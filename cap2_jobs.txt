@@ -1,0 +1,3 @@
+cap90k7_d256_frozen 90 7 1 256
+cap110k8_d256_full 110 8 0 256
+cap110k8_d256_frozen 110 8 1 256

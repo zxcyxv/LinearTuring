@@ -1,0 +1,5 @@
+  [tau110k8_t4_frozen] step   500 loss 0.5589 셀 0.6807 전체일치 0.0000
+  [tau110k8_t4_frozen] step  1000 loss 0.5033 셀 0.7213 전체일치 0.0000
+  [tau110k8_t4_frozen] step  1500 loss 0.4824 셀 0.7464 전체일치 0.0005
+  [tau110k8_t4_frozen] step  2000 loss 0.4730 셀 0.7535 전체일치 0.0010
+[tau110k8_t4_frozen] rule=110 k=8 T=32 tau=4 freeze_A=True FINAL 셀 0.7523 전체일치 0.0007 (247s)

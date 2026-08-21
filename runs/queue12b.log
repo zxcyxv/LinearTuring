@@ -1,0 +1,15 @@
+[ca90_k1_frozen] rule=90 k=1 T=32 freeze_A=True FINAL 셀 1.0000 전체일치 1.0000 (202s)
+[ca90_k7_full] rule=90 k=7 T=32 freeze_A=False FINAL 셀 0.6968 전체일치 0.0000 (2272s)
+skip ca90_k7_frozen
+skip ca90_k15_full
+skip ca90_k15_frozen
+=== RULE90 DONE ===
+skip ca110_k1_full
+skip ca110_k1_frozen
+skip ca110_k2_full
+skip ca110_k2_frozen
+skip ca110_k4_full
+skip ca110_k4_frozen
+[ca110_k8_full] rule=110 k=8 T=32 freeze_A=False FINAL 셀 0.9323 전체일치 0.1182 (1270s)
+skip ca110_k8_frozen
+=== QUEUE12 DONE ===

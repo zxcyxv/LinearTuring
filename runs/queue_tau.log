@@ -1,0 +1,5 @@
+[tau110k8_t2_frozen] rule=110 k=8 T=32 tau=2 freeze_A=True FINAL 셀 0.7085 전체일치 0.0000 (172s)
+[tau110k8_t4_frozen] rule=110 k=8 T=32 tau=4 freeze_A=True FINAL 셀 0.7523 전체일치 0.0007 (247s)
+[tau110k8_t2_full] rule=110 k=8 T=32 tau=2 freeze_A=False FINAL 셀 0.8815 전체일치 0.0277 (581s)
+[tau110k8_t4_full] rule=110 k=8 T=32 tau=4 freeze_A=False FINAL 셀 0.9274 전체일치 0.1306 (781s)
+=== TAU DONE ===

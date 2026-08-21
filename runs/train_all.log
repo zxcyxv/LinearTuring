@@ -1,0 +1,84 @@
+[full] params=26507  dev=cuda  steps=3744
+  step   200 loss 1.4945 acc 0.484 |h|max 8.50 rho 2.21 gam 0.093 kap 108.5
+  step   400 loss 0.5457 acc 0.852 |h|max 9.28 rho 2.73 gam 0.081 kap 111.4
+[full] epoch 0 test_acc 0.8712  (60s)
+  step   600 loss 0.3036 acc 0.938 |h|max 9.70 rho 2.44 gam 0.073 kap 114.3
+  step   800 loss 0.1249 acc 0.961 |h|max 10.07 rho 2.45 gam 0.067 kap 117.7
+[full] epoch 1 test_acc 0.9445  (121s)
+  step  1000 loss 0.2312 acc 0.953 |h|max 10.31 rho 2.44 gam 0.062 kap 120.8
+  step  1200 loss 0.0977 acc 0.961 |h|max 10.74 rho 2.23 gam 0.058 kap 123.0
+  step  1400 loss 0.0918 acc 0.977 |h|max 11.14 rho 2.14 gam 0.055 kap 125.1
+[full] epoch 2 test_acc 0.9528  (182s)
+  step  1600 loss 0.1664 acc 0.930 |h|max 11.32 rho 2.12 gam 0.052 kap 126.0
+  step  1800 loss 0.1240 acc 0.953 |h|max 11.50 rho 2.08 gam 0.050 kap 126.7
+[full] epoch 3 test_acc 0.9566  (242s)
+  step  2000 loss 0.1154 acc 0.969 |h|max 11.74 rho 2.19 gam 0.048 kap 127.7
+  step  2200 loss 0.0760 acc 0.984 |h|max 11.81 rho 2.13 gam 0.046 kap 128.3
+[full] epoch 4 test_acc 0.9686  (302s)
+  step  2400 loss 0.0761 acc 0.961 |h|max 12.05 rho 2.01 gam 0.045 kap 129.1
+  step  2600 loss 0.1364 acc 0.945 |h|max 11.97 rho 1.98 gam 0.045 kap 129.4
+  step  2800 loss 0.0241 acc 1.000 |h|max 12.37 rho 2.09 gam 0.044 kap 129.3
+[full] epoch 5 test_acc 0.9715  (363s)
+  step  3000 loss 0.0860 acc 0.969 |h|max 12.33 rho 2.08 gam 0.043 kap 129.3
+  step  3200 loss 0.0165 acc 1.000 |h|max 12.41 rho 2.08 gam 0.043 kap 129.2
+[full] epoch 6 test_acc 0.9741  (423s)
+  step  3400 loss 0.0601 acc 0.984 |h|max 12.42 rho 2.06 gam 0.043 kap 129.3
+  step  3600 loss 0.0672 acc 0.977 |h|max 12.45 rho 2.07 gam 0.042 kap 129.3
+[full] epoch 7 test_acc 0.9742  (492s)
+[full] done. final test_acc=0.9742
+[noov] params=18379  dev=cuda  steps=3744
+  step   200 loss 1.7465 acc 0.352 |h|max 8.46 rho 4.17 gam 0.093 kap 35.9
+  step   400 loss 1.0618 acc 0.617 |h|max 9.40 rho 4.31 gam 0.078 kap 37.7
+[noov] epoch 0 test_acc 0.7815  (60s)
+  step   600 loss 0.5463 acc 0.828 |h|max 10.10 rho 4.08 gam 0.064 kap 38.9
+  step   800 loss 0.5299 acc 0.820 |h|max 10.50 rho 3.82 gam 0.054 kap 40.8
+[noov] epoch 1 test_acc 0.8937  (142s)
+  step  1000 loss 0.3620 acc 0.852 |h|max 11.32 rho 3.97 gam 0.047 kap 41.8
+  step  1200 loss 0.2914 acc 0.914 |h|max 12.10 rho 4.32 gam 0.041 kap 42.4
+  step  1400 loss 0.2517 acc 0.922 |h|max 12.35 rho 4.22 gam 0.037 kap 42.9
+[noov] epoch 2 test_acc 0.9251  (201s)
+  step  1600 loss 0.2283 acc 0.961 |h|max 12.66 rho 4.40 gam 0.034 kap 43.2
+  step  1800 loss 0.1442 acc 0.945 |h|max 12.85 rho 4.13 gam 0.032 kap 43.3
+[noov] epoch 3 test_acc 0.9382  (262s)
+  step  2000 loss 0.2769 acc 0.906 |h|max 13.16 rho 4.26 gam 0.030 kap 43.4
+  step  2200 loss 0.1982 acc 0.914 |h|max 13.94 rho 4.63 gam 0.028 kap 43.5
+[noov] epoch 4 test_acc 0.9430  (322s)
+  step  2400 loss 0.1452 acc 0.953 |h|max 13.95 rho 4.69 gam 0.027 kap 43.6
+  step  2600 loss 0.2812 acc 0.914 |h|max 14.10 rho 4.38 gam 0.026 kap 43.7
+  step  2800 loss 0.1462 acc 0.953 |h|max 14.17 rho 4.60 gam 0.026 kap 43.7
+[noov] epoch 5 test_acc 0.9537  (382s)
+  step  3000 loss 0.0988 acc 0.969 |h|max 14.46 rho 4.77 gam 0.025 kap 43.7
+  step  3200 loss 0.1023 acc 0.969 |h|max 14.56 rho 4.56 gam 0.025 kap 43.7
+[noov] epoch 6 test_acc 0.9558  (442s)
+  step  3400 loss 0.1425 acc 0.938 |h|max 14.43 rho 4.61 gam 0.025 kap 43.7
+  step  3600 loss 0.1323 acc 0.977 |h|max 14.54 rho 4.67 gam 0.025 kap 43.7
+[noov] epoch 7 test_acc 0.9583  (501s)
+[noov] done. final test_acc=0.9583
+[noisy] params=26507  dev=cuda  steps=3744
+  step   200 loss 1.8590 acc 0.336 |h|max 8.59 rho 1.89 gam 0.092 kap 108.6
+  step   400 loss 0.8064 acc 0.703 |h|max 9.94 rho 2.32 gam 0.072 kap 114.6
+[noisy] epoch 0 test_acc 0.8159  (83s)
+  step   600 loss 0.4767 acc 0.820 |h|max 10.74 rho 2.38 gam 0.061 kap 118.2
+  step   800 loss 0.2317 acc 0.930 |h|max 11.04 rho 1.99 gam 0.053 kap 124.2
+[noisy] epoch 1 test_acc 0.9066  (144s)
+  step  1000 loss 0.2744 acc 0.938 |h|max 11.59 rho 2.29 gam 0.048 kap 128.0
+  step  1200 loss 0.1700 acc 0.945 |h|max 11.95 rho 2.32 gam 0.044 kap 130.1
+  step  1400 loss 0.0820 acc 0.977 |h|max 12.14 rho 2.18 gam 0.040 kap 130.7
+[noisy] epoch 2 test_acc 0.9405  (204s)
+  step  1600 loss 0.1628 acc 0.953 |h|max 12.56 rho 2.05 gam 0.038 kap 132.5
+  step  1800 loss 0.0825 acc 0.984 |h|max 13.18 rho 2.15 gam 0.035 kap 133.1
+[noisy] epoch 3 test_acc 0.9476  (263s)
+  step  2000 loss 0.2040 acc 0.953 |h|max 13.19 rho 2.24 gam 0.033 kap 133.4
+  step  2200 loss 0.1476 acc 0.945 |h|max 13.57 rho 2.26 gam 0.032 kap 133.7
+[noisy] epoch 4 test_acc 0.9591  (341s)
+  step  2400 loss 0.1390 acc 0.938 |h|max 13.64 rho 2.21 gam 0.031 kap 133.8
+  step  2600 loss 0.1051 acc 0.969 |h|max 13.81 rho 2.18 gam 0.030 kap 134.3
+  step  2800 loss 0.0935 acc 0.984 |h|max 13.98 rho 2.13 gam 0.030 kap 134.2
+[noisy] epoch 5 test_acc 0.9630  (402s)
+  step  3000 loss 0.1021 acc 0.977 |h|max 13.97 rho 2.17 gam 0.029 kap 134.2
+  step  3200 loss 0.0416 acc 0.977 |h|max 14.23 rho 2.15 gam 0.029 kap 134.2
+[noisy] epoch 6 test_acc 0.9638  (462s)
+  step  3400 loss 0.1687 acc 0.969 |h|max 14.07 rho 2.14 gam 0.029 kap 134.2
+  step  3600 loss 0.0617 acc 0.984 |h|max 14.10 rho 2.14 gam 0.029 kap 134.2
+[noisy] epoch 7 test_acc 0.9672  (522s)
+[noisy] done. final test_acc=0.9672

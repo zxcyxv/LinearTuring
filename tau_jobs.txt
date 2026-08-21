@@ -1,0 +1,4 @@
+tau110k8_t2_full 110 8 0 2
+tau110k8_t2_frozen 110 8 1 2
+tau110k8_t4_full 110 8 0 4
+tau110k8_t4_frozen 110 8 1 4

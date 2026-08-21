@@ -1,0 +1,5 @@
+  [tau110k8_t2_full] step   500 loss 0.5242 셀 0.7029 전체일치 0.0000
+  [tau110k8_t2_full] step  1000 loss 0.3685 셀 0.8225 전체일치 0.0049
+  [tau110k8_t2_full] step  1500 loss 0.2810 셀 0.8690 전체일치 0.0225
+  [tau110k8_t2_full] step  2000 loss 0.2646 셀 0.8822 전체일치 0.0308
+[tau110k8_t2_full] rule=110 k=8 T=32 tau=2 freeze_A=False FINAL 셀 0.8815 전체일치 0.0277 (581s)

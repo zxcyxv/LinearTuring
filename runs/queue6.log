@@ -1,0 +1,49 @@
+[nb_g0.02] params=26442  dev=cuda  steps=2808
+[nb_g0.02] epoch 0 test_acc 0.9021  (74s)
+  step   600 loss 0.3753 acc 0.883 |h|max 16.47 rho 1.79 gam 0.020 kap 111.2
+[nb_g0.02] epoch 1 test_acc 0.9438  (148s)
+  step  1200 loss 0.1907 acc 0.969 |h|max 16.00 rho 1.81 gam 0.020 kap 113.0
+[nb_g0.02] epoch 2 test_acc 0.9519  (223s)
+  step  1800 loss 0.1205 acc 0.961 |h|max 16.05 rho 1.86 gam 0.020 kap 114.0
+[nb_g0.02] epoch 3 test_acc 0.9625  (297s)
+[nb_g0.02] epoch 4 test_acc 0.9689  (369s)
+  step  2400 loss 0.0913 acc 0.984 |h|max 16.35 rho 1.88 gam 0.020 kap 114.2
+[nb_g0.02] epoch 5 test_acc 0.9702  (441s)
+[nb_g0.02] done. final test_acc=0.9702
+max||h|| at r=8/32/64: 16.53/15.02/15.21  (bound 107.4)  판정: 지속 운동(비고정점)
+주기성: 12 스텝, 상관 -0.02740439586341381
+refine acc: ['R=2:0.314', 'R=4:0.955', 'R=8:0.970', 'R=12:0.969', 'R=16:0.965', 'R=24:0.963', 'R=32:0.962', 'R=48:0.958', 'R=64:0.952', 'R=96:0.940']
+[nb_g0.02] FTLE λ = +1.705 /τ  → 카오스(민감 의존)  | 자기상관 lag=1 +0.13, lag=3 -0.12
+[nb_g2.0] params=26442  dev=cuda  steps=2808
+[nb_g2.0] epoch 0 test_acc 0.8232  (75s)
+  step   600 loss 0.5787 acc 0.820 |h|max 1.96 rho 4.70 gam 2.000 kap 123.0
+[nb_g2.0] epoch 1 test_acc 0.9124  (148s)
+  step  1200 loss 0.2313 acc 0.930 |h|max 1.96 rho 4.00 gam 2.000 kap 135.7
+[nb_g2.0] epoch 2 test_acc 0.9427  (223s)
+  step  1800 loss 0.1764 acc 0.969 |h|max 1.96 rho 3.88 gam 2.000 kap 142.4
+[nb_g2.0] epoch 3 test_acc 0.9507  (295s)
+[nb_g2.0] epoch 4 test_acc 0.9564  (367s)
+  step  2400 loss 0.2423 acc 0.953 |h|max 1.97 rho 3.79 gam 2.000 kap 144.8
+[nb_g2.0] epoch 5 test_acc 0.9586  (440s)
+[nb_g2.0] done. final test_acc=0.9586
+max||h|| at r=8/32/64: 1.97/1.96/1.95  (bound 12.1)  판정: 느린 이완
+주기성: 27 스텝, 상관 -0.021109240129590034
+refine acc: ['R=2:0.383', 'R=4:0.930', 'R=8:0.949', 'R=12:0.951', 'R=16:0.948', 'R=24:0.944', 'R=32:0.942', 'R=48:0.935', 'R=64:0.920', 'R=96:0.897']
+[nb_g2.0] FTLE λ = +0.599 /τ  → 카오스(민감 의존)  | 자기상관 lag=1 +0.83, lag=3 +0.50
+[nb_g128.0] params=26442  dev=cuda  steps=2808
+[nb_g128.0] epoch 0 test_acc 0.2928  (75s)
+  step   600 loss 1.7101 acc 0.422 |h|max 0.25 rho 4.87 gam 128.000 kap 162.7
+[nb_g128.0] epoch 1 test_acc 0.4627  (153s)
+  step  1200 loss 1.0298 acc 0.602 |h|max 0.25 rho 3.79 gam 128.000 kap 187.9
+[nb_g128.0] epoch 2 test_acc 0.6272  (227s)
+  step  1800 loss 1.0097 acc 0.664 |h|max 0.25 rho 3.65 gam 128.000 kap 191.0
+[nb_g128.0] epoch 3 test_acc 0.7059  (301s)
+[nb_g128.0] epoch 4 test_acc 0.7749  (374s)
+  step  2400 loss 1.1177 acc 0.727 |h|max 0.25 rho 3.59 gam 128.000 kap 193.7
+[nb_g128.0] epoch 5 test_acc 0.7835  (447s)
+[nb_g128.0] done. final test_acc=0.7835
+max||h|| at r=8/32/64: 0.25/0.25/0.25  (bound 1.7)  판정: 고정점 수렴
+주기성: 33 스텝, 상관 -0.011519520543515682
+refine acc: ['R=2:0.237', 'R=4:0.749', 'R=8:0.771', 'R=12:0.770', 'R=16:0.744', 'R=24:0.708', 'R=32:0.688', 'R=48:0.655', 'R=64:0.642', 'R=96:0.630']
+[nb_g128.0] FTLE λ = -2.405 /τ  → 수축  | 자기상관 lag=1 +0.72, lag=3 +0.62
+=== QUEUE6 DONE ===

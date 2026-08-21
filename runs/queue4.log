@@ -1,0 +1,86 @@
+[g0.02] params=26506  dev=cuda  steps=2808
+[g0.02] epoch 0 test_acc 0.9025  (75s)
+  step   600 loss 0.3390 acc 0.898 |h|max 16.34 rho 1.81 gam 0.020 kap 111.1
+[g0.02] epoch 1 test_acc 0.9433  (149s)
+  step  1200 loss 0.1619 acc 0.961 |h|max 15.93 rho 1.93 gam 0.020 kap 112.2
+[g0.02] epoch 2 test_acc 0.9555  (224s)
+  step  1800 loss 0.1207 acc 0.969 |h|max 15.82 rho 1.81 gam 0.020 kap 113.8
+[g0.02] epoch 3 test_acc 0.9600  (298s)
+[g0.02] epoch 4 test_acc 0.9699  (370s)
+  step  2400 loss 0.0897 acc 0.984 |h|max 15.85 rho 1.84 gam 0.020 kap 114.2
+[g0.02] epoch 5 test_acc 0.9704  (443s)
+[g0.02] done. final test_acc=0.9704
+anytime acc r=1,2,4,8,16,32,64: 0.100, 0.162, 0.816, 0.969, 0.857, 0.156, 0.111
+max||h|| at r=8/32/64: 15.89/15.57/15.84  (bound 107.4)  판정: 지속 운동(비고정점)
+주기성: 12 스텝, 상관 -0.011701150797307491
+refine acc: ['R=2:0.363', 'R=4:0.953', 'R=8:0.967', 'R=12:0.964', 'R=16:0.961', 'R=24:0.953', 'R=32:0.954', 'R=48:0.951', 'R=64:0.948', 'R=96:0.945']
+[g0.02] FTLE λ = +1.659 /τ  → 카오스(민감 의존)  | 자기상관 lag=1 +0.15, lag=3 -0.12
+[g0.1] params=26506  dev=cuda  steps=2808
+[g0.1] epoch 0 test_acc 0.8700  (75s)
+  step   600 loss 0.4425 acc 0.898 |h|max 8.14 rho 3.11 gam 0.100 kap 114.4
+[g0.1] epoch 1 test_acc 0.9346  (149s)
+  step  1200 loss 0.1984 acc 0.945 |h|max 7.89 rho 2.44 gam 0.100 kap 120.0
+[g0.1] epoch 2 test_acc 0.9476  (223s)
+  step  1800 loss 0.1347 acc 0.961 |h|max 7.85 rho 2.51 gam 0.100 kap 122.6
+[g0.1] epoch 3 test_acc 0.9615  (297s)
+[g0.1] epoch 4 test_acc 0.9663  (369s)
+  step  2400 loss 0.1591 acc 0.945 |h|max 7.87 rho 2.50 gam 0.100 kap 123.1
+[g0.1] epoch 5 test_acc 0.9672  (442s)
+[g0.1] done. final test_acc=0.9672
+anytime acc r=1,2,4,8,16,32,64: 0.082, 0.221, 0.871, 0.967, 0.832, 0.277, 0.188
+max||h|| at r=8/32/64: 8.05/8.05/8.04  (bound 49.8)  판정: 지속 운동(비고정점)
+주기성: 13 스텝, 상관 -0.027610192075371742
+refine acc: ['R=2:0.409', 'R=4:0.943', 'R=8:0.960', 'R=12:0.959', 'R=16:0.955', 'R=24:0.948', 'R=32:0.941', 'R=48:0.931', 'R=64:0.930', 'R=96:0.919']
+[g0.1] FTLE λ = +1.898 /τ  → 카오스(민감 의존)  | 자기상관 lag=1 +0.11, lag=3 -0.11
+[g0.5] params=26506  dev=cuda  steps=2808
+[g0.5] epoch 0 test_acc 0.8292  (75s)
+  step   600 loss 0.4881 acc 0.867 |h|max 3.79 rho 3.44 gam 0.500 kap 120.8
+[g0.5] epoch 1 test_acc 0.9163  (149s)
+  step  1200 loss 0.2740 acc 0.938 |h|max 3.74 rho 3.40 gam 0.500 kap 137.0
+[g0.5] epoch 2 test_acc 0.9490  (224s)
+  step  1800 loss 0.1408 acc 0.969 |h|max 3.75 rho 3.06 gam 0.500 kap 141.8
+[g0.5] epoch 3 test_acc 0.9498  (297s)
+[g0.5] epoch 4 test_acc 0.9604  (369s)
+  step  2400 loss 0.2018 acc 0.945 |h|max 3.75 rho 3.00 gam 0.500 kap 143.2
+[g0.5] epoch 5 test_acc 0.9632  (442s)
+[g0.5] done. final test_acc=0.9632
+anytime acc r=1,2,4,8,16,32,64: 0.082, 0.082, 0.867, 0.971, 0.812, 0.146, 0.096
+max||h|| at r=8/32/64: 3.78/3.71/3.77  (bound 24.0)  판정: 지속 운동(비고정점)
+주기성: 15 스텝, 상관 -0.016941716894507408
+refine acc: ['R=2:0.344', 'R=4:0.938', 'R=8:0.959', 'R=12:0.960', 'R=16:0.955', 'R=24:0.950', 'R=32:0.941', 'R=48:0.932', 'R=64:0.922', 'R=96:0.913']
+[g0.5] FTLE λ = +2.105 /τ  → 카오스(민감 의존)  | 자기상관 lag=1 +0.12, lag=3 -0.11
+[g2.0] params=26506  dev=cuda  steps=2808
+[g2.0] epoch 0 test_acc 0.7874  (75s)
+  step   600 loss 0.6670 acc 0.844 |h|max 1.97 rho 4.39 gam 2.000 kap 119.9
+[g2.0] epoch 1 test_acc 0.9154  (149s)
+  step  1200 loss 0.1916 acc 0.945 |h|max 1.97 rho 3.78 gam 2.000 kap 132.6
+[g2.0] epoch 2 test_acc 0.9303  (224s)
+  step  1800 loss 0.1681 acc 0.945 |h|max 1.97 rho 3.68 gam 2.000 kap 139.1
+[g2.0] epoch 3 test_acc 0.9504  (298s)
+[g2.0] epoch 4 test_acc 0.9565  (371s)
+  step  2400 loss 0.2972 acc 0.930 |h|max 1.97 rho 3.49 gam 2.000 kap 141.2
+[g2.0] epoch 5 test_acc 0.9598  (444s)
+[g2.0] done. final test_acc=0.9598
+anytime acc r=1,2,4,8,16,32,64: 0.082, 0.145, 0.896, 0.967, 0.943, 0.627, 0.402
+max||h|| at r=8/32/64: 1.97/1.97/1.97  (bound 11.9)  판정: 느린 이완
+주기성: 27 스텝, 상관 -0.015491288155317307
+refine acc: ['R=2:0.557', 'R=4:0.945', 'R=8:0.961', 'R=12:0.959', 'R=16:0.956', 'R=24:0.952', 'R=32:0.944', 'R=48:0.944', 'R=64:0.941', 'R=96:0.937']
+[g2.0] FTLE λ = +0.996 /τ  → 카오스(민감 의존)  | 자기상관 lag=1 +0.72, lag=3 +0.43
+[g8.0] params=26506  dev=cuda  steps=2808
+[g8.0] epoch 0 test_acc 0.6681  (75s)
+  step   600 loss 1.1109 acc 0.719 |h|max 0.99 rho 4.96 gam 8.000 kap 127.5
+[g8.0] epoch 1 test_acc 0.8841  (150s)
+  step  1200 loss 0.3681 acc 0.930 |h|max 0.99 rho 3.59 gam 8.000 kap 142.1
+[g8.0] epoch 2 test_acc 0.9101  (225s)
+  step  1800 loss 0.3190 acc 0.930 |h|max 0.99 rho 4.04 gam 8.000 kap 148.0
+[g8.0] epoch 3 test_acc 0.9328  (299s)
+[g8.0] epoch 4 test_acc 0.9429  (372s)
+  step  2400 loss 0.4320 acc 0.953 |h|max 0.99 rho 3.95 gam 8.000 kap 148.7
+[g8.0] epoch 5 test_acc 0.9487  (445s)
+[g8.0] done. final test_acc=0.9487
+anytime acc r=1,2,4,8,16,32,64: 0.137, 0.254, 0.881, 0.949, 0.877, 0.604, 0.369
+max||h|| at r=8/32/64: 0.99/0.99/0.99  (bound 6.1)  판정: 느린 이완
+주기성: 35 스텝, 상관 -0.020962117239832878
+refine acc: ['R=2:0.419', 'R=4:0.923', 'R=8:0.947', 'R=12:0.943', 'R=16:0.943', 'R=24:0.939', 'R=32:0.931', 'R=48:0.913', 'R=64:0.906', 'R=96:0.891']
+[g8.0] FTLE λ = +0.273 /τ  → 카오스(민감 의존)  | 자기상관 lag=1 +0.59, lag=3 +0.41
+=== QUEUE4 DONE ===

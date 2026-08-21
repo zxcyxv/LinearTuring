@@ -1,0 +1,144 @@
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">§3.4의 세 선택지에 없던 네 번째 답</p>
+  <h1>이상한 끌개</h1>
+  <p class="lede">
+    사양은 R을 늘려 돌렸을 때 <em>고정점 수렴 · 닫힌 궤도 · 발산</em> 셋 중 하나가 나올 것으로 봤다.
+    셋 다 아니었다. 학습된 계는 §1.7이 보장한 흡수구 안에서 <strong>유계 카오스</strong>로 배회한다.
+    리아푸노프 지수 <code>λ = +1.72</code>. 그리고 이 판정이 가능해진 것은
+    이산화 종속이 구조가 아니라 <strong>학습 방식의 산물</strong>이었음을 먼저 밝혔기 때문이다.
+  </p>
+  <div class="statbar">
+    <div class="stat"><span class="stat-k">리아푸노프 지수</span><span class="stat-v">+1.72</span><span class="stat-n">randR · τ≈5부터 평탄화</span></div>
+    <div class="stat"><span class="stat-k">정밀화 저항</span><span class="stat-v">.286 → .947</span><span class="stat-n">R=96에서의 정확도</span></div>
+    <div class="stat"><span class="stat-k">최고 정확도</span><span class="stat-v">97.62%</span><span class="stat-n">kern · 커널 학습률 ×30</span></div>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="n">01</span><h2>먼저 고쳐야 했던 것</h2></div>
+  <div class="col"><p>
+    앞선 관측에서 학습된 사상은 <code>dt = 1/8</code>에서만 동작했다. τ=1을 유지한 채 더 정밀하게 적분하면
+    정확도가 0.972에서 0.286으로 무너졌다. 그 상태로는 “끌개가 무엇인가”라는 질문 자체가 성립하지 않는다.
+    적분을 정밀화할 때 계산이 달라진다면, 무엇의 끌개인지 말할 수 없기 때문이다.
+  </p></div>
+
+  <div class="finding held">
+    <span class="chip">해결</span><span class="spec">randR · 매 배치 R ~ U(4,16)</span>
+    <h3>이산화 종속은 구조가 아니라 학습의 문제였다</h3>
+    <p>τ=1을 고정한 채 <strong>매 배치마다 dt를 무작위로 바꿔</strong> 학습했다. 구조는 한 글자도 안 바꿨다.</p>
+    <div class="tw"><table>
+      <thead><tr><th>τ=1 유지, 적분 스텝수 R</th><th class="num">8 (학습역)</th><th class="num">16</th><th class="num">32</th><th class="num">64</th><th class="num">128</th></tr></thead>
+      <tbody>
+        <tr><td>full — 정확도</td><td class="num">.99</td><td class="num">.63</td><td class="num">.35</td><td class="num">.29</td><td class="num">.25</td></tr>
+        <tr class="hi"><td>randR — 정확도</td><td class="num">.98</td><td class="num">.98</td><td class="num">.98</td><td class="num">.98</td><td class="num">.97</td></tr>
+      </tbody>
+    </table></div>
+    <p>dt를 16배 줄여도 정확도가 <strong>완전히 평평하다</strong>. test 정확도도 97.13%로 full의 97.42%와 사실상 같다.
+    즉 이 구조는 진짜 뉴럴 ODE가 <strong>될 수 있었고</strong>, 원래 학습이 그걸 강제하지 않았을 뿐이다.
+    “가중치 공유 재귀 = 동일 벡터장의 시간 전개”라는 사양 §3의 전제는
+    <strong>학습 프로토콜에 조건부로 참</strong>이다 — 아키텍처의 성질이 아니라 학습의 성질이다.</p>
+    <figure>
+      <img src="{{CMP}}" alt="모델 6종의 anytime 정확도, 정밀화 저항, 연속극한 상대속도">
+      <figcaption><strong>모델 6종 비교.</strong> 가운데 패널에서 randR만 평평하다.
+      오른쪽 패널: 어떤 모델도 상대속도가 0으로 내려가지 않는다 — 전부 비고정점.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">02</span><h2>그래서 끌개는 무엇인가</h2></div>
+  <div class="col"><p>
+    randR은 dt에 무관하므로, 이제 그 위에서의 측정은 <strong>연속 동역학계에 대한 진술</strong>이 된다.
+    τ=4까지 버린 뒤(과도기 제거), 상대 섭동 <code>ε = 10⁻⁵</code>을 주고
+    τ=0.5마다 재정규화하는 Benettin 방식으로 유한시간 리아푸노프 지수를 쟀다.
+  </p></div>
+
+  <div class="finding broke">
+    <span class="chip">네 번째 답</span><span class="spec">§3.4 고정점 / 닫힌 궤도 / 발산</span>
+    <h3>유계 카오스 — 초기조건에 민감하게 의존하는 이상한 끌개</h3>
+    <div class="tw"><table>
+      <thead><tr><th>모델</th><th class="num">λ (FTLE)</th><th class="num">끌개 ‖h‖</th><th class="num">예측 흡수구</th><th>판정</th></tr></thead>
+      <tbody>
+        <tr class="hi"><td>randR (연속 흐름)</td><td class="num">+1.72</td><td class="num">13.3</td><td class="num">—</td><td>카오스</td></tr>
+        <tr><td>noov (순수 좌곱셈)</td><td class="num">+1.28</td><td class="num">15.5</td><td class="num">59</td><td>카오스</td></tr>
+        <tr><td>full</td><td class="num">+0.52</td><td class="num">12.6</td><td class="num">78</td><td>카오스 + 준주기 성분</td></tr>
+      </tbody>
+    </table></div>
+    <p>세 모델 모두 <code>λ &gt; 0</code>이고, 누적 추정치가 τ≈5부터 평탄화한다 — 과도기 성장이 아니라 끌개의 성질이다.
+    이것이 지금까지의 모든 관측을 한 번에 설명한다.
+    증분이 죽지 않는 것, 자기상관 포락선이 한 주기 만에 붕괴하는 것,
+    닫힌 궤도가 안 나오는 것, 분기 다이어그램에 Hopf 지점이 없고 전 구간이 진동인 것 — 전부 카오스의 표준 징후다.</p>
+    <p>full만 자기상관에 lag τ≈2.5–3에서 0.4의 재발이 남아 있어 <strong>카오스 위에 준주기 성분이 겹친</strong> 형태다.
+    randR과 noov는 단조 감쇠 후 −0.13에서 평탄하다.</p>
+    <figure>
+      <img src="{{ATT}}" alt="누적 리아푸노프 지수 추정과 장시간 자기상관">
+      <figcaption><strong>끌개 판정.</strong> 왼쪽: 누적 FTLE가 세 모델 모두 양수에서 평탄화.
+      오른쪽: full(주황)의 lag 2.5–3 재발이 준주기 성분.</figcaption>
+    </figure>
+  </div>
+
+  <div class="col">
+    <p class="note">이건 §1.7의 실패가 아니라 <strong>§1.7이 있어서 가능한 결과</strong>다.
+    4차 소산이 흡수구를 보장하지 않았다면 양의 리아푸노프 지수는 곧 발산을 뜻했을 것이다.
+    “유계성만 강제하고 진동은 허용한다”던 설계 의도가 정확히 이상한 끌개의 정의다 —
+    다만 사양은 그 진동이 한계주기일 것으로 봤고, 실제로는 카오스였다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">03</span><h2>Gabor 필터뱅크의 부분 회복</h2></div>
+  <div class="col"><p>
+    앞선 관측에서 ψ·θ·α는 학습 내내 초기값 근처에 머물렀고, 문제를 어렵게 해도(잡음 MNIST) 움직이지 않았다.
+    남은 가설은 “그래디언트 스케일 문제”였다. ψ·θ·α에만 30배 학습률을 줬다.
+  </p></div>
+
+  <div class="finding held">
+    <span class="chip">부분 회복</span><span class="spec">kern · 커널 학습률 ×30</span>
+    <h3>다중 스케일 수용장이 처음으로 생겼다</h3>
+    <div class="tw"><table>
+      <thead><tr><th>모델</th><th class="num">test</th><th class="num">|Δψ|</th><th class="num">1/α 평균</th><th class="num">1/α 범위</th><th class="num">1/α 표준편차</th></tr></thead>
+      <tbody>
+        <tr><td>full</td><td class="num">.9742</td><td class="num">0.114</td><td class="num">11.0</td><td class="num">8.5 – 16.4</td><td class="num">1.48</td></tr>
+        <tr class="hi"><td>kern</td><td class="num">.9762</td><td class="num">0.322</td><td class="num">11.1</td><td class="num">3.7 – 34.0</td><td class="num">5.75</td></tr>
+        <tr><td>noov</td><td class="num">.9583</td><td class="num">0.212</td><td class="num">17.0</td><td class="num">10.5 – 29.8</td><td class="num">5.08</td></tr>
+      </tbody>
+    </table></div>
+    <p>수용장 폭의 표준편차가 1.48에서 5.75로 <strong>네 배</strong>가 됐다.
+    좁게는 3.7(7×7 격자에서 국소), 넓게는 34(전역)까지 채널이 갈라졌다 — 다중 시간척도/공간척도의 분리다.
+    ψ 이동도 세 배(0.114 → 0.322)이고, 정확도는 <strong>97.62%로 전 모델 최고</strong>다.</p>
+    <p>즉 원인은 과제 난이도가 아니라 <strong>커널 파라미터로 흐르는 그래디언트가 작다</strong>는 것이었다.
+    다만 “학습된 Gabor 필터뱅크”라 부르기엔 아직 이르다. 스케일은 갈라졌지만
+    방향 선택성은 초기 무작위 분포에서 크게 정리되지 않았다.</p>
+    <figure>
+      <img src="{{KFB}}" alt="kern 모델의 2D 파수 벡터, 주파수-대역폭 커버리지, ψ 분포">
+      <figcaption><strong>kern의 필터뱅크 파라미터.</strong> 왼쪽 색이 수용장 폭 —
+      full에서는 전부 같은 색(≈10)이었다.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">04</span><h2>정리하면</h2></div>
+  <div class="col">
+    <p><strong>이 구조는 뉴럴 ODE가 될 수 있다.</strong> 단, 학습이 그것을 강제해야 한다.
+    dt 무작위화 한 줄이면 되고, 정확도 비용은 0.3%p다.</p>
+    <p><strong>그 ODE의 끌개는 이상한 끌개다.</strong> 유계이되 카오스이고,
+    사양이 기대한 FHN식 한계주기는 나오지 않는다.
+    스파이킹 서사를 원한다면 흡수구만으로는 부족하고 진동을 <em>조직화</em>하는 장치가 따로 필요하다.</p>
+    <p><strong>커널은 학습률만 올려주면 학습된다.</strong> 그리고 그때가 가장 정확하다.
+    사양의 “최소 실험 사양” 표에 학습률 항목이 커널 파라미터에 대해 따로 없었던 것이
+    Gabor 실증 실패의 직접적 원인이었다.</p>
+  </div>
+</section>
+
+<footer>
+  <p class="mono">
+    FTLE: Benettin, ε=1e−5 상대섭동, τ_burn=4, τ_span=12, 재정규화 간격 0.5, dt=1/64, 배치 64<br>
+    randR: --rand_R 4,16 (매 배치 R 균등 샘플, τ=1 고정) · kern: --kernel_lr_mult 30<br>
+    /workspace/mnist_model1/ — attractor.py · compare.py · dt_sweep.py
+  </p>
+</footer>
+
+</div>

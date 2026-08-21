@@ -1,0 +1,243 @@
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">사양의 반응-확산 해석을 실제로 측정한 기록</p>
+  <h1>확산이라 불린 것</h1>
+  <p class="lede">
+    사양은 어텐션 출력이 <code>Σa<sub>tn</sub>(h<sub>n</sub>−h<sub>t</sub>) + d<sub>t</sub>h<sub>t</sub></code>,
+    곧 확산항과 반응항으로 정확히 분해된다는 관찰에서 출발했다. 분해 자체는 대수 항등식이라 반박할 게 없다.
+    그런데 항등식은 <strong>어떤 행렬에 대해서도</strong> 성립한다 — 물리적 내용은 계수가 음이 아닐 때만 붙는다.
+    이 모델의 계수는 절반이 음수다. 그래서 실제로 무엇이 일어나는지 쟀다.
+    결론부터 말하면, 패턴 형성은 진짜이고 반응-확산은 이름만 남는다.
+  </p>
+  <div class="statbar">
+    <div class="stat"><span class="stat-k">확산항의 에너지 수지</span><span class="stat-v">+15,269</span><span class="stat-n">소산이 아니라 최대 주입원 (39%)</span></div>
+    <div class="stat"><span class="stat-k">특징 파장</span><span class="stat-v">k* = 1.12</span><span class="stat-n">P(k=0)/P(k*) = 0.000</span></div>
+    <div class="stat"><span class="stat-k">구조적 좌절도</span><span class="stat-v">0.132</span><span class="stat-n">무작위 부호 대비 4.8배 낮음 (noov)</span></div>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="n">01</span><h2>왜 noov 에서만 물을 수 있나</h2></div>
+  <div class="col">
+    <p>완전 모델의 어텐션 항은 <code>Σ<sub>n</sub> a<sub>tn</sub> W<sub>OV</sub> h<sub>n</sub></code>이라
+    <code>h<sub>n</sub> − h<sub>t</sub></code> 구조가 나오지 않는다. 사양 자신이 “미해결 지점” 2번에 적어둔 문제다 —
+    <em>“원래 상태 공간이 아니라 <code>W<sub>V</sub></code>로 변환된 공간에서의 확산이라,
+    그래프 디리클레 에너지 해석이 그대로 이식되지 않습니다.”</em></p>
+    <p><strong>noov</strong>는 <code>W<sub>OV</sub></code>를 블록 항등으로 두고 Λ를 대각으로 묶은 변종이다.
+    <code>Σ<sub>m</sub> W<sub>OV</sub><sup>(m)</sup>P<sub>m</sub> = I</code>가 정확히 성립하므로
+    <strong>분해가 블록 단위로 정확히 되살아난다.</strong> 즉 이 변종에서 나온 결과에는
+    “변환된 공간 탓”이라는 변명이 통하지 않는다. test 95.83% / 18,379 파라미터로 성능도 충분하다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">02</span><h2>먼저 걷어낸 잘못된 기각</h2></div>
+  <div class="finding open">
+    <span class="chip">자기정정</span><span class="spec">첫 측정의 판정 기준이 틀렸다</span>
+    <h3>에너지 증가와 음수 계수는 그 자체로 반증이 아니다</h3>
+    <p>처음 측정에서 디리클레 에너지가 1757 → 3288로 늘고 계수의 47.8%가 음수인 것을 보고
+    “확산이 아니다”라고 적었다. 둘 다 근거가 되지 못한다.</p>
+    <p><strong>에너지 증가는 튜링 패턴 형성의 정의</strong>다. 균일 상태가 불안정해지며 공간 구조가 자라날 때
+    에너지는 당연히 올라간다. 그리고 잰 것은 확산항 하나가 아니라 확산+반응+Λ+4차 <strong>전체</strong>의 궤적이었다.</p>
+    <p><strong>음수 계수도 이 계열에서 이물질이 아니다.</strong> 신경장 모형(Wilson–Cowan, Amari)의 표준 커널이
+    중심-주변(Mexican hat) 구조이고 주변부가 음수다. 측면 억제는 정석이며 튜링형 패턴의 주된 장치다.</p>
+    <p>정리 수준에서 확실한 것은 하나뿐이다: <strong>전도도가 음이 아닌 확산 연산자는
+    디리클레 에너지를 절대 증가시킬 수 없다</strong> (<code>dE/dt = −Σa<sub>tn</sub>‖h<sub>t</sub>−h<sub>n</sub>‖² ≤ 0</code>).
+    그러니 물어야 할 것은 “전체가 늘었나”가 아니라 <strong>“확산항이 제 몫으로 에너지를 넣나 빼나”</strong>다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">03</span><h2>항별 에너지 수지</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th>항</th><th class="num">noov · dE/dt 기여</th><th class="num">비중</th><th class="num">full</th><th>역할</th></tr></thead>
+    <tbody>
+      <tr class="hi"><td>확산</td><td class="num">+15,269</td><td class="num">39.1%</td><td class="num">+32,633</td><td>주입</td></tr>
+      <tr><td>반응</td><td class="num">+8,365</td><td class="num">21.4%</td><td class="num">+7,037</td><td>주입</td></tr>
+      <tr><td>Λ</td><td class="num">+967</td><td class="num">2.5%</td><td class="num">+1,207</td><td>주입</td></tr>
+      <tr><td>4차 소산</td><td class="num">−14,451</td><td class="num">37.0%</td><td class="num">−17,054</td><td>소산</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p>확산항이 <strong>에너지를 빼는 게 아니라 넣고 있고, 그것도 최대 주입원</strong>이다.
+    유일한 소산원은 폭발을 막으려고 넣은 4차 감쇠 하나다.</p>
+    <p>이것이 튜링 메커니즘과 갈리는 지점이다. <strong>튜링계에서 확산은 언제나 소산항</strong>이고,
+    패턴은 확산이 에너지를 넣어서가 아니라 두 화학종의 <em>확산 속도 차이</em>가
+    반응의 균일 정상상태를 불안정하게 만들어 생긴다. 여기서는 확산 자리의 항이 스스로 주입원이다.
+    부호가 뒤집힌 게 아니라 <strong>역할이 뒤바뀐</strong> 구조다.</p>
+  </div>
+
+  <div class="finding held">
+    <span class="chip">검증</span><span class="spec">간선 부호별 분해</span>
+    <h3>음수 간선이 양수 간선을 1.6배로 이긴다</h3>
+    <div class="tw"><table>
+      <thead><tr><th>noov, 끌개</th><th class="num">기여</th></tr></thead>
+      <tbody>
+        <tr><td>양성 간선만</td><td class="num">−25,214 (소산)</td></tr>
+        <tr class="hi"><td>음성 간선만</td><td class="num">+40,731 (주입)</td></tr>
+        <tr><td>합계 (항등식)</td><td class="num">+15,517</td></tr>
+        <tr><td>직접 측정 <code>2Σ⟨h<sub>t</sub>−h̄, diff<sub>t</sub>⟩</code></td><td class="num">+16,215 (상대차 4.5%)</td></tr>
+      </tbody>
+    </table></div>
+    <p>메커니즘은 간단하다. 각 간선의 기여가 <code>−a<sub>tn</sub>‖h<sub>t</sub>−h<sub>n</sub>‖²</code>이므로,
+    <code>a&lt;0</code>인 간선은 <strong>두 노드를 이미 벌어진 정도의 제곱에 비례해 밀어낸다</strong> —
+    국소적으로 열방정식을 거꾸로 돌리는 것과 같다.</p>
+    <p>그리고 <strong>왜 음성 쪽이 이기는지</strong>가 결정적이다. 음성 간선이 걸린 패치 쌍의 평균 거리²가
+    <strong>40.5</strong>, 양성 쪽은 <strong>26.6</strong>이다. 학습이 척력을 <strong>이미 가장 다른 패치들 사이에</strong> 배치했다.
+    비슷한 것끼리 뭉치고 다른 것끼리 더 벌어진다 — 교과서적인 측면 억제와 윤곽 강화다.</p>
+    <figure>
+      <img src="{{RD}}" alt="확산항 대 반응항 크기, 디리클레 에너지, 음수 전도도, 반경 벡터장">
+      <figcaption><strong>반응-확산 구조의 실측.</strong> ④ 반경 벡터장 <code>⟨f,ĥ⟩</code>가 상승하다 급락하며
+      <code>‖h‖=11.6</code>에서 영교차한다(끌개 실측 8.9). 점선은 흥분부만 — 되돌리는 것은 정확히 4차항이다.
+      FHN의 <code>−v³/3</code>이 하는 일의 벡터 일반화라는 주장은 이 그림으로 확인된다.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">04</span><h2>그런데 패턴은 진짜다</h2></div>
+  <div class="finding held">
+    <span class="chip">지지</span><span class="spec">튜링 특징 파장</span>
+    <h3>선택된 중간 파장이 존재한다</h3>
+    <p>패턴 형성의 서명은 <strong>특징 파장</strong>이다 — 균일(<code>k=0</code>)도 격자 잡음(<code>k<sub>max</sub></code>)도 아닌,
+    <strong>0이 아닌 특정 파수에 몰린 공간 스펙트럼</strong>. 상태장의 2D 스펙트럼을 재면:</p>
+    <div class="tw"><table>
+      <thead><tr><th></th><th class="num">최대 파수 k*</th><th class="num">P(k=0)/P(k*)</th><th class="num">격자 한계 k<sub>max</sub></th></tr></thead>
+      <tbody>
+        <tr class="hi"><td>noov</td><td class="num">1.12</td><td class="num">0.000</td><td class="num">4.1</td></tr>
+        <tr><td>full</td><td class="num">1.12</td><td class="num">0.000</td><td class="num">4.1</td></tr>
+      </tbody>
+    </table></div>
+    <p>7×7 격자에서 <code>k=1.12</code>는 파장 약 6.3 패치, 시야 전체에 한 주기가 들어가는 크기다.
+    균일 성분은 사실상 0이다. <strong>패턴은 실재하고, 척도까지 선택돼 있다.</strong></p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">05</span><h2>그럼 무엇이라 불러야 하나</h2></div>
+  <div class="col">
+    <p>부호가 섞이면 확산/반응 분해는 기호로만 남는다. 맞는 틀은 두 개이고 둘 다 기성 이론이다.</p>
+  </div>
+
+  <div class="finding open">
+    <span class="chip">틀 ①</span><span class="spec">W<sub>OV</sub> = sheaf 복원 사상, 단 반쪽</span>
+    <h3>δ 는 있는데 δᵀδ 가 없다</h3>
+    <p>Sheaf Laplacian은 <code>L<sub>F</sub> = δᵀδ</code>이고 sheaf Dirichlet 에너지는
+    <code>Σ<sub>e</sub>‖F<sub>u◁e</sub>x<sub>u</sub> − F<sub>v◁e</sub>x<sub>v</sub>‖²</code>다.
+    복원 사상 <code>F</code>가 항등이면 표준 그래프 라플라시안으로 되돌아간다 —
+    즉 <strong><code>W<sub>OV</sub></code>가 정확히 복원 사상 자리</strong>이고,
+    <code>noov</code>는 그것을 항등으로 둔 경우다.</p>
+    <p>그런데 이 모델의 항은 <code>Σa<sub>tn</sub>W<sub>OV</sub>h<sub>n</sub></code>으로
+    <strong><code>W<sub>OV</sub></code>가 한 번만</strong> 붙는다. <code>δᵀδ</code>가 아니라 <code>δ</code>만 있어
+    PSD가 아니고, 그래서 에너지 부호가 뒤집힐 수 있다. 그 결손의 정량이 이것이다:</p>
+    <div class="tw"><table>
+      <thead><tr><th>full 의 확산항 기여</th><th class="num">W<sub>OV</sub> 통과 전 (값 공간)</th><th class="num">통과 후 (상태 공간)</th></tr></thead>
+      <tbody><tr class="hi"><td>dE/dt</td><td class="num">−7,049 (소산)</td><td class="num">+32,633 (주입)</td></tr></tbody>
+    </table></div>
+    <p><code>W<sub>OV</sub></code> 하나가 에너지 역할의 <strong>부호를 뒤집는다</strong>.
+    <code>noov</code>는 복원 사상이 항등이라 두 값이 일치한다(+16,215 vs +15,269).
+    사양이 “이식되지 않는다”고 적어둔 정도가 부호가 바뀔 만큼이라는 뜻이다.</p>
+    <p><strong>구조적 개선 후보:</strong> 항을 <code>W<sub>OV</sub><sup>⊤</sup>(·)W<sub>OV</sub></code> 형태로 바꾸면
+    진짜 sheaf Dirichlet 흐름이 되어 소산이 보장되고, <code>noov</code>와 <code>full</code>이 같은 이론 아래 놓인다.</p>
+  </div>
+
+  <div class="finding held">
+    <span class="chip">틀 ②</span><span class="spec">부호 그래프 · 구조적 균형</span>
+    <h3>흐름이 수렴하는 ‘합의’는 균일장이 아니라 분할이다</h3>
+    <p>부호가 섞인 그래프에서도 <code>L̄ = D̄ − A</code>, <code>D̄ = diag(Σ|a|)</code>는 PSD라 제대로 된 에너지가 정의된다.
+    다만 이 흐름의 정지 상태가 균일장이 아니다. 그래프가 <em>균형</em> 잡혀 있으면 — 노드를 두 집단으로 나눠
+    양성 간선은 집단 안, 음성 간선은 집단 사이에 오게 할 수 있으면 — <code>L̄</code>이 0 고유값을 갖고
+    흐름은 <strong>두 집단이 반대 부호를 갖는 이분 상태</strong>로 간다. 그러면 “에너지 증가”는 실패가 아니라
+    <strong>다른 합의로의 수렴</strong>이다.</p>
+    <div class="tw"><table>
+      <thead><tr><th></th><th class="num">좌절도 λ<sub>min</sub></th><th class="num">부호 무작위 비교군</th><th class="num">참여비 PR / T</th><th class="num">스펙트럼 간극</th></tr></thead>
+      <tbody>
+        <tr class="hi"><td>noov</td><td class="num">0.132</td><td class="num">0.636</td><td class="num">34.8 / 49</td><td class="num">11배</td></tr>
+        <tr><td>full</td><td class="num">0.723</td><td class="num">0.637</td><td class="num">19.1 / 49</td><td class="num">없음</td></tr>
+      </tbody>
+    </table></div>
+    <p><code>noov</code>의 그래프는 <strong>무작위 부호 대비 4.8배 덜 좌절</strong>돼 있고,
+    참여비 34.8/49로 한 노드가 아니라 <strong>전역에 퍼진 분할</strong>이며,
+    최소 고유값 뒤에 11배 간극이 있어 <strong>지배적 이분 구조가 하나</strong> 있다.
+    <code>full</code>은 무작위 부호보다도 더 좌절돼 있고 간극도 없다.</p>
+    <p>그리고 그 분할의 최대 파수가 <strong>1.00</strong>으로, 상태장 스펙트럼의 <code>k* = 1.12</code>와 같은 척도다.
+    <strong>“튜링 특징 파장”과 “균형 이분”은 같은 것의 두 측면이다.</strong></p>
+    <figure>
+      <img src="{{BAL}}" alt="noov와 full의 분할 고유벡터와 패치 밝기 비교">
+      <figcaption><strong>부호 그래프의 분할.</strong> noov(왼쪽)는 전역에 퍼진 저주파 공간 모드,
+      full(오른쪽)은 구조 없는 얼룩. 오른쪽 열은 같은 샘플의 패치 밝기.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">06</span><h2>분할의 기준은 깊이에 따라 바뀐다</h2></div>
+  <div class="col">
+    <p>위 측정은 모두 <code>r = R</code> 한 지점의 것이다. 스텝마다 다시 재면 정적인 그림이 아니라
+    <strong>두 국면으로 나뉜 궤적</strong>이 나온다. (‘의미론적’은 부호 불변 측도로 바꿔 쟀다 —
+    같은 클래스끼리의 분할 유사도가 다른 클래스보다 얼마나 높은가.)</p>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>noov · r</th><th class="num">0</th><th class="num">2</th><th class="num">4</th><th class="num">6</th><th class="num">8 (학습깊이)</th><th class="num">12</th><th class="num">16</th><th class="num">24</th></tr></thead>
+    <tbody>
+      <tr><td>좌절도 (0=균형)</td><td class="num">0.774</td><td class="num">0.429</td><td class="num">0.253</td><td class="num"><strong>0.081</strong></td><td class="num">0.133</td><td class="num">0.292</td><td class="num">0.297</td><td class="num">0.327</td></tr>
+      <tr><td>|corr| 패치 밝기</td><td class="num"><strong>0.372</strong></td><td class="num">0.136</td><td class="num">0.129</td><td class="num">0.145</td><td class="num">0.147</td><td class="num">0.179</td><td class="num">0.160</td><td class="num">0.148</td></tr>
+      <tr class="hi"><td>클래스내 − 클래스간</td><td class="num">0.126</td><td class="num">0.099</td><td class="num">0.088</td><td class="num">0.062</td><td class="num"><strong>0.198</strong></td><td class="num">0.192</td><td class="num">0.141</td><td class="num">0.047</td></tr>
+      <tr><td>샘플간 |corr|</td><td class="num">0.263</td><td class="num">0.590</td><td class="num">0.530</td><td class="num"><strong>0.722</strong></td><td class="num">0.479</td><td class="num">0.444</td><td class="num">0.300</td><td class="num">0.188</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p><strong>① 획/배경 기준은 r=0 에만 있다.</strong> 밝기 상관이 0.372에서 0.14로 떨어진다.
+    r=0의 상태는 패치 임베딩 그 자체이므로 당연하고, <strong>재귀가 거기서 떠난다</strong>는 것이 요점이다.</p>
+    <p><strong>② 균형은 학습된 것이 아니라 재귀 중에 조립된다.</strong> 좌절도가 r=0의 0.774
+    (거의 무작위 부호 수준)에서 <strong>r=6의 0.081</strong>까지 내려갔다 다시 오른다.
+    이분 구조는 초기 조건에 없다.</p>
+    <p><strong>③ 두 국면이 갈린다.</strong>
+    <em>r=0→6 골격 단계</em>에서는 분할이 입력에 무관해지고(샘플간 0.26 → 0.72) 좌절도가 최소로 떨어지는데,
+    클래스 정보는 오히려 줄어든다(0.126 → 0.062). 모든 입력이 공유하는 균형 잡힌 공간 골격을 먼저 세운다.
+    <em>r=6→8 분화 단계</em>에서 골격이 입력별로 갈라지고(0.72 → 0.48)
+    클래스 정보가 <strong>0.062에서 0.198로 세 배</strong> 뛰어 정점을 찍는다 —
+    <strong>정확히 읽기헤드가 붙는 깊이에서</strong>. 그 너머로 외삽하면 0.047까지 무너지는데,
+    이는 앞서 잰 anytime 정확도 붕괴와 같은 지점·같은 모양이다.</p>
+    <p><code>full</code>에는 골격 단계가 없다. 좌절도가 0.656에서 시작해 내려가지 않고 r=6~8에서 오히려 0.74로 최악이다.
+    그런데도 클래스 정보는 똑같이 r=8에서 0.200으로 정점이다. <strong>같은 목표를 다른 방식으로 달성</strong>하며,
+    <code>noov</code> 쪽이 읽을 수 있는 경로를 쓴다.</p>
+    <figure>
+      <img src="{{PD}}" alt="깊이에 따른 좌절도, 밝기 상관, 클래스 정보, 샘플간 상관">
+      <figcaption><strong>분할 기준의 궤적.</strong> 점선이 학습 깊이 r=8.
+      좌절도 최소(r=6)와 클래스 정보 최대(r=8)가 어긋나 있는 것이 두 국면의 표시다.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">07</span><h2>이름 다시 붙이기</h2></div>
+  <div class="col">
+    <p>이 모델은 반응-확산계가 아니다. <strong>부호 그래프 위의 균형 흐름 + 반쪽짜리 sheaf 구조 + 4차 포화</strong>다.
+    패턴 형성은 실재하지만 그 동력이 확산의 소산이 아니라 <strong>음수 간선의 척력</strong>이고,
+    수렴 목표가 균일장이 아니라 <strong>이분 분할</strong>이다.</p>
+    <p>그리고 이건 새 이름이 아니다. 대화의 <strong>맨 첫 문단</strong>에서 이미 이렇게 결론이 났었다 —
+    <em>“완전한 동형은 아니며(가산 결합 vs 곱셈 결합 …) Ginzburg-Landau / 결합 비선형 진동자의
+    텐서 일반화로 보는 게 타당하다.”</em> 이후 Model 0을 반응-확산계로 재해석하면서 그 유보가 사라졌는데,
+    <strong>실측은 첫 결론 쪽이 옳았다고 말한다.</strong> §3.1의 위상장 그림이
+    복소 Ginzburg–Landau 시뮬레이션처럼 보였던 것도 우연이 아니었다.</p>
+    <p class="note"><strong>방법론 각주.</strong> 이 문서는 두 번의 자기정정을 포함한다.
+    ① 처음에 “에너지가 늘었으니 확산이 아니다”라고 적었는데, 그건 튜링 패턴 형성의 정의여서 근거가 되지 못한다.
+    올바른 검정은 확산항 <em>자신의</em> dE/dt 기여였다.
+    ② 균형 검정을 비정규화 라플라시안으로 하는 바람에 <code>λ<sub>min</sub></code>이 차수 낮은 구석 패치 하나에
+    국소화되는 인공물을 균형으로 오독했다. 정규화 라플라시안과 참여비를 함께 보고 나서야 결론이 섰다.
+    두 정정 모두 대화 중 받은 반박에서 나왔고, 결과적으로 결론의 방향은 유지되되 근거가 바뀌었다.</p>
+  </div>
+</section>
+
+<footer>
+  <p class="mono">
+    noov: --no_ov --lam_mode diag (W<sub>OV</sub>=블록항등, Λ 대각) · test .9583 · 18,379 파라미터 · λ(FTLE)=+1.27<br>
+    에너지 수지: E=Σ‖h<sub>t</sub>−h̄‖², dE/dt=2Σ⟨h<sub>t</sub>−h̄, 항⟩, 끌개(r=3R) · 배치 64~256<br>
+    균형: 정규화 부호 라플라시안 I − D̄<sup>−1/2</sup>A<sub>sym</sub>D̄<sup>−1/2</sup>, 비교군은 |a| 유지·부호 무작위<br>
+    /workspace/mnist_model1/ — rd_analysis.py · turing.py · balance.py · partition_depth.py
+  </p>
+</footer>
+
+</div>

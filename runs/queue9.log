@@ -1,0 +1,11 @@
+  [par20_full] step   500 loss 0.6930 eval_acc 0.4924
+  [par20_full] step  1000 loss 0.6940 eval_acc 0.5110
+  [par20_full] step  1500 loss 0.6930 eval_acc 0.5044
+  [par20_full] step  2000 loss 0.6933 eval_acc 0.4980
+  [par20_full] step  2500 loss 0.6929 eval_acc 0.4998
+  [par20_full] step  3000 loss 0.6931 eval_acc 0.5090
+  [par20_full] step  3500 loss 0.6928 eval_acc 0.4883
+  [par20_full] step  4000 loss 0.6945 eval_acc 0.4944
+  [par20_full] step  4500 loss 0.6932 eval_acc 0.5022
+  [par20_full] step  5000 loss 0.6929 eval_acc 0.5051
+  [par20_full] step  5500 loss 0.6930 eval_acc 0.5122

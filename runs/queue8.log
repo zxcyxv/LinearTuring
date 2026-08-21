@@ -1,0 +1,53 @@
+  [par16_full] step   500 loss 0.6902 eval_acc 0.4897
+  [par16_full] step  1000 loss 0.6927 eval_acc 0.4922
+  [par16_full] step  1500 loss 0.6922 eval_acc 0.4846
+  [par16_full] step  2000 loss 0.6951 eval_acc 0.4336
+  [par16_full] step  2500 loss 0.9335 eval_acc 0.9023
+  [par16_full] step  3000 loss 0.0001 eval_acc 1.0000
+  [par16_full] step  3500 loss 0.0001 eval_acc 1.0000
+  [par16_full] step  4000 loss 0.0000 eval_acc 1.0000
+  [par16_full] step  4500 loss 0.0000 eval_acc 1.0000
+  [par16_full] step  5000 loss 0.0000 eval_acc 1.0000
+  [par16_full] step  5500 loss 0.0000 eval_acc 1.0000
+  [par16_full] step  6000 loss 0.0000 eval_acc 1.0000
+[par16_full] T=16 freeze_A=False FINAL parity acc = 1.0000  (235s)
+  [par16_frozen] step   500 loss 0.6903 eval_acc 0.4897
+  [par16_frozen] step  1000 loss 0.6941 eval_acc 0.4900
+  [par16_frozen] step  1500 loss 0.6929 eval_acc 0.4949
+  [par16_frozen] step  2000 loss 0.4863 eval_acc 0.6919
+  [par16_frozen] step  2500 loss 0.0077 eval_acc 0.9978
+  [par16_frozen] step  3000 loss 0.0001 eval_acc 0.9988
+  [par16_frozen] step  3500 loss 0.0000 eval_acc 1.0000
+  [par16_frozen] step  4000 loss 0.0000 eval_acc 1.0000
+  [par16_frozen] step  4500 loss 0.0000 eval_acc 1.0000
+  [par16_frozen] step  5000 loss 0.0000 eval_acc 1.0000
+  [par16_frozen] step  5500 loss 0.0000 eval_acc 1.0000
+  [par16_frozen] step  6000 loss 0.0000 eval_acc 1.0000
+[par16_frozen] T=16 freeze_A=True FINAL parity acc = 1.0000  (91s)
+  [par32_full] step   500 loss 0.6931 eval_acc 0.4958
+  [par32_full] step  1000 loss 0.6929 eval_acc 0.4976
+  [par32_full] step  1500 loss 0.6961 eval_acc 0.4988
+  [par32_full] step  2000 loss 0.6932 eval_acc 0.5095
+  [par32_full] step  2500 loss 0.6934 eval_acc 0.5051
+  [par32_full] step  3000 loss 0.6931 eval_acc 0.5088
+  [par32_full] step  3500 loss 0.6938 eval_acc 0.5081
+  [par32_full] step  4000 loss 0.6924 eval_acc 0.5544
+  [par32_full] step  4500 loss 0.6940 eval_acc 0.4741
+  [par32_full] step  5000 loss 0.6931 eval_acc 0.4949
+  [par32_full] step  5500 loss 0.6928 eval_acc 0.4973
+  [par32_full] step  6000 loss 0.6929 eval_acc 0.4949
+[par32_full] T=32 freeze_A=False FINAL parity acc = 0.5047  (668s)
+  [par32_frozen] step   500 loss 0.6949 eval_acc 0.4956
+  [par32_frozen] step  1000 loss 0.6928 eval_acc 0.4995
+  [par32_frozen] step  1500 loss 0.6931 eval_acc 0.4998
+  [par32_frozen] step  2000 loss 0.6937 eval_acc 0.5012
+  [par32_frozen] step  2500 loss 0.6931 eval_acc 0.5059
+  [par32_frozen] step  3000 loss 0.6931 eval_acc 0.5085
+  [par32_frozen] step  3500 loss 0.6932 eval_acc 0.4990
+  [par32_frozen] step  4000 loss 0.6929 eval_acc 0.5007
+  [par32_frozen] step  4500 loss 0.6933 eval_acc 0.4949
+  [par32_frozen] step  5000 loss 0.6930 eval_acc 0.4922
+  [par32_frozen] step  5500 loss 0.6926 eval_acc 0.4993
+  [par32_frozen] step  6000 loss 0.6930 eval_acc 0.4961
+[par32_frozen] T=32 freeze_A=True FINAL parity acc = 0.5043  (151s)
+=== QUEUE8 DONE ===

@@ -1,0 +1,7 @@
+  [ca90_k1_frozen] step  1000 loss 0.0001 셀 1.0000 전체일치 1.0000
+  [ca90_k1_frozen] step  2000 loss 0.0000 셀 1.0000 전체일치 1.0000
+  [ca90_k1_frozen] step  3000 loss 0.0000 셀 1.0000 전체일치 1.0000
+  [ca90_k1_frozen] step  4000 loss 0.0000 셀 1.0000 전체일치 1.0000
+  [ca90_k1_frozen] step  5000 loss 0.0000 셀 1.0000 전체일치 1.0000
+  [ca90_k1_frozen] step  6000 loss 0.0000 셀 1.0000 전체일치 1.0000
+[ca90_k1_frozen] rule=90 k=1 T=32 freeze_A=True FINAL 셀 1.0000 전체일치 1.0000 (202s)

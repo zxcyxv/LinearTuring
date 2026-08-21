@@ -1,0 +1,148 @@
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">카오스는 계산에 쓰이는가 — 인과 실험</p>
+  <h1>자기참조 그래프</h1>
+  <p class="lede">
+    이 모델의 어텐션 행렬 <code>A</code>는 매 재귀 스텝마다 현재 상태 <code>h</code>로부터 다시 계산된다.
+    그 자기참조가 이상한 끌개의 원인이라는 것은 앞서 확인했다.
+    이번엔 <code>A</code>를 <code>h⁽⁰⁾</code>에서 한 번만 계산해 고정하고 다시 학습했다 —
+    그러면 벡터장이 <code>h</code>에 대해 선형이 되어 카오스가 원리적으로 불가능해진다.
+    <strong>정확도는 0.16%p 떨어졌다.</strong> 그리고 사양이 예측했다가 빗나갔던 것들이 한꺼번에 되살아났다.
+  </p>
+  <div class="statbar">
+    <div class="stat"><span class="stat-k">카오스 제거 비용</span><span class="stat-v">0.16 %p</span><span class="stat-n">97.13% → 96.97%</span></div>
+    <div class="stat"><span class="stat-k">λ</span><span class="stat-v">+1.74 → −0.16</span><span class="stat-n">이상한 끌개 → 준주기 궤도</span></div>
+    <div class="stat"><span class="stat-k">잡음 강건성</span><span class="stat-v">역전</span><span class="stat-n">카오스 쪽이 2배 강함</span></div>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="n">01</span><h2>왜 이 손잡이인가</h2></div>
+  <div class="col">
+    <p>앞선 γ 쓸기는 카오스의 인과성을 묻지 못했다. γ는 동역학의 자유도가 아니라 스케일 게이지여서,
+    돌리면 최적화 문제만 바뀌기 때문이다. Λ에 상수를 더하는 방식도 안 된다 —
+    Λ가 자유 행렬이라 학습이 그대로 상쇄한다.</p>
+    <p><strong><code>A</code>를 <code>h⁽⁰⁾</code>에서 고정</strong>하는 것은 세 조건을 모두 만족한다.
+    스케일 불변이고(γ처럼 단위만 바꾸지 않는다), 학습이 상쇄할 수 없으며,
+    <strong>카오스를 원리적으로 제거한다</strong> — <code>A</code>가 상수면
+    <code>f = Λh + Σ W<sub>OV</sub>A₀v(h) + d₀b − γ‖h‖²h</code>가 선형항 + 반경 감쇠이므로
+    민감 의존이 발생할 수 없다.</p>
+    <p>그리고 이 조작은 입력에 대한 비선형성을 <strong>전혀 건드리지 않는다</strong>.
+    <code>A₀ = A(Embed(x))</code>는 여전히 임베딩의 3차 함수다.
+    즉 이 실험은 “<em>입력</em>에 대한 비선형성”과 “<em>재귀</em>의 비선형성”을 정확히 분리한다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">02</span><h2>결과</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th>모델</th><th>A</th><th class="num">test</th><th class="num">λ (FTLE)</th>
+      <th class="num">자기상관 재발</th><th class="num">뒤집힘 σ=0.4</th><th class="num">epoch 시간</th><th>끌개 판정</th></tr></thead>
+    <tbody>
+      <tr><td>randR</td><td>h에 의존</td><td class="num">.9713</td><td class="num">+1.74</td>
+        <td class="num">−0.01</td><td class="num">.088</td><td class="num">60 s</td><td>이상한 끌개</td></tr>
+      <tr class="hi"><td>frozenA</td><td>h⁽⁰⁾ 고정</td><td class="num">.9697</td><td class="num">−0.16</td>
+        <td class="num">−0.06</td><td class="num">.178</td><td class="num">15 s</td><td>준주기 회전</td></tr>
+      <tr class="hi"><td>frozenA8</td><td>h⁽⁰⁾ 고정, dt 고정</td><td class="num">.9684</td><td class="num">−0.02</td>
+        <td class="num">+0.60</td><td class="num">13 s</td><td class="num"></td><td>닫힌 궤도에 근접</td></tr>
+      <tr><td>full</td><td>h에 의존</td><td class="num">.9742</td><td class="num">+0.52</td>
+        <td class="num">—</td><td class="num">.120</td><td class="num">60 s</td><td>이상한 끌개 + 준주기</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p><strong>카오스를 완전히 제거해도 정확도는 97.13%에서 96.97%로 0.16%p 떨어질 뿐이다.</strong>
+    학습 시간은 4배 빨라진다(<code>A</code>를 R번이 아니라 한 번만 계산하므로).
+    이 과제에서 재귀의 <code>h</code>-비선형성은 <strong>사실상 쓰이지 않는다.</strong></p>
+    <p>동역학은 완전히 바뀐다. λ가 +1.74에서 −0.16으로 부호를 바꾸고,
+    dt를 고정한 <code>frozenA8</code>에서는 자기상관 재발이 <strong>0.60</strong>까지 올라간다 —
+    지금까지 학습한 어떤 모델보다 높다. 배회하던 궤적이 닫힌 고리에 가까워진다.</p>
+  </div>
+  <figure>
+    <img src="{{CMP}}" alt="모델별 anytime 정확도, 정밀화 저항, 연속극한 상대속도">
+    <figcaption><strong>모델별 동역학.</strong> frozenA 계열이 처음으로 오른쪽 패널의 상대속도를 눈에 띄게 끌어내린다.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">03</span><h2>사양의 예측이 한꺼번에 되살아난다</h2></div>
+  <div class="col">
+    <p>이게 이 실험에서 가장 큰 소득이다. 지금까지 사양이 빗나간 지점이 셋이었는데,
+    <strong>셋 다 “A가 상수라면” 정확히 맞는다.</strong></p>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>사양의 예측</th><th>A가 h에 의존할 때 (실제 모델)</th><th>A를 고정하면</th></tr></thead>
+    <tbody>
+      <tr><td>§2.4 ψ=0 ⟹ gradient flow, 진동 불가</td>
+          <td class="num">야코비안 비대칭도 0.575</td><td class="num">정확히 <strong>0.0000</strong></td></tr>
+      <tr><td>§3.4 R을 늘리면 닫힌 궤도(한계주기)</td>
+          <td class="num">재발 −0.01 (배회)</td><td class="num"><strong>+0.60</strong> (닫힌 고리 근접)</td></tr>
+      <tr><td>§1.7 유계성 + 진동 허용, 카오스 언급 없음</td>
+          <td class="num">λ = +1.74 (카오스)</td><td class="num">λ = <strong>−0.16</strong> (비카오스)</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p>세 개가 독립적으로 같은 결론을 가리킨다. <strong>사양이 머릿속에서 다루던 계는
+    이 모델이 아니라, 이 모델의 “A 고정판”이었다.</strong>
+    선형 어텐션을 그래프 라플라시안으로 읽는 관습 — 어텐션 행렬을 주어진 그래프로 두고
+    그 위의 확산을 논하는 방식 — 이 그대로 옮겨온 결과다.
+    그런데 이 구조의 <code>A</code>는 주어진 그래프가 아니라 <strong>매 스텝 자기 상태로부터 다시 그려지는 그래프</strong>다.
+    수식으로는 <code>Df = A + (∂A/∂h)·h</code>의 둘째 항 하나 차이지만, 그 항이 계의 종류를 바꾼다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">04</span><h2>예상 밖: 카오스 쪽이 더 강건하다</h2></div>
+  <div class="col">
+    <p>양의 리아푸노프 지수는 초기조건에 대한 민감 의존이므로, 입력 잡음에도 더 약할 것으로 보는 게 자연스럽다.
+    반대였다.</p>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>모델</th><th class="num">깨끗</th><th class="num">σ=0.2</th><th class="num">σ=0.4</th><th class="num">σ=0.8</th><th class="num">예측 뒤집힘 σ=0.4</th></tr></thead>
+    <tbody>
+      <tr class="hi"><td>randR (λ=+1.74)</td><td class="num">.961</td><td class="num">.955</td><td class="num">.900</td><td class="num">.508</td><td class="num">.088</td></tr>
+      <tr><td>frozenA (λ=−0.16)</td><td class="num">.963</td><td class="num">.935</td><td class="num">.811</td><td class="num">.405</td><td class="num">.178</td></tr>
+      <tr><td>frozenA8 (λ=−0.02)</td><td class="num">.964</td><td class="num">.934</td><td class="num">.747</td><td class="num">.319</td><td class="num">.242</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p>σ=0.4 잡음에서 카오스 모델이 90.0%, 고정 모델이 81.1%다. 예측이 뒤집히는 비율은 <strong>2배</strong> 차이다.</p>
+    <p>모순은 아니다. λ&gt;0은 <em>상태 공간</em>의 이웃한 두 궤적이 갈라진다는 뜻이지,
+    <em>입력 공간</em>의 섭동이 결정에 미치는 영향과는 다른 양이다.
+    분류 결정은 <code>τ=1</code> 시점의 상태에 대한 선형 읽기이고, 그 한 시점까지 증폭될 시간은 짧다.
+    오히려 상태 의존 <code>A</code>가 잡음 픽셀에 대해 어텐션을 다시 조정할 수 있다는 점이
+    강건성으로 작동한 것으로 보인다 — 고정 <code>A</code>는 잡음 섞인 <code>h⁽⁰⁾</code>로 그린 그래프를 끝까지 쓴다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">05</span><h2>그래서 이 모델은 무엇인가</h2></div>
+  <div class="col">
+    <p>사양의 출발 질문은 “MLP 없이 비선형 학습이 일어나는가”였다. 답은 <strong>그렇다</strong>이고,
+    이제 그 비선형성이 어디에 있는지도 말할 수 있다.</p>
+    <p><strong>입력에서 어텐션 행렬을 만드는 3차 사상 <code>x ↦ A</code>에 있다.</strong>
+    그 행렬을 한 번만 그리고 재귀 내내 고정해도 성능이 유지된다.
+    사양 자신이 §2에서 <code>W<sub>V</sub></code> 없는 경우에 대해 정확히 이 표현을 썼다 —
+    <em>“모델은 입력에 따라 토큰 믹싱 행렬을 출력하는 하이퍼네트워크, 즉 fast-weight 기계로 정확히 남습니다.”</em>
+    그 서술은 <code>W<sub>OV</sub></code>가 있는 완전 모델에도 해당한다.</p>
+    <p>재귀를 <code>h</code>에 대해 비선형으로 두면 이상한 끌개가 생기고,
+    선형으로 두면 준주기 궤도가 생긴다. MNIST 분류 성능 차이는 0.16%p다.
+    <strong>동역학의 풍부함은 실재하지만, 이 과제가 그것을 요구하지 않는다.</strong></p>
+    <p class="note">정직한 한계: 사양이 §3에서 미리 경고한 그대로다 —
+    “MNIST는 너무 쉬워서 영상이 지루할 가능성이 크다”.
+    anytime 곡선을 보면 <code>frozenA</code>는 r=4에서 이미 86.7%, r=6에서 95.9%로 포화한다.
+    6스텝이면 끝나는 문제에서 8스텝 재귀의 비선형성이 필요할 이유가 없다.
+    이 결론을 일반화하려면 반복 정제가 실제로 필요한 과제 —
+    연상 회상, 다단계 추론, 또는 사양이 제안한 induction/parity — 에서 같은 실험을 다시 해야 한다.</p>
+  </div>
+</section>
+
+<footer>
+  <p class="mono">
+    frozenA: A = attn(Embed(x)) 를 모든 재귀 깊이에서 재사용 (--freeze_A) · 8 epoch<br>
+    frozenA/randR 은 --rand_R 4,16 (τ=1 고정, dt 무작위) · frozenA8 은 고정 R=8<br>
+    /workspace/mnist_model1/ — model1.py (freeze_A) · attractor.py · robustness.py
+  </p>
+</footer>
+
+</div>

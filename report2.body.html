@@ -1,0 +1,207 @@
+<div class="wrap">
+
+<header class="masthead">
+  <p class="eyebrow">사양 §2.4의 단일 주장에 대한 반증 실험</p>
+  <h1>ψ 대칭성 논증</h1>
+  <p class="lede">
+    사양은 ψ를 “시스템이 소산계에 머물지 진동계로 갈지를 결정하는 <strong>유일한</strong> 파라미터”로 지목하고,
+    학습 후 ψ가 0으로 수렴했는지를 반드시 확인하라고 못박았다.
+    ψ를 아예 0에 묶어 학습시켰다. 진동은 사라지지 않았다.
+    이 문서는 논증이 어느 고리에서 끊어지는지, 그리고 그 답이 이미 사양 안에 적혀 있었다는 것을 보인다.
+  </p>
+  <div class="statbar">
+    <div class="stat"><span class="stat-k">ψ≡0 모델 정확도</span><span class="stat-v">97.25%</span><span class="stat-n">자유 ψ 모델 97.42% — 차이 0.17%p</span></div>
+    <div class="stat"><span class="stat-k">A 비대칭도</span><span class="stat-v">6e−08</span><span class="stat-n">부동소수점 오차 — 대칭 성립</span></div>
+    <div class="stat"><span class="stat-k">야코비안 비대칭도</span><span class="stat-v">0.575</span><span class="stat-n">A를 얼리면 정확히 0 — 차이는 A의 상태 의존성뿐</span></div>
+  </div>
+</header>
+
+<section>
+  <div class="sec-head"><span class="n">01</span><h2>논증 사슬</h2></div>
+  <div class="col"><p>사양 §2.4의 추론은 네 단계다. 각 고리를 따로 검증했다.</p></div>
+  <ol class="chain">
+    <li class="ok"><span class="lk">고리 1 · 성립</span>
+      <h3>ψ = 0 ⟹ a<sub>tn</sub> = a<sub>nt</sub></h3>
+      <p><code>a<sub>tn</sub> ∝ cos(X − ψ)</code>, <code>a<sub>nt</sub> ∝ cos(−X − ψ)</code>이므로
+      <code>a<sub>tn</sub> = a<sub>nt</sub> ⟺ sin X sin ψ = 0</code>. 구현에서도 실측 비대칭도가
+      <code>max|A − Aᵀ| = 5.96e−08</code>(<code>max|A| = 1.000</code>)로 부동소수점 오차 수준이다. 대칭은 정확히 성립한다.</p></li>
+    <li class="ok"><span class="lk">고리 2 · 성립</span>
+      <h3>A 대칭 ⟹ A의 고유값이 실수</h3>
+      <p>실대칭 행렬의 표준 성질. 토큰 믹싱 행렬 <code>A</code> 자체에는 회전 성분이 없다.</p></li>
+    <li class="bad"><span class="lk">고리 3 · <strong>끊어짐</strong></span>
+      <h3>A의 실고유값 ⟹ 전체 계가 Dirichlet 에너지의 gradient flow</h3>
+      <p>여기가 무너진다. 상태의 시간 발전을 지배하는 것은 <code>A</code>가 아니라
+      <code>f = Λh + Σ<sub>m</sub> W<sub>OV</sub><sup>(m)</sup> A<sup>(m)</sup> v<sup>(m)</sup> + (Σ<sub>m</sub> d<sub>t</sub>)b</code> 전체다.
+      <code>A</code>가 대칭이어도 <strong>Λ와 W<sub>OV</sub>가 채널 축에서 회전을 만든다.</strong>
+      정확히 이 두 항이 사양이 “미해결 지점”으로 스스로 적어둔 것들이다.</p>
+      <p style="margin-top:.6rem"><strong>그리고 그 둘을 다 제거해도 고리는 여전히 끊어져 있다.</strong>
+      사양이 적어두지 않은 세 번째 이유가 있다 — <code>A</code>가 상수가 아니라 <code>h</code>의 함수라는 것.
+      §05에서 격리했다.</p></li>
+    <li class="bad"><span class="lk">결론 · 반증</span>
+      <h3>gradient flow ⟹ 진동·스파이킹 원리적으로 불가능</h3>
+      <p>전건이 성립하지 않으므로 결론도 따라 나오지 않는다. 실험 결과가 이를 확인한다.</p></li>
+  </ol>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">02</span><h2>실험: ψ ≡ 0으로 학습</h2></div>
+  <div class="col"><p>
+    ψ를 학습 파라미터가 아닌 상수 0 버퍼로 바꾸고 나머지는 완전 Model 1과 동일하게 8 epoch 학습했다.
+    사양이 예측한 것은 <em>고정점으로의 이완</em>이다.
+  </p></div>
+
+  <div class="finding broke">
+    <span class="chip">반증</span><span class="spec">§2.4 “진동·스파이킹 원리적으로 불가능”</span>
+    <h3>진동은 사라지지 않았다 — 오히려 강해졌다</h3>
+    <div class="tw"><table>
+      <thead><tr><th>dt</th><th class="num">1/8 (학습)</th><th class="num">1/16</th><th class="num">1/32</th><th class="num">1/64</th><th class="num">1/128</th></tr></thead>
+      <tbody>
+        <tr><td>full — τ∈[6,8] 상대속도 ‖dh/dτ‖/‖h‖</td><td class="num">2.97</td><td class="num">2.53</td><td class="num">2.68</td><td class="num">2.93</td><td class="num">3.07</td></tr>
+        <tr class="hi"><td>psi0 (ψ≡0) — 같은 지표</td><td class="num">2.93</td><td class="num">3.34</td><td class="num">3.57</td><td class="num">3.78</td><td class="num">3.85</td></tr>
+      </tbody>
+    </table></div>
+    <p>고정점이라면 이 값이 0으로 죽어야 한다. dt를 16배 줄여 연속 극한에 접근시켜도
+    <strong>3.85까지 오히려 증가</strong>한다. 수치 산물이 아니라 벡터장의 성질이다.</p>
+    <p>부수적으로, 정확도는 97.25%로 자유 ψ 모델(97.42%)과 <strong>0.17%p 차이</strong>다.
+    대화 내내 “흥분/억제를 결정하는 파라미터”로 불려온 ψ가 이 과제에서는 성능에 거의 기여하지 않는다.</p>
+    <figure>
+      <img src="{{P38}}" alt="psi0 모델의 dt 쓸기: 상태 노름, 상대 속도, dt에 대한 후반 속도">
+      <figcaption><strong>ψ≡0 모델의 dt 쓸기.</strong> 오른쪽 패널이 <code>1/dt</code>에 대해 단조 증가한다 —
+      더 정확히 적분할수록 운동이 더 뚜렷해진다.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">03</span><h2>어디서 회전이 나오는가</h2></div>
+  <div class="col"><p>
+    <code>A</code>가 대칭인 ψ≡0 모델의 학습된 가중치를 직접 뜯어봤다.
+  </p></div>
+  <div class="tw"><table>
+    <thead><tr><th>진단</th><th class="num">full</th><th class="num">psi0 (A 대칭)</th><th>의미</th></tr></thead>
+    <tbody>
+      <tr><td>max|A − Aᵀ|</td><td class="num">1.04</td><td class="num">6.0e−08</td><td>토큰 믹싱은 psi0에서 정확히 대칭</td></tr>
+      <tr class="hi"><td>Λ 비정규도 ‖ΛΛᵀ−ΛᵀΛ‖ / ‖Λ‖²</td><td class="num">0.272</td><td class="num">0.331</td><td>psi0이 <strong>더</strong> 비정규</td></tr>
+      <tr class="hi"><td>Λ의 복소 고유값 개수</td><td class="num">58 / 64</td><td class="num">56 / 64</td><td>채널 축 회전의 직접 원인</td></tr>
+      <tr><td>max |Im λ(Λ)|</td><td class="num">1.111</td><td class="num">0.892</td><td>회전 각속도</td></tr>
+      <tr><td>max Re λ(Λ)</td><td class="num">1.174</td><td class="num">2.391</td><td>psi0의 선형 흥분이 <strong>두 배 불안정</strong></td></tr>
+      <tr><td>‖W<sub>OV</sub><sup>(0)</sup>‖₂ (64×16)</td><td class="num">3.20</td><td class="num">3.15</td><td>확산이 원래 상태공간이 아닌 곳에서 일어남</td></tr>
+    </tbody>
+  </table></div>
+  <div class="col">
+    <p>ψ를 막자 학습은 <strong>Λ로 우회했다.</strong> 비정규도는 0.272에서 0.331로 늘었고,
+    선형 흥분의 최대 실수부는 1.174에서 2.391로 두 배가 됐다.
+    진동을 만드는 자유도가 하나 막히면 다른 자유도가 그 역할을 넘겨받는다는 뜻이다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">04</span><h2>답은 사양 안에 이미 있었다</h2></div>
+  <div class="col">
+    <p>이건 사양이 몰랐던 사실이 아니다. 같은 문서의 서로 다른 곳에 두 진술이 공존한다.</p>
+  </div>
+  <div class="grid2">
+    <blockquote class="q ok"><p>“그리고 중요한 건 이게 gradient flow가 아니라는 점입니다.
+      <strong>Λ의 비정규(non-normal) 부분과 유니터리 U가 만드는 회전 성분</strong> 덕에 Hopf 분기와 한계주기가 여전히 가능합니다.”</p>
+      <cite>§1.7 — 흡수구 정리 직후</cite></blockquote>
+    <blockquote class="q bad"><p>“ψ는 시스템이 소산계에 머물지 진동계로 갈지를 결정하는 <strong>유일한</strong> 파라미터입니다.
+      ψ→0으로 수렴하는지 여부가 학습 후 반드시 확인해야 할 값입니다.”</p>
+      <cite>§2.4 — 양방향화 논의 중</cite></blockquote>
+  </div>
+  <div class="col">
+    <p>두 진술은 양립하지 않는다. §1.7이 Λ의 비정규성을 진동의 원천으로 명시했으므로,
+    ψ는 애초에 유일한 파라미터일 수 없다. 실험은 §1.7 쪽이 맞다고 판정한다.</p>
+    <p>세 번째 조각도 있다. 사양은 “짚어둘 만한 미해결 지점” 2번에서
+    <em>“확산+반응 분해도 깨집니다. <code>f<sub>t</sub> = Σ a<sub>tn</sub> W<sub>V</sub> h<sub>n</sub></code>은 원래 상태 공간이 아니라
+    <code>W<sub>V</sub></code>로 변환된 공간에서의 확산이라, 그래프 디리클레 에너지 해석이 그대로 이식되지 않습니다”</em>라고 적었다.
+    <strong>고리 3이 끊어지는 이유가 정확히 여기 문장으로 쓰여 있다.</strong>
+    §2.4의 대칭성 논증은 그 지적을 반영하지 않은 채 <code>A</code>만 보고 전개된 것이다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">05</span><h2>격리 실험</h2></div>
+  <div class="col">
+    <p>고리 3이 <code>Λ</code>와 <code>W<sub>OV</sub></code> 때문에 끊어진다면, 둘을 없애면 되살아나야 한다.
+    사양이 gradient flow의 조건으로 암묵적으로 요구한 것을 전부 강제한 모델
+    (<strong>gradflow</strong>: ψ=0 · W<sub>OV</sub>=I · Λ=0 · b=0)과,
+    거기서 Λ만 되살린 모델(<strong>lamonly</strong>)을 각각 학습했다.</p>
+  </div>
+
+  <div class="finding open">
+    <span class="chip">부분 성립</span><span class="spec">gradflow · lamonly</span>
+    <h3>운동이 8배 줄지만 0이 되지는 않는다</h3>
+    <div class="tw"><table>
+      <thead><tr><th>모델</th><th class="num">test</th><th class="num">1/8</th><th class="num">1/32</th><th class="num">1/128</th><th class="num">증분/‖h‖</th><th class="num">λ (FTLE)</th></tr></thead>
+      <tbody>
+        <tr><td>psi0 (ψ=0만)</td><td class="num">.9725</td><td class="num">2.93</td><td class="num">3.57</td><td class="num">3.85</td><td class="num">0.367</td><td class="num">—</td></tr>
+        <tr><td>lamonly (+W<sub>OV</sub>=I, b=0)</td><td class="num">.9535</td><td class="num">0.54</td><td class="num">0.64</td><td class="num">0.69</td><td class="num">0.072</td><td class="num">+1.09</td></tr>
+        <tr class="hi"><td>gradflow (+Λ=0)</td><td class="num">.9463</td><td class="num">0.35</td><td class="num">0.46</td><td class="num">0.49</td><td class="num">0.046</td><td class="num">+0.99</td></tr>
+      </tbody>
+    </table></div>
+    <p>가운데 세 열은 dt별 τ∈[6,8] 상대속도다. <code>W<sub>OV</sub></code>를 항등으로 묶는 순간 2.93 → 0.54로 <strong>5배</strong>,
+    Λ까지 없애면 0.35로 <strong>8배</strong> 줄어든다. 사양의 진단은 방향이 맞았다.
+    그런데 <strong>0이 아니다.</strong> 그리고 리아푸노프 지수는 여전히 <code>+0.99</code> — 카오스다.
+    ψ·Λ·W<sub>OV</sub>·b를 전부 제거한 최소 모델도 소산계가 아니다.</p>
+  </div>
+
+  <div class="finding broke">
+    <span class="chip">새 발견</span><span class="spec">사양에 없던 세 번째 원인</span>
+    <h3>A가 상수가 아니라 h의 함수다</h3>
+    <p>벡터장이 gradient field인지는 야코비안 <code>Df</code>의 대칭성으로 판정된다.
+    무작위 탐침 <code>u, v</code>에 대해 <code>uᵀ(Df)v</code>와 <code>vᵀ(Df)u</code>를 JVP로 24쌍 비교했다.
+    같은 모델·같은 점에서, <code>A</code>를 <code>h</code>에 대해 얼린 대조군
+    <code>f̃(h) = A(h₀)h</code>도 함께 쟀다 — 이것이 사양의 논증이 암묵적으로 가정한 대상이다.</p>
+    <div class="tw"><table>
+      <thead><tr><th>모델</th><th class="num">f̃ — A 고정 (논증의 가정)</th><th class="num">f — A가 h에 의존 (실제)</th></tr></thead>
+      <tbody>
+        <tr class="hi"><td>gradflow</td><td class="num">0.0000 ± 0.0000</td><td class="num">0.575 ± 0.337</td></tr>
+        <tr><td>lamonly</td><td class="num">0.529 ± 0.397</td><td class="num">0.674 ± 0.373</td></tr>
+        <tr><td>full</td><td class="num">0.654 ± 0.377</td><td class="num">0.787 ± 0.306</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>gradflow에서 A를 얼리면 비대칭도가 정확히 0이다.</strong>
+    즉 사양의 논증은 그 가정 아래서 완벽하게 옳다 — 대칭 <code>A</code>가 상수라면 그 계는 진짜 gradient flow다.
+    그런데 실제 벡터장은 0.575다. 두 경우의 차이는 <strong>오직 A가 h의 함수라는 것 하나</strong>다.</p>
+    <p>수식으로도 즉시 보인다. <code>f(h) = A(h)h</code>의 야코비안은
+    <code>Df = A + (∂A/∂h)·h</code>이고, 둘째 항은 <code>A</code>가 대칭이어도 대칭일 이유가 없다.
+    사양은 <code>A</code>를 고정된 그래프 라플라시안처럼 다뤘지만,
+    이 모델의 <code>A</code>는 매 스텝 <code>h</code>로부터 다시 계산되는 <strong>자기참조 fast-weight 그래프</strong>다.
+    lamonly 열에서 0.529는 Λ의 비정규성이 만든 몫이고,
+    gradflow 열의 0 → 0.575가 상태 의존성 단독의 몫이다.</p>
+  </div>
+
+  <figure>
+    <img src="{{CMP}}" alt="모델별 anytime 정확도, 적분 정밀화 저항, 연속극한 상대속도 비교">
+    <figcaption><strong>모델 6종의 동역학.</strong> 오른쪽 패널에서 어떤 모델도 상대속도가 0으로 내려가지 않는다.</figcaption>
+  </figure>
+</section>
+
+<section>
+  <div class="sec-head"><span class="n">06</span><h2>함의</h2></div>
+  <div class="col">
+    <p><strong>1. ψ 히스토그램 감시는 불필요하다.</strong> 사양이 학습 내내 로깅하라고 지시한 항목이지만,
+    ψ가 0으로 수렴하더라도 그것이 소산계로의 붕괴를 뜻하지 않는다.
+    감시해야 할 것은 ψ가 아니라 <strong>Λ의 스펙트럼</strong>(복소 고유값 비율, max Re λ)이다.</p>
+    <p><strong>2. 진동을 억제하려면 ψ도 Λ도 부족하다.</strong>
+    ψ를 막으면 학습이 Λ로 우회하고, Λ와 W<sub>OV</sub>까지 없애도 상대속도가 8배 줄 뿐 0이 되지 않으며
+    리아푸노프 지수는 여전히 양수다. 소산계를 원한다면
+    <strong>A의 상태 의존성 자체를 끊어야</strong> 한다 — 그런데 그건 이 모델의 비선형성의 원천이므로,
+    “활성화함수 없이 비선형성을 얻는다”는 전제와 맞바꾸는 선택이 된다.</p>
+    <p><strong>3. 사양의 논증은 틀린 게 아니라 다른 대상에 대한 참이다.</strong>
+    고정된 대칭 <code>A</code>에 대해서는 정확히 옳고(비대칭도 0.0000), 이 모델에는 적용되지 않는다.
+    선형 어텐션을 그래프 라플라시안으로 읽는 해석 전반에 같은 단서가 붙는다.</p>
+    <p><strong>4. 최소주의가 이론에 더 충실하다.</strong> 채널 믹싱을 제거한 noov 모델이
+    자기상관 재발 0.39로 full의 0.09보다 네 배 강해 한계주기에 가장 근접했다.
+    사양이 예측한 깨끗한 동역학은 구조를 더할 때가 아니라 <strong>덜어낼 때</strong> 나타난다.</p>
+  </div>
+</section>
+
+<footer>
+  <p class="mono">
+    psi0 = Model 1 with ψ≡0 (buffer, no grad) · 8 epoch · 나머지 하이퍼파라미터 full 과 동일<br>
+    /workspace/mnist_model1/ — model1.py · train.py --psi_zero · dt_sweep.py · compare.py
+  </p>
+</footer>
+
+</div>

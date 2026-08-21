@@ -1,0 +1,4 @@
+[b110k8_noov_t4] rule=110 k=8 T=32 tau=4 freeze_A=False FINAL 셀 0.7519 전체일치 0.0002 (780s)
+[b110k8_noovWO_t4] rule=110 k=8 T=32 tau=4 freeze_A=False FINAL 셀 0.8624 전체일치 0.0140 (780s)
+[b110k8_noovWO_t2] rule=110 k=8 T=32 tau=2 freeze_A=False FINAL 셀 0.8266 전체일치 0.0039 (395s)
+=== BWO DONE ===

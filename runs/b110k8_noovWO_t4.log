@@ -1,0 +1,5 @@
+  [b110k8_noovWO_t4] step   500 loss 0.4675 셀 0.7378 전체일치 0.0000
+  [b110k8_noovWO_t4] step  1000 loss 0.3750 셀 0.8148 전체일치 0.0020
+  [b110k8_noovWO_t4] step  1500 loss 0.3017 셀 0.8521 전체일치 0.0093
+  [b110k8_noovWO_t4] step  2000 loss 0.2801 셀 0.8654 전체일치 0.0156
+[b110k8_noovWO_t4] rule=110 k=8 T=32 tau=4 freeze_A=False FINAL 셀 0.8624 전체일치 0.0140 (780s)

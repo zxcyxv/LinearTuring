@@ -1,0 +1,7 @@
+__pycache__/
+*.lock/
+.ipynb_checkpoints/
+nohup.out
+runs/chunk_*
+runs/tchunk_*
+runs/CAP_DONE

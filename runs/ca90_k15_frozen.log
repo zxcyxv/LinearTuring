@@ -1,0 +1,5 @@
+  [ca90_k15_frozen] step   500 loss 0.6789 셀 0.5260 전체일치 0.0000
+  [ca90_k15_frozen] step  1000 loss 0.6287 셀 0.5502 전체일치 0.0000
+  [ca90_k15_frozen] step  1500 loss 0.6172 셀 0.5631 전체일치 0.0000
+  [ca90_k15_frozen] step  2000 loss 0.6129 셀 0.5641 전체일치 0.0000
+[ca90_k15_frozen] rule=90 k=15 T=32 freeze_A=True FINAL 셀 0.5660 전체일치 0.0000 (463s)

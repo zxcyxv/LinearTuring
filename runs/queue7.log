@@ -1,0 +1,46 @@
+### frozenA : A(h^0) 고정, dt 무작위화
+[frozenA] params=26507  dev=cuda  steps=3744
+[frozenA] epoch 0 test_acc 0.8329  (15s)
+  step   600 loss 0.5691 acc 0.836 |h|max 9.79 rho 4.36 gam 0.065 kap 123.9
+[frozenA] epoch 1 test_acc 0.9232  (32s)
+  step  1200 loss 0.1775 acc 0.961 |h|max 11.90 rho 4.02 gam 0.041 kap 139.2
+[frozenA] epoch 2 test_acc 0.9377  (46s)
+  step  1800 loss 0.1718 acc 0.922 |h|max 13.31 rho 3.98 gam 0.032 kap 142.6
+[frozenA] epoch 3 test_acc 0.9542  (62s)
+[frozenA] epoch 4 test_acc 0.9638  (77s)
+  step  2400 loss 0.1974 acc 0.945 |h|max 14.09 rho 3.75 gam 0.028 kap 144.6
+[frozenA] epoch 5 test_acc 0.9656  (91s)
+  step  3000 loss 0.0856 acc 0.969 |h|max 14.55 rho 3.75 gam 0.026 kap 145.4
+[frozenA] epoch 6 test_acc 0.9688  (107s)
+  step  3600 loss 0.0937 acc 0.969 |h|max 14.73 rho 3.73 gam 0.025 kap 145.6
+[frozenA] epoch 7 test_acc 0.9697  (123s)
+[frozenA] done. final test_acc=0.9697
+    ph = tr["zphase"][r][0, :, head, chan].cpu().numpy()
+         ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+IndexError: too many indices for tensor of dimension 3
+[frozenA] FTLE λ = -0.163 /τ  → 수축  | 자기상관 lag=1 +0.65, lag=3 -0.31
+### frozenA8: A(h^0) 고정, 고정 R=8
+[frozenA8] params=26507  dev=cuda  steps=3744
+[frozenA8] epoch 0 test_acc 0.8420  (13s)
+  step   600 loss 0.2931 acc 0.898 |h|max 9.95 rho 5.07 gam 0.068 kap 122.4
+[frozenA8] epoch 1 test_acc 0.9335  (25s)
+  step  1200 loss 0.1713 acc 0.938 |h|max 11.48 rho 4.83 gam 0.047 kap 136.8
+[frozenA8] epoch 2 test_acc 0.9428  (38s)
+  step  1800 loss 0.1545 acc 0.945 |h|max 12.64 rho 4.66 gam 0.038 kap 142.3
+[frozenA8] epoch 3 test_acc 0.9578  (52s)
+[frozenA8] epoch 4 test_acc 0.9631  (65s)
+  step  2400 loss 0.0757 acc 0.977 |h|max 13.66 rho 4.88 gam 0.033 kap 146.3
+[frozenA8] epoch 5 test_acc 0.9656  (78s)
+  step  3000 loss 0.1554 acc 0.961 |h|max 14.03 rho 4.85 gam 0.031 kap 147.4
+[frozenA8] epoch 6 test_acc 0.9679  (92s)
+  step  3600 loss 0.0927 acc 0.984 |h|max 14.20 rho 4.85 gam 0.030 kap 147.6
+[frozenA8] epoch 7 test_acc 0.9684  (105s)
+[frozenA8] done. final test_acc=0.9684
+    ph = tr["zphase"][r][0, :, head, chan].cpu().numpy()
+         ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+IndexError: too many indices for tensor of dimension 3
+[frozenA8] FTLE λ = -0.017 /τ  → 비카오스(주기/준주기)  | 자기상관 lag=1 +0.17, lag=3 -0.07
+[frozenA] clean 0.9629 | acc@σ 0.05:0.955 0.1:0.962 0.2:0.935 0.4:0.811 0.8:0.405 | flip@σ=0.1 0.015 σ=0.4 0.178
+[frozenA8] clean 0.9639 | acc@σ 0.05:0.961 0.1:0.961 0.2:0.934 0.4:0.747 0.8:0.319 | flip@σ=0.1 0.013 σ=0.4 0.242
+[randR  ] clean 0.9609 | acc@σ 0.05:0.964 0.1:0.960 0.2:0.955 0.4:0.900 0.8:0.508 | flip@σ=0.1 0.011 σ=0.4 0.088
+=== QUEUE7 DONE ===

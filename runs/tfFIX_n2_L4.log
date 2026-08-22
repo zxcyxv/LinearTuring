@@ -1,0 +1,44 @@
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+[tfFIX_n2_L4] TF L=4 d=92 heads=4 lr=0.001 opt=adamw sched=onecycle bs=256 steps=20000 T=20 n=2 params=425105 (Model1 d=256 = 427,330)  우연=0.1250
+  [tfFIX_n2_L4] step   500 loss 3.1494 질의 0.1272 전체일치 0.0005
+  [tfFIX_n2_L4] step  1000 loss 2.7171 질의 0.1393 전체일치 0.0010
+  [tfFIX_n2_L4] step  1500 loss 2.4111 질의 0.1425 전체일치 0.0024
+  [tfFIX_n2_L4] step  2000 loss 2.2577 질의 0.1393 전체일치 0.0015
+  [tfFIX_n2_L4] step  2500 loss 2.1812 질의 0.1432 전체일치 0.0015
+  [tfFIX_n2_L4] step  3000 loss 2.1413 질의 0.1376 전체일치 0.0005
+  [tfFIX_n2_L4] step  3500 loss 2.1256 질의 0.1423 전체일치 0.0015
+  [tfFIX_n2_L4] step  4000 loss 2.1222 질의 0.1375 전체일치 0.0005
+  [tfFIX_n2_L4] step  4500 loss 2.0818 질의 0.1372 전체일치 0.0024
+  [tfFIX_n2_L4] step  5000 loss 2.0556 질의 0.1318 전체일치 0.0015
+  [tfFIX_n2_L4] step  5500 loss 2.0536 질의 0.1470 전체일치 0.0020
+  [tfFIX_n2_L4] step  6000 loss 2.0419 질의 0.1469 전체일치 0.0039
+  [tfFIX_n2_L4] step  6500 loss 2.0205 질의 0.1440 전체일치 0.0029
+  [tfFIX_n2_L4] step  7000 loss 2.0115 질의 0.1368 전체일치 0.0015
+  [tfFIX_n2_L4] step  7500 loss 2.0021 질의 0.1464 전체일치 0.0020
+  [tfFIX_n2_L4] step  8000 loss 1.9999 질의 0.1383 전체일치 0.0010
+  [tfFIX_n2_L4] step  8500 loss 2.0037 질의 0.1469 전체일치 0.0000
+  [tfFIX_n2_L4] step  9000 loss 2.0032 질의 0.1471 전체일치 0.0020
+  [tfFIX_n2_L4] step  9500 loss 1.9926 질의 0.1414 전체일치 0.0039
+  [tfFIX_n2_L4] step 10000 loss 2.0004 질의 0.1395 전체일치 0.0010
+  [tfFIX_n2_L4] step 10500 loss 1.9844 질의 0.1461 전체일치 0.0015
+  [tfFIX_n2_L4] step 11000 loss 1.9841 질의 0.1464 전체일치 0.0020
+  [tfFIX_n2_L4] step 11500 loss 1.9828 질의 0.1450 전체일치 0.0024
+  [tfFIX_n2_L4] step 12000 loss 1.9601 질의 0.1454 전체일치 0.0010
+  [tfFIX_n2_L4] step 12500 loss 1.9774 질의 0.1481 전체일치 0.0024
+  [tfFIX_n2_L4] step 13000 loss 1.9656 질의 0.1422 전체일치 0.0005
+  [tfFIX_n2_L4] step 13500 loss 1.9706 질의 0.1469 전체일치 0.0020
+  [tfFIX_n2_L4] step 14000 loss 1.9599 질의 0.1477 전체일치 0.0020
+  [tfFIX_n2_L4] step 14500 loss 1.9642 질의 0.1482 전체일치 0.0044
+  [tfFIX_n2_L4] step 15000 loss 1.9581 질의 0.1489 전체일치 0.0005
+  [tfFIX_n2_L4] step 15500 loss 1.9572 질의 0.1472 전체일치 0.0015
+  [tfFIX_n2_L4] step 16000 loss 1.9611 질의 0.1400 전체일치 0.0024
+  [tfFIX_n2_L4] step 16500 loss 1.9553 질의 0.1526 전체일치 0.0029
+  [tfFIX_n2_L4] step 17000 loss 1.9465 질의 0.1360 전체일치 0.0005
+  [tfFIX_n2_L4] step 17500 loss 1.9585 질의 0.1499 전체일치 0.0024
+  [tfFIX_n2_L4] step 18000 loss 1.9532 질의 0.1410 전체일치 0.0015
+  [tfFIX_n2_L4] step 18500 loss 1.9523 질의 0.1437 전체일치 0.0034
+  [tfFIX_n2_L4] step 19000 loss 1.9506 질의 0.1417 전체일치 0.0020
+  [tfFIX_n2_L4] step 19500 loss 1.9546 질의 0.1381 전체일치 0.0020
+  [tfFIX_n2_L4] step 20000 loss 1.9521 질의 0.1409 전체일치 0.0029
+[tfFIX_n2_L4] TF L=4 d=92 lr=0.001 n=2 params=425105 FINAL 질의 0.1437 전체일치 0.0020 (최고 0.1526) (397s)

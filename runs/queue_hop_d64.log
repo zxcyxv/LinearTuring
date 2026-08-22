@@ -1,0 +1,38 @@
+[hop_n1_full] T=20 V=64 N=8 Q=4 n=1 tau=1 freeze_A=False noov=False d=64 params=33154 우연=0.1250
+  [hop_n1_full] step   250 loss 3.7613 질의 0.0986 전체일치 0.0000
+  [hop_n1_full] step   500 loss 3.0797 질의 0.1318 전체일치 0.0010
+  [hop_n1_full] step   750 loss 2.7637 질의 0.1409 전체일치 0.0034
+  [hop_n1_full] step  1000 loss 2.6693 질의 0.1464 전체일치 0.0015
+  [hop_n1_full] step  1250 loss 2.6383 질의 0.1414 전체일치 0.0005
+  [hop_n1_full] step  1500 loss 2.5985 질의 0.1469 전체일치 0.0005
+  [hop_n1_full] step  1750 loss 2.5056 질의 0.1418 전체일치 0.0005
+  [hop_n1_full] step  2000 loss 2.4995 질의 0.1416 전체일치 0.0020
+[hop_n1_full] n=1 N=8 T=20 tau=1 freeze_A=False noov=False FINAL 질의 0.1456 전체일치 0.0012 (112s)
+[hop_n1_frozen] T=20 V=64 N=8 Q=4 n=1 tau=1 freeze_A=True noov=False d=64 params=33154 우연=0.1250
+  [hop_n1_frozen] step   250 loss 3.7279 질의 0.1013 전체일치 0.0005
+  [hop_n1_frozen] step   500 loss 3.2272 질의 0.1285 전체일치 0.0010
+  [hop_n1_frozen] step   750 loss 2.8729 질의 0.1469 전체일치 0.0024
+  [hop_n1_frozen] step  1000 loss 2.8074 질의 0.1448 전체일치 0.0024
+  [hop_n1_frozen] step  1250 loss 2.7818 질의 0.1459 전체일치 0.0015
+  [hop_n1_frozen] step  1500 loss 2.7724 질의 0.1433 전체일치 0.0000
+  [hop_n1_frozen] step  1750 loss 2.7133 질의 0.1407 전체일치 0.0005
+  [hop_n1_frozen] step  2000 loss 2.6824 질의 0.1459 전체일치 0.0010
+[hop_n1_frozen] n=1 N=8 T=20 tau=1 freeze_A=True noov=False FINAL 질의 0.1479 전체일치 0.0013 (71s)
+[hop_n2_full] T=20 V=64 N=8 Q=4 n=2 tau=1 freeze_A=False noov=False d=64 params=33154 우연=0.1250
+  [hop_n2_full] step   250 loss 3.7377 질의 0.0918 전체일치 0.0000
+  [hop_n2_full] step   500 loss 2.9373 질의 0.1365 전체일치 0.0010
+  [hop_n2_full] step   750 loss 2.7774 질의 0.1443 전체일치 0.0015
+  [hop_n2_full] step  1000 loss 2.7050 질의 0.1409 전체일치 0.0010
+  [hop_n2_full] step  1250 loss 2.6222 질의 0.1389 전체일치 0.0034
+  [hop_n2_full] step  1500 loss 2.6121 질의 0.1447 전체일치 0.0005
+  [hop_n2_full] step  1750 loss 2.5446 질의 0.1350 전체일치 0.0020
+  [hop_n2_full] step  2000 loss 2.6108 질의 0.1359 전체일치 0.0020
+[hop_n2_full] n=2 N=8 T=20 tau=1 freeze_A=False noov=False FINAL 질의 0.1437 전체일치 0.0015 (111s)
+[hop_n2_frozen] T=20 V=64 N=8 Q=4 n=2 tau=1 freeze_A=True noov=False d=64 params=33154 우연=0.1250
+  [hop_n2_frozen] step   250 loss 3.7585 질의 0.0967 전체일치 0.0010
+  [hop_n2_frozen] step   500 loss 3.0235 질의 0.1418 전체일치 0.0015
+  [hop_n2_frozen] step   750 loss 2.8361 질의 0.1370 전체일치 0.0034
+  [hop_n2_frozen] step  1000 loss 2.7781 질의 0.1350 전체일치 0.0024
+  [hop_n2_frozen] step  1250 loss 2.7957 질의 0.1396 전체일치 0.0015
+  [hop_n2_frozen] step  1500 loss 2.7565 질의 0.1376 전체일치 0.0010
+  [hop_n2_frozen] step  1750 loss 2.6709 질의 0.1417 전체일치 0.0015

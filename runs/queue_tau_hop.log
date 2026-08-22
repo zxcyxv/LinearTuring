@@ -1,0 +1,2 @@
+[Ltau4_n2_full] T=20 V=64 N=8 Q=4 n=2 tau=4 freeze_A=False noov=False d=256 params=427330 우연=0.1250
+  [Ltau4_n2_full] step   250 loss 4.1722 질의 0.0167 전체일치 0.0000

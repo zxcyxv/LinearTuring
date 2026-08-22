@@ -29,7 +29,8 @@ class Model1(nn.Module):
                  eps=1e-4, gamma_init=0.1, alpha_init=0.1,
                  use_ov=True, lam_mode="full", orth_wc=True,
                  use_bias_v=True, learn_gamma=True, psi_zero=False, freeze_A=False,
-                 positions=None, vocab=None, pool=True, boundary_wo=False, wo_mode='plain'):
+                 positions=None, vocab=None, pool=True, boundary_wo=False, wo_mode='plain', sheaf=False,
+                 alpha_per_head=False):
         super().__init__()
         assert d % H == 0
         self.d, self.H, self.R = d, H, R
@@ -89,7 +90,11 @@ class Model1(nn.Module):
         # θ : 2D 파수 벡터 (§2.5). 나이퀴스트(≈π) 내부로 초기화.
         self.theta = nn.Parameter((torch.rand(H, self.p, 2) * 2 - 1) * (math.pi / 2))
         # α = softplus(α̃) > 0, init 0.1 (넓은 수용장)
-        self.alpha_raw = nn.Parameter(torch.full((H, self.p), inv_softplus(alpha_init)))
+        # alpha_per_head: 감쇠를 헤드 단위로 묶음 → e^{−α_h‖Δ‖} 가 [H,T,T] 마스크로 인수분해되어
+        # 고속 경로(attn_fast: RoPE 화 + matmul)가 가능. θ 는 채널별 유지 (파수 다양성 보존).
+        self.alpha_per_head = alpha_per_head
+        self.alpha_raw = nn.Parameter(torch.full((H, 1 if alpha_per_head else self.p),
+                                                 inv_softplus(alpha_init)))
 
         # --- 값 경로 -------------------------------------------------------
         if use_ov:
@@ -99,6 +104,13 @@ class Model1(nn.Module):
             # (채널 믹싱 없음 → §2 "순수 좌곱셈" 판정용)
             self.register_buffer("w_ov_fixed", torch.eye(d).view(H, self.dh, d).transpose(1, 2).contiguous()
                                  if False else self._block_identity(d, H, self.dh))
+        # sheaf 값 경로: v = W^(m)h, 출력 = W^(m)ᵀ Σ_n a v_n → 수송 = W^(m)ᵀW^(m) (대칭 PSD).
+        # 블록 항등 init → 시작점이 정확히 noov. 학습이 '종(species) 기저'를 회전시키고
+        # 헤드 간 기저 불일치가 채널 혼합을 만든다. 간선별 에너지 귀속이 혼합 아래서도 보존.
+        self.sheaf = sheaf
+        if sheaf:
+            self.w_sh = nn.Parameter(self._block_identity(d, H, self.dh).transpose(1, 2).contiguous()
+                                     + 0.01 * torch.randn(H, self.dh, d) / math.sqrt(d))
         # value bias b : 우함수(2차) 항 생성 (§1.5 마지막 항)
         self.b = nn.Parameter(torch.zeros(d)) if use_bias_v else None
 
@@ -131,6 +143,8 @@ class Model1(nn.Module):
         self.register_buffer("du", u[:, None] - u[None, :])   # [T,T]
         self.register_buffer("dw", w[:, None] - w[None, :])
         self.register_buffer("l1", (u[:, None] - u[None, :]).abs() + (w[:, None] - w[None, :]).abs())
+        self.register_buffer("pos_u", u)                       # [T] 원좌표 (고속 경로 위상용)
+        self.register_buffer("pos_w", w)
 
     @staticmethod
     def _block_identity(d, H, dh):
@@ -170,6 +184,36 @@ class Model1(nn.Module):
         Theta = Theta + self.psi[..., None, None]             # ψ_j + θ·Δ
         return decay, Theta
 
+    def kernel_fast(self):
+        """고속 경로 사전량 (alpha_per_head 전용).
+        decay_h [H,T,T] = e^{−α_h‖Δ‖₁},  위상각 A/B [T,H,p]:
+          A_t = +ψ/2 + θ·pos_t  (q 쪽),   B_t = −ψ/2 + θ·pos_t  (k 쪽)
+        유도: conj(q̂_t)·U(t←n)·k̂_n = conj(ẑ_t e^{iA_t}) · (ẑ_n e^{iB_n}) · e^{−α‖Δ‖}"""
+        assert self.alpha_per_head
+        decay_h = torch.exp(-self.alpha[:, 0, None, None] * self.l1)          # [H,T,T]
+        ppos = (self.theta[..., 0, None] * self.pos_u                        # [H,p,T] = θ·pos_t
+                + self.theta[..., 1, None] * self.pos_w)
+        A = (ppos + self.psi[..., None] / 2).permute(2, 0, 1)                # [T,H,p]
+        B = (ppos - self.psi[..., None] / 2).permute(2, 0, 1)
+        return decay_h, torch.cos(A), torch.sin(A), torch.cos(B), torch.sin(B)
+
+    def attn_fast(self, h, decay_h, cosA, sinA, cosB, sinB, AB=None):
+        """a = decay_h ⊙ ( Q̃ₓK̃ₓᵀ + Q̃ᵧK̃ᵧᵀ ) — 거대 [B,T,H,p,T] 중간텐서 없음.
+        Q̃ = ẑ 를 각 A_t 로 회전, K̃ = ẑ 를 각 B_t 로 회전.  느린 경로와 수학적으로 동일
+        (alpha_per_head 제약 하에서), 수치 검증: tests 참조."""
+        A, Bm = self.W_C() if AB is None else AB
+        x = torch.einsum('btd,hjd->bthj', h, A)
+        y = torch.einsum('btd,hjd->bthj', h, Bm)
+        nrm = (x.pow(2) + y.pow(2)).sum(-1, keepdim=True).sqrt()
+        x = x / (nrm + self.eps); y = y / (nrm + self.eps)
+        qx = x * cosA - y * sinA; qy = x * sinA + y * cosA                    # e^{+iA_t} ẑ_t
+        kx = x * cosB - y * sinB; ky = x * sinB + y * cosB                    # e^{+iB_n} ẑ_n
+        # Re[conj(q̃_t) k̃_n] = qx_t·kx_n + qy_t·ky_n  → 헤드별 bmm 2회
+        a = (torch.einsum('bthj,bnhj->bhtn', qx, kx)
+             + torch.einsum('bthj,bnhj->bhtn', qy, ky))
+        a = a * decay_h.unsqueeze(0)
+        return a, x, y, nrm.squeeze(-1)
+
     # -------------------------------------------------------------- forward
     def attn(self, h, decay, Theta, AB=None):
         """a^(m)_{tn} : [B,H,T,T] , ẑ 성분도 반환 (해석가능성용).
@@ -189,18 +233,26 @@ class Model1(nn.Module):
              - torch.einsum('bthj,bnhj,hjtn->bhtn', y, x, Ds))
         return a, x, y, nrm.squeeze(-1)
 
-    def field(self, h, decay, Theta, a_fixed=None, AB=None):
-        """벡터장 f_t (§1.5) 와 진단량.  a_fixed 를 주면 A 를 h 에서 다시 계산하지 않는다."""
+    def field(self, h, decay, Theta, a_fixed=None, AB=None, fast_ctx=None):
+        """벡터장 f_t (§1.5) 와 진단량.  a_fixed 를 주면 A 를 h 에서 다시 계산하지 않는다.
+        fast_ctx = kernel_fast() 결과를 주면 고속 attn (alpha_per_head 전용)."""
         B, T, d = h.shape
-        if a_fixed is None:
+        if a_fixed is None and fast_ctx is not None:
+            a, zx, zy, znorm = self.attn_fast(h, *fast_ctx, AB=AB)
+        elif a_fixed is None:
             a, zx, zy, znorm = self.attn(h, decay, Theta, AB)  # [B,H,T,T]
         else:
             a = a_fixed
             zx = zy = torch.zeros(B, T, self.H, self.p, device=h.device)
             znorm = torch.zeros(B, T, self.H, device=h.device)
-        v = h.view(B, T, self.H, self.dh)                      # P_m = 슬라이스
-        o = torch.einsum('bhtn,bnhc->bthc', a, v)
-        f = torch.einsum('bthc,hdc->btd', o, self.OV())
+        if getattr(self, 'sheaf', False):
+            v = torch.einsum('btd,hcd->bthc', h, self.w_sh)    # v = W^(m) h
+            o = torch.einsum('bhtn,bnhc->bthc', a, v)
+            f = torch.einsum('bthc,hcd->btd', o, self.w_sh)    # 출력 = W^(m)ᵀ o
+        else:
+            v = h.view(B, T, self.H, self.dh)                  # P_m = 슬라이스
+            o = torch.einsum('bhtn,bnhc->bthc', a, v)
+            f = torch.einsum('bthc,hdc->btd', o, self.OV())
         dt = a.sum(-1)                                         # d_t^(m)  [B,H,T]
         if self.b is not None:
             f = f + dt.sum(1).unsqueeze(-1) * self.b

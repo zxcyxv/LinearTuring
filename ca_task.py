@@ -28,6 +28,9 @@ def main():
     ap.add_argument("--H", type=int, default=4); ap.add_argument("--R", type=int, default=8)
     ap.add_argument("--freeze_A", action="store_true")
     ap.add_argument("--no_ov", action="store_true", help="noov 구조 (W_OV=블록항등, Λ 대각)")
+    ap.add_argument("--sheaf", action="store_true", help="sheaf 값 경로 WᵀW (대칭 PSD, noov 일반화)")
+    ap.add_argument("--lam", default="auto", choices=["auto", "diag", "full"],
+                    help="Λ 모드. auto = noov/sheaf 면 diag, 아니면 full")
     ap.add_argument("--boundary_wo", action="store_true", help="τ 블록 경계에서만 W_O")
     ap.add_argument("--wo_mode", default="plain", choices=["plain","residual","orth","contract","perhead"]); ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--tau", type=int, default=1, help="총 적분 시간 배수: steps = tau*R (dt=1/R 고정)")
@@ -39,7 +42,8 @@ def main():
     pos = torch.stack([torch.arange(a.T).float(), torch.zeros(a.T)], 1)
     m = Model1(d=a.d, H=a.H, R=a.R, n_classes=2, positions=pos, vocab=2,
                freeze_A=a.freeze_A, pool=False, boundary_wo=a.boundary_wo, wo_mode=a.wo_mode,
-               use_ov=not a.no_ov, lam_mode="diag" if a.no_ov else "full").to(dev)
+               use_ov=not a.no_ov, sheaf=a.sheaf,
+               lam_mode=("diag" if (a.no_ov or a.sheaf) else "full") if a.lam == "auto" else a.lam).to(dev)
     kn={"psi","theta","alpha_raw"}
     kp=[p for n,p in m.named_parameters() if n in kn]; rp=[p for n,p in m.named_parameters() if n not in kn]
     opt=torch.optim.AdamW([{"params":rp,"lr":a.lr},{"params":kp,"lr":a.lr*a.kernel_lr_mult}],weight_decay=1e-4)

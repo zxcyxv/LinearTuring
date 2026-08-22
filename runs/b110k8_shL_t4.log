@@ -1,0 +1,5 @@
+  [b110k8_shL_t4] step   500 loss 0.4849 셀 0.7319 전체일치 0.0000
+  [b110k8_shL_t4] step  1000 loss 0.2653 셀 0.8801 전체일치 0.0229
+  [b110k8_shL_t4] step  1500 loss 0.1572 셀 0.9279 전체일치 0.1221
+  [b110k8_shL_t4] step  2000 loss 0.1398 셀 0.9408 전체일치 0.1753
+[b110k8_shL_t4] rule=110 k=8 T=32 tau=4 freeze_A=False FINAL 셀 0.9401 전체일치 0.1656 (307s)

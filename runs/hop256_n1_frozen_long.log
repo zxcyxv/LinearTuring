@@ -1,0 +1,14 @@
+[hop256_n1_frozen_long] T=20 V=64 N=8 Q=4 n=1 tau=1 freeze_A=True noov=False d=256 params=427330 우연=0.1250
+  [hop256_n1_frozen_long] step   250 loss 4.1616 질의 0.0245 전체일치 0.0000
+  [hop256_n1_frozen_long] step   500 loss 3.1628 질의 0.1283 전체일치 0.0010
+  [hop256_n1_frozen_long] step   750 loss 2.6507 질의 0.1318 전체일치 0.0005
+  [hop256_n1_frozen_long] step  1000 loss 2.5405 질의 0.1416 전체일치 0.0005
+  [hop256_n1_frozen_long] step  1250 loss 2.4280 질의 0.1521 전체일치 0.0020
+  [hop256_n1_frozen_long] step  1500 loss 2.4307 질의 0.1421 전체일치 0.0005
+  [hop256_n1_frozen_long] step  1750 loss 2.3726 질의 0.1495 전체일치 0.0029
+  [hop256_n1_frozen_long] step  2000 loss 2.3342 질의 0.1522 전체일치 0.0010
+  [hop256_n1_frozen_long] step  2250 loss 2.2954 질의 0.1506 전체일치 0.0024
+  [hop256_n1_frozen_long] step  2500 loss 2.3254 질의 0.1417 전체일치 0.0015
+  [hop256_n1_frozen_long] step  2750 loss 2.3347 질의 0.1389 전체일치 0.0015
+  [hop256_n1_frozen_long] step  3000 loss 2.2437 질의 0.1531 전체일치 0.0015
+  [hop256_n1_frozen_long] step  3250 loss 1.5966 질의 0.4706 전체일치 0.0718

@@ -1,0 +1,55 @@
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+[tf_L1_n1_lr2e-3] TF L=1 d=184 heads=4 lr=0.002 T=20 n=1 params=436697 (Model1 d=256 = 427,330)  우연=0.1250
+  [tf_L1_n1_lr2e-3] step   250 loss 2.9275 질의 0.1486 전체일치 0.0015
+  [tf_L1_n1_lr2e-3] step   500 loss 2.3089 질의 0.1493 전체일치 0.0024
+  [tf_L1_n1_lr2e-3] step   750 loss 2.1823 질의 0.1477 전체일치 0.0024
+  [tf_L1_n1_lr2e-3] step  1000 loss 2.0849 질의 0.1439 전체일치 0.0005
+  [tf_L1_n1_lr2e-3] step  1250 loss 2.0914 질의 0.1451 전체일치 0.0020
+  [tf_L1_n1_lr2e-3] step  1500 loss 2.0706 질의 0.1370 전체일치 0.0029
+  [tf_L1_n1_lr2e-3] step  1750 loss 2.0486 질의 0.1410 전체일치 0.0024
+  [tf_L1_n1_lr2e-3] step  2000 loss 2.0414 질의 0.1466 전체일치 0.0029
+  [tf_L1_n1_lr2e-3] step  2250 loss 2.0296 질의 0.1418 전체일치 0.0005
+  [tf_L1_n1_lr2e-3] step  2500 loss 1.9863 질의 0.1407 전체일치 0.0020
+  [tf_L1_n1_lr2e-3] step  2750 loss 1.9910 질의 0.1417 전체일치 0.0059
+  [tf_L1_n1_lr2e-3] step  3000 loss 1.9862 질의 0.1464 전체일치 0.0024
+  [tf_L1_n1_lr2e-3] step  3250 loss 1.9732 질의 0.1472 전체일치 0.0020
+  [tf_L1_n1_lr2e-3] step  3500 loss 1.9653 질의 0.1433 전체일치 0.0044
+  [tf_L1_n1_lr2e-3] step  3750 loss 1.9636 질의 0.1406 전체일치 0.0029
+  [tf_L1_n1_lr2e-3] step  4000 loss 1.9634 질의 0.1442 전체일치 0.0029
+[tf_L1_n1_lr2e-3] TF L=1 d=184 lr=0.002 n=1 params=436697 FINAL 질의 0.1475 전체일치 0.0029 (최고 0.1493) (27s)
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+[tf_L2_n1_lr2e-3] TF L=2 d=128 heads=4 lr=0.002 T=20 n=1 params=416065 (Model1 d=256 = 427,330)  우연=0.1250
+  [tf_L2_n1_lr2e-3] step   250 loss 2.8612 질의 0.1445 전체일치 0.0024
+  [tf_L2_n1_lr2e-3] step   500 loss 2.3600 질의 0.1495 전체일치 0.0024
+  [tf_L2_n1_lr2e-3] step   750 loss 2.1885 질의 0.1469 전체일치 0.0020
+  [tf_L2_n1_lr2e-3] step  1000 loss 2.1324 질의 0.1409 전체일치 0.0005
+  [tf_L2_n1_lr2e-3] step  1250 loss 2.1117 질의 0.1466 전체일치 0.0015
+  [tf_L2_n1_lr2e-3] step  1500 loss 2.0917 질의 0.1384 전체일치 0.0005
+  [tf_L2_n1_lr2e-3] step  1750 loss 2.0733 질의 0.1403 전체일치 0.0010
+  [tf_L2_n1_lr2e-3] step  2000 loss 2.0637 질의 0.1464 전체일치 0.0015
+  [tf_L2_n1_lr2e-3] step  2250 loss 2.0239 질의 0.1444 전체일치 0.0029
+  [tf_L2_n1_lr2e-3] step  2500 loss 2.0094 질의 0.1417 전체일치 0.0024
+  [tf_L2_n1_lr2e-3] step  2750 loss 1.9973 질의 0.1378 전체일치 0.0024
+  [tf_L2_n1_lr2e-3] step  3000 loss 1.9881 질의 0.1447 전체일치 0.0020
+  [tf_L2_n1_lr2e-3] step  3250 loss 1.9811 질의 0.1412 전체일치 0.0015
+  [tf_L2_n1_lr2e-3] step  3500 loss 1.9716 질의 0.1464 전체일치 0.0020
+  [tf_L2_n1_lr2e-3] step  3750 loss 1.9717 질의 0.1389 전체일치 0.0015
+  [tf_L2_n1_lr2e-3] step  4000 loss 1.9708 질의 0.1488 전체일치 0.0034
+[tf_L2_n1_lr2e-3] TF L=2 d=128 lr=0.002 n=1 params=416065 FINAL 질의 0.1447 전체일치 0.0021 (최고 0.1495) (39s)
+/usr/local/lib/python3.12/dist-packages/torch/nn/modules/transformer.py:392: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(
+[tf_L4_n1_lr2e-3] TF L=4 d=92 heads=4 lr=0.002 T=20 n=1 params=425105 (Model1 d=256 = 427,330)  우연=0.1250
+  [tf_L4_n1_lr2e-3] step   250 loss 3.0474 질의 0.1453 전체일치 0.0020
+  [tf_L4_n1_lr2e-3] step   500 loss 2.4646 질의 0.1428 전체일치 0.0020
+  [tf_L4_n1_lr2e-3] step   750 loss 2.2675 질의 0.1471 전체일치 0.0010
+  [tf_L4_n1_lr2e-3] step  1000 loss 2.1601 질의 0.1417 전체일치 0.0015
+  [tf_L4_n1_lr2e-3] step  1250 loss 2.1213 질의 0.1425 전체일치 0.0020
+  [tf_L4_n1_lr2e-3] step  1500 loss 2.1092 질의 0.1390 전체일치 0.0015
+  [tf_L4_n1_lr2e-3] step  1750 loss 2.0853 질의 0.1536 전체일치 0.0039
+  [tf_L4_n1_lr2e-3] step  2000 loss 2.0439 질의 0.1470 전체일치 0.0015
+  [tf_L4_n1_lr2e-3] step  2250 loss 2.0418 질의 0.1378 전체일치 0.0015
+  [tf_L4_n1_lr2e-3] step  2500 loss 1.9944 질의 0.1481 전체일치 0.0020
+  [tf_L4_n1_lr2e-3] step  2750 loss 2.0182 질의 0.1427 전체일치 0.0024
+  [tf_L4_n1_lr2e-3] step  3000 loss 2.0055 질의 0.1467 전체일치 0.0005

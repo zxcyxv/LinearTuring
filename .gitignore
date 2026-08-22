@@ -5,3 +5,5 @@ nohup.out
 runs/chunk_*
 runs/tchunk_*
 runs/CAP_DONE
+
+refs/

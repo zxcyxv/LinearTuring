@@ -1,0 +1,14 @@
+[Htau4_n2_wo] T=20 V=64 N=8 Q=4 n=2 tau=4 freeze_A=False noov=False d=256 params=492866 우연=0.1250
+  [Htau4_n2_wo] step   250 loss 4.0830 질의 0.0646 전체일치 0.0000
+  [Htau4_n2_wo] step   500 loss 3.7984 질의 0.0983 전체일치 0.0000
+  [Htau4_n2_wo] step   750 loss 3.6057 질의 0.1006 전체일치 0.0005
+  [Htau4_n2_wo] step  1000 loss 3.3123 질의 0.1113 전체일치 0.0005
+  [Htau4_n2_wo] step  1250 loss 3.1886 질의 0.1158 전체일치 0.0000
+  [Htau4_n2_wo] step  1500 loss 3.1714 질의 0.1222 전체일치 0.0000
+  [Htau4_n2_wo] step  1750 loss 3.0657 질의 0.1146 전체일치 0.0005
+  [Htau4_n2_wo] step  2000 loss 3.0221 질의 0.1395 전체일치 0.0000
+  [Htau4_n2_wo] step  2250 loss 2.9088 질의 0.1332 전체일치 0.0005
+  [Htau4_n2_wo] step  2500 loss 2.8937 질의 0.1357 전체일치 0.0000
+  [Htau4_n2_wo] step  2750 loss 2.6982 질의 0.1354 전체일치 0.0000
+  [Htau4_n2_wo] step  3000 loss 2.6153 질의 0.1450 전체일치 0.0015
+  [Htau4_n2_wo] step  3250 loss 2.6188 질의 0.1432 전체일치 0.0005

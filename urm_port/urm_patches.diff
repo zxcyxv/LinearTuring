@@ -1,0 +1,106 @@
+diff --git a/models/layers.py b/models/layers.py
+index 5c2b648..8465636 100644
+--- a/models/layers.py
++++ b/models/layers.py
+@@ -11,7 +11,10 @@ import math
+ try:
+     from flash_attn_interface import flash_attn_func
+ except ImportError:
+-    from flash_attn import flash_attn_func
++    try:
++        from flash_attn import flash_attn_func
++    except ImportError:
++        flash_attn_func = None  # [LT] 미설치 시 SDPA 폴백 (수치 동등, 커널만 다름)
+ 
+ from models.common import trunc_normal_init_
+ 
+@@ -126,13 +129,17 @@ class Attention(nn.Module):
+             cos, sin = cos_sin
+             query, key = apply_rotary_pos_emb(query, key, cos, sin)
+ 
+-        # flash attn
+-        attn_output = flash_attn_func(q=query, k=key, v=value, causal=self.causal)
+-        if isinstance(attn_output, tuple):  # fa2 and fa3 compatibility
+-            attn_output = attn_output[0]
++        # flash attn (미설치 시 SDPA 폴백)
++        if flash_attn_func is not None:
++            attn_output = flash_attn_func(q=query, k=key, v=value, causal=self.causal)
++            if isinstance(attn_output, tuple):  # fa2 and fa3 compatibility
++                attn_output = attn_output[0]
++        else:
++            attn_output = scaled_dot_product_attention(
++                query.transpose(1, 2), key.transpose(1, 2), value.transpose(1, 2),
++                is_causal=self.causal).transpose(1, 2)
+ 
+-        # attn_output: [batch_size, num_heads, seq_len, head_dim]
+-        attn_output = attn_output.view(batch_size, seq_len, self.output_size)  # type: ignore
++        attn_output = attn_output.reshape(batch_size, seq_len, self.output_size)  # type: ignore
+         return self.o_proj(attn_output)
+ 
+ 
+diff --git a/pretrain.py b/pretrain.py
+index b523632..1ba6a1f 100644
+--- a/pretrain.py
++++ b/pretrain.py
+@@ -229,7 +229,16 @@ def create_model(config: PretrainConfig, train_metadata: PuzzleDatasetMetadata,
+                 world_size=world_size,
+             ),
+             AdamATan2(
+-                model.parameters(),
++                # [LT] 동역학 상수(ψ·θ·α·γ·b·게이트)와 1차원 파라미터는 wd 제외 —
++                # wd=1.0 이 약한 그래디언트의 커널을 (0.9999)^t 로 잠식 (loss 역행의 기전)
++                [{"params": [p for n, p in model.named_parameters()
++                             if p.ndim <= 1 or n.endswith(".b")
++                             or any(k in n for k in ("psi", "theta", "alpha_raw", "gamma_raw", "inj_gate"))],
++                  "weight_decay": 0.0},
++                 {"params": [p for n, p in model.named_parameters()
++                             if not (p.ndim <= 1 or n.endswith(".b")
++                             or any(k in n for k in ("psi", "theta", "alpha_raw", "gamma_raw", "inj_gate")))],
++                  "weight_decay": config.weight_decay}],
+                 lr=0,  # Needs to be set by scheduler
+                 weight_decay=config.weight_decay,
+                 betas=(config.beta1, config.beta2),
+@@ -702,6 +711,14 @@ def evaluate(
+ 
+         # Reduce to rank 0
+         if metric_values is not None:
++            # [LT] eval 지표 콘솔 출력
++            if rank == 0:
++                _mv = metric_values.cpu().numpy()
++                for _si, _sn in enumerate(set_ids):
++                    _d = dict(zip(metric_keys, _mv[_si]))
++                    _n = max(_d.get("count", 1.0), 1.0)
++                    print(f"[EVAL] step {train_state.step}  set {_sn}  "
++                          f"acc {_d.get('accuracy',0)/_n:.4f}  exact {int(_d.get('exact_accuracy',0))}/{int(_n)}", flush=True)
+             if world_size > 1:
+                 dist.reduce(metric_values, dst=0)
+ 
+@@ -900,7 +917,13 @@ def launch(hydra_config: DictConfig):
+             settings=wandb.Settings(_disable_stats=True),
+         )
+         wandb.log({"num_params": sum(x.numel() for x in train_state.model.parameters())}, step=0)
+-        save_code_and_config(config)
++        # [LT] 원 레포 버그: save_dir 인자 누락 — checkpoint_path 로 보정
++        if config.checkpoint_path is not None:
++            os.makedirs(config.checkpoint_path, exist_ok=True)
++            try:
++                save_code_and_config(config, config.checkpoint_path)
++            except Exception as e:   # [LT] ListConfig 등 직렬화 불가 필드 — 저장은 비필수
++                print(f"[LT] config 저장 생략 ({type(e).__name__})", flush=True)
+ 
+     # Training Loop
+     for _iter_id in range(total_iters):
+@@ -929,6 +952,13 @@ def launch(hydra_config: DictConfig):
+             if RANK == 0 and metrics is not None:
+                 wandb.log(metrics, step=train_state.step)
+                 progress_bar.update(train_state.step - progress_bar.n)
++                # [LT] wandb 비활성 환경용 콘솔 로그 — 배치 exact 는 개수/카운트로 표시
++                if train_state.step % 200 == 0:
++                    # 주의: train_batch 가 이미 count 로 정규화한 비율을 준다 — int() 절단 금지
++                    _m = {k.split("/")[-1]: (v.item() if hasattr(v, "item") else v) for k, v in metrics.items()}
++                    _ex = _m.get('exact_accuracy', 0.0)
++                    print(f"[LT] step {train_state.step}  lm_loss {_m.get('lm_loss', float('nan')):.4f}  "
++                          f"acc {_m.get('accuracy', 0):.4f}  exact {_ex:.4f} (~{_ex*128:.0f}/128)", flush=True)
+ 
+         ############ Evaluation
+         if eval_loader is not None and eval_metadata is not None:

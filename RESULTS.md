@@ -3,9 +3,20 @@
 | 실험 | 태그 | 과제 | 구성 | 주지표 | 보조 |
 |---|---|---|---|---|---|
 | CA | b110k8_fullWO_t4 | R110 k8 | d=64 τ=4 WO:None | 0.4143 | 0.9713 |
+| CA | b110k8_fullWO_t4_long | R110 k8 | d=64 τ=4 WO:None | 0.8788 | 0.9959 |
+| CA | b110k8_noovC_t4 | R110 k8 | d=64 τ=4 noov WO:contract | 0.0731 | 0.9092 |
 | CA | b110k8_noovWO_t2 | R110 k8 | d=64 τ=2 noov WO:None | 0.0039 | 0.8266 |
 | CA | b110k8_noovWO_t4 | R110 k8 | d=64 τ=4 noov WO:None | 0.0140 | 0.8624 |
 | CA | b110k8_noov_t4 | R110 k8 | d=64 τ=4 noov | 0.0002 | 0.7519 |
+| CA | b110k8_shCL_t4 | R110 k8 | d=64 τ=4 sheaf Λfull WO:contract | 0.5029 | 0.9757 |
+| CA | b110k8_shCL_t4_long | R110 k8 | d=64 τ=4 sheaf Λfull WO:contract | 0.9498 | 0.9983 |
+| CA | b110k8_shC_t4 | R110 k8 | d=64 τ=4 sheaf WO:contract | 0.3922 | 0.9674 |
+| CA | b110k8_shL_t4 | R110 k8 | d=64 τ=4 sheaf Λfull | 0.1656 | 0.9401 |
+| CA | b110k8_woC_t4 | R110 k8 | d=64 τ=4 WO:contract | 0.6655 | 0.9862 |
+| CA | b110k8_woC_t4_long | R110 k8 | d=64 τ=4 WO:contract | 0.9886 | 0.9996 |
+| CA | b110k8_woH_t4 | R110 k8 | d=64 τ=4 WO:perhead | 0.2007 | 0.9488 |
+| CA | b110k8_woO_t4 | R110 k8 | d=64 τ=4 WO:orth | 0.4915 | 0.9768 |
+| CA | b110k8_woR_t4 | R110 k8 | d=64 τ=4 WO:residual | 0.4531 | 0.9740 |
 | CA | ca110_k1_frozen | R110 k1 | d=64 τ=1 frz | 1.0000 | 1.0000 |
 | CA | ca110_k1_full | R110 k1 | d=64 τ=1 | 1.0000 | 1.0000 |
 | CA | ca110_k2_frozen | R110 k2 | d=64 τ=1 frz | 1.0000 | 1.0000 |
@@ -69,6 +80,25 @@
 | parity | par16_full | T=16 | d=64 R=8 | 1.0000 |  |
 | parity | par32_frozen | T=32 | d=64 R=8 frz | 0.5043 |  |
 | parity | par32_full | T=32 | d=64 R=8 | 0.5047 |  |
+| hop | L16_n1_frozen | n=1 N=8 | M1 frz d=256 τ=1 16000st | 1.0000 | 1.0000 |
+| hop | L16_n2_full | n=2 N=8 | M1 d=256 τ=1 16000st | 0.1414 | 0.0004 |
+| hop | hop256_n1_frozen | n=1 N=8 | M1 frz d=256 τ=1 4000st k×30 | 0.1466 | 0.0011 |
+| hop | hop256_n1_full | n=1 N=8 | M1 d=256 τ=1 4000st k×30 | 0.9990 | 0.9962 |
+| hop | hop256_n1_full_k1 | n=1 N=8 | M1 d=256 τ=1 4000st | 0.9983 | 0.9940 |
+| hop | hop_n1_frozen | n=1 N=8 | M1 frz d=64 τ=1 2000st k×30 | 0.1479 | 0.0013 |
+| hop | hop_n1_full | n=1 N=8 | M1 d=64 τ=1 2000st k×30 | 0.1456 | 0.0012 |
+| hop | hop_n2_full | n=2 N=8 | M1 d=64 τ=1 2000st k×30 | 0.1437 | 0.0015 |
+| hop | tf425_n1_16k | n=1 N=8 | TF L4 d=92 τ=1 16000st | 0.1432 | 0.0028 |
+| hop | tf425_n1_40k | n=1 N=8 | TF L4 d=92 τ=1 40000st | 0.1440 | 0.0031 |
+| hop | tf425_n1_lr1e-3 | n=1 N=8 | TF L4 d=92 τ=1 4000st | 0.1420 | 0.0032 |
+| hop | tf425_n1_lr2e-3 | n=1 N=8 | TF L4 d=92 τ=1 4000st | 0.1452 | 0.0031 |
+| hop | tfFIX_n1 | n=1 N=8 | TF L2 d=128 τ=1 20000st | 1.0000 | 0.9999 |
+| hop | tfFIX_n2_L4 | n=2 N=8 | TF L4 d=92 τ=1 20000st | 0.1437 | 0.0020 |
+| hop | tfFIX_n2 | n=2 N=8 | TF L2 d=128 τ=1 20000st | 0.1413 | 0.0026 |
+| hop | tfV8_n1_hi | n=1 N=8 | TF L2 d=128 τ=1 8000st | 0.1388 | 0.0032 |
+| hop | tfV8_n1 | n=1 N=8 | TF L2 d=128 τ=1 8000st | 0.1457 | 0.0032 |
+| hop | tf_L1_n1_lr2e-3 | n=1 N=8 | TF L1 d=184 τ=1 4000st | 0.1475 | 0.0029 |
+| hop | tf_L2_n1_lr2e-3 | n=1 N=8 | TF L2 d=128 τ=1 4000st | 0.1447 | 0.0021 |
 | MNIST | frozenA8 | 분류 | d=64 frz | 0.9684 | -0.02 |
 | MNIST | frozenA_g0 | 분류 | d=64 frz γ=0.0001 randR | 0.9706 |  |
 | MNIST | frozenA | 분류 | d=64 frz randR | 0.9697 | -0.16 |
@@ -104,4 +134,4 @@
 | 기준선 | gruL2 | R90 k3 | 149,506p | 1.0000 | 1.0000 |
 | 기준선 | gruL2 | R90 k7 | 149,506p | 0.9563 | 0.9986 |
 
-총 101건 · 주지표: CA/parity=전체일치, MNIST=test acc · 보조: CA=셀, MNIST=λ(FTLE)
+총 131건 · 주지표: CA/parity=전체일치, hop=질의, MNIST=test acc · 보조: CA=셀, MNIST=λ(FTLE)

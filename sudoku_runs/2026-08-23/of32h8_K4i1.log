@@ -1,0 +1,4 @@
+[EVAL] step 500  set all  acc 0.8688  exact 0/32
+[EVAL] step 1000  set all  acc 0.9880  exact 8/32
+[EVAL] step 1500  set all  acc 1.0000  exact 32/32
+[EVAL] step 2000  set all  acc 1.0000  exact 32/32

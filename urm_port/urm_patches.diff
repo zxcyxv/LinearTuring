@@ -1,3 +1,20 @@
+diff --git a/data/build_sudoku_dataset.py b/data/build_sudoku_dataset.py
+index 9fa8476..043b95a 100644
+--- a/data/build_sudoku_dataset.py
++++ b/data/build_sudoku_dataset.py
+@@ -62,7 +62,11 @@ def convert_subset(set_name: str, config: DataProcessConfig):
+     inputs = []
+     labels = []
+     
+-    with open(hf_hub_download(config.source_repo, f"{set_name}.csv", repo_type="dataset"), newline="") as csvfile:
++    # [LT] 로컬 CSV 우선 — HF 접근 불가 환경 대비. 없으면 기존대로 HF 폴백.
++    _local = os.path.join(os.path.dirname(__file__), "sudoku_csv", f"{set_name}.csv")
++    _src = _local if os.path.exists(_local) else hf_hub_download(config.source_repo, f"{set_name}.csv", repo_type="dataset")
++    print(f"[data] {set_name}: {_src}", flush=True)
++    with open(_src, newline="") as csvfile:
+         reader = csv.reader(csvfile)
+         next(reader)  # Skip header
+         for source, q, a, rating in reader:
 diff --git a/models/layers.py b/models/layers.py
 index 5c2b648..8465636 100644
 --- a/models/layers.py
@@ -38,6 +55,53 @@ index 5c2b648..8465636 100644
          return self.o_proj(attn_output)
  
  
+diff --git a/models/losses.py b/models/losses.py
+index f3af55b..c043964 100644
+--- a/models/losses.py
++++ b/models/losses.py
+@@ -142,10 +142,11 @@ def softmax_cross_entropy(logits, labels, ignore_index: int = -100):
+ 
+ 
+ class ACTLossHead(nn.Module):
+-    def __init__(self, model: nn.Module, loss_type: str):
++    def __init__(self, model: nn.Module, loss_type: str, q_weight: float = 0.5):
+         super().__init__()
+         self.model = model
+         self.loss_fn = globals()[loss_type]
++        self.q_weight = q_weight   # [절제] 0 이면 q(BCE) 손실 제거 — q_head 동결 (logits=init −5, 조기 halt 불가)
+ 
+     def initial_carry(self, *args, **kwargs):
+         return self.model.initial_carry(*args, **kwargs)  # type: ignore
+@@ -227,7 +228,7 @@ class ACTLossHead(nn.Module):
+             if k in outputs:
+                 returned_outputs[k] = outputs[k].detach()
+ 
+-        total_loss = lm_loss + 0.5 * (q_halt_loss + q_continue_loss)
++        total_loss = lm_loss + self.q_weight * (q_halt_loss + q_continue_loss)
+         if aux_loss is not None:
+             total_loss = total_loss + aux_loss
+ 
+diff --git a/models/urm/urm.py b/models/urm/urm.py
+index 4791a3d..a845fe9 100644
+--- a/models/urm/urm.py
++++ b/models/urm/urm.py
+@@ -36,6 +36,7 @@ class URMConfig(BaseModel):
+     loops: int
+     L_cycles: int
+     H_cycles: int
++    act: bool = True   # [절제] False 면 학습 중 조기 halt(ACT) 제거 — 결정론적 loops 소진
+     forward_dtype: str = "bfloat16"
+ 
+ 
+@@ -217,7 +218,7 @@ class URM(nn.Module):
+             new_steps = new_steps + 1
+             halted = (new_steps >= self.config.loops)
+ 
+-            if self.training and (self.config.loops > 1):
++            if self.training and self.config.act and (self.config.loops > 1):
+                 halted = halted | (q_halt_logits > 0)
+ 
+                 # Exploration
 diff --git a/pretrain.py b/pretrain.py
 index b523632..1ba6a1f 100644
 --- a/pretrain.py

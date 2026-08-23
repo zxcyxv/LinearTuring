@@ -1,0 +1,8 @@
+[EVAL] step 1953  set all  acc 0.1916  exact 0/2048
+[EVAL] step 3906  set all  acc 0.2570  exact 0/2048
+[EVAL] step 5859  set all  acc 0.3751  exact 0/2048
+[EVAL] step 7812  set all  acc 0.4700  exact 0/2048
+[EVAL] step 9765  set all  acc 0.5031  exact 0/2048
+[EVAL] step 11718  set all  acc 0.5579  exact 0/2048
+[EVAL] step 13671  set all  acc 0.6243  exact 2/2048
+[EVAL] step 15624  set all  acc 0.6397  exact 27/2048

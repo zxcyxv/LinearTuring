@@ -7,3 +7,4 @@ runs/tchunk_*
 runs/CAP_DONE
 
 refs/
+/train.csv

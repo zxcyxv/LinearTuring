@@ -1,0 +1,101 @@
+{
+ "L0_b0": {
+  "ent_pre": 0.8,
+  "ent_postSwiGLU": 0.102,
+  "ent_postInj": 0.365,
+  "ent_postAttn": 1.718,
+  "acc_pre": 0.113,
+  "acc_postSwiGLU": 0.112,
+  "acc_postAttn": 0.119,
+  "flip_SwiGLU": 1.0,
+  "flip_Attn": 0.986
+ },
+ "L0_b3": {
+  "ent_pre": 0.897,
+  "ent_postSwiGLU": 0.929,
+  "ent_postInj": 0.881,
+  "ent_postAttn": 0.55,
+  "acc_pre": 0.422,
+  "acc_postSwiGLU": 0.394,
+  "acc_postAttn": 0.466,
+  "flip_SwiGLU": 0.268,
+  "flip_Attn": 0.44
+ },
+ "L0_b7": {
+  "ent_pre": 0.329,
+  "ent_postSwiGLU": 0.256,
+  "ent_postInj": 0.262,
+  "ent_postAttn": 0.319,
+  "acc_pre": 0.519,
+  "acc_postSwiGLU": 0.514,
+  "acc_postAttn": 0.529,
+  "flip_SwiGLU": 0.088,
+  "flip_Attn": 0.157
+ },
+ "L1_b0": {
+  "ent_pre": 0.319,
+  "ent_postSwiGLU": 0.245,
+  "ent_postInj": 0.251,
+  "ent_postAttn": 0.306,
+  "acc_pre": 0.529,
+  "acc_postSwiGLU": 0.524,
+  "acc_postAttn": 0.535,
+  "flip_SwiGLU": 0.084,
+  "flip_Attn": 0.15
+ },
+ "L1_b3": {
+  "ent_pre": 0.297,
+  "ent_postSwiGLU": 0.234,
+  "ent_postInj": 0.242,
+  "ent_postAttn": 0.298,
+  "acc_pre": 0.549,
+  "acc_postSwiGLU": 0.546,
+  "acc_postAttn": 0.552,
+  "flip_SwiGLU": 0.081,
+  "flip_Attn": 0.133
+ },
+ "L1_b7": {
+  "ent_pre": 0.289,
+  "ent_postSwiGLU": 0.226,
+  "ent_postInj": 0.233,
+  "ent_postAttn": 0.284,
+  "acc_pre": 0.56,
+  "acc_postSwiGLU": 0.558,
+  "acc_postAttn": 0.564,
+  "flip_SwiGLU": 0.079,
+  "flip_Attn": 0.124
+ },
+ "L15_b0": {
+  "ent_pre": 0.262,
+  "ent_postSwiGLU": 0.203,
+  "ent_postInj": 0.211,
+  "ent_postAttn": 0.261,
+  "acc_pre": 0.58,
+  "acc_postSwiGLU": 0.581,
+  "acc_postAttn": 0.58,
+  "flip_SwiGLU": 0.071,
+  "flip_Attn": 0.1
+ },
+ "L15_b3": {
+  "ent_pre": 0.261,
+  "ent_postSwiGLU": 0.202,
+  "ent_postInj": 0.21,
+  "ent_postAttn": 0.262,
+  "acc_pre": 0.58,
+  "acc_postSwiGLU": 0.58,
+  "acc_postAttn": 0.579,
+  "flip_SwiGLU": 0.071,
+  "flip_Attn": 0.101
+ },
+ "L15_b7": {
+  "ent_pre": 0.261,
+  "ent_postSwiGLU": 0.203,
+  "ent_postInj": 0.211,
+  "ent_postAttn": 0.261,
+  "acc_pre": 0.581,
+  "acc_postSwiGLU": 0.579,
+  "acc_postAttn": 0.579,
+  "flip_SwiGLU": 0.071,
+  "flip_Attn": 0.102
+ }
+}

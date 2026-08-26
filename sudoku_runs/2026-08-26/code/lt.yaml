@@ -1,0 +1,18 @@
+name: lt.lt@LT
+loss:
+  name: losses@ACTLossHead
+  loss_type: stablemax_cross_entropy
+
+loops: 16
+R: 8
+seg_steps: 0
+hidden_size: 256
+num_heads: 4
+grid: 9
+
+puzzle_emb_ndim: ${.hidden_size}
+forward_dtype: float32
+
+ckpt: False
+boundary_mlp: True   # [2026-08-26] 기본값 True 로 변경 — False 기본이 5일차 오전 6개 런을 무효로 만들었다 (경계=w_bo contract 로 폴백). 선형 경계 절제(lin_boundaries) 시 명시적으로 False 필요
+mlp_expansion: 4.0

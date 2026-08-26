@@ -1,5 +1,5 @@
 diff --git a/data/build_sudoku_dataset.py b/data/build_sudoku_dataset.py
-index 9fa8476..043b95a 100644
+index 9fa8476..1d2f7e6 100644
 --- a/data/build_sudoku_dataset.py
 +++ b/data/build_sudoku_dataset.py
 @@ -62,7 +62,11 @@ def convert_subset(set_name: str, config: DataProcessConfig):
@@ -15,6 +15,14 @@ index 9fa8476..043b95a 100644
          reader = csv.reader(csvfile)
          next(reader)  # Skip header
          for source, q, a, rating in reader:
+@@ -159,6 +163,7 @@ def convert_subset(set_name: str, config: DataProcessConfig):
+ 
+ @cli.command(singleton=True)
+ def preprocess_data(config: DataProcessConfig):
++    np.random.seed(int(os.environ.get("LT_SEED", "0")))   # [LT 2026-08-24; 08-26 env LT_SEED] 서브샘플·증강 재현성 고정 (어제 '시드 없이 리샘플' 문제 제거)
+     convert_subset("train", config)
+     convert_subset("test", config)
+ 
 diff --git a/models/layers.py b/models/layers.py
 index 5c2b648..8465636 100644
 --- a/models/layers.py
@@ -103,7 +111,7 @@ index 4791a3d..a845fe9 100644
  
                  # Exploration
 diff --git a/pretrain.py b/pretrain.py
-index b523632..1ba6a1f 100644
+index b523632..5495666 100644
 --- a/pretrain.py
 +++ b/pretrain.py
 @@ -229,7 +229,16 @@ def create_model(config: PretrainConfig, train_metadata: PuzzleDatasetMetadata,
@@ -124,7 +132,39 @@ index b523632..1ba6a1f 100644
                  lr=0,  # Needs to be set by scheduler
                  weight_decay=config.weight_decay,
                  betas=(config.beta1, config.beta2),
-@@ -702,6 +711,14 @@ def evaluate(
+@@ -289,7 +298,7 @@ def init_train_state(
+     return train_state
+ 
+ 
+-def save_train_state(config: PretrainConfig, train_state: TrainState):
++def save_train_state(config: PretrainConfig, train_state: TrainState, extra: Optional[dict] = None):
+     if config.checkpoint_path is None:
+         return
+ 
+@@ -300,6 +309,8 @@ def save_train_state(config: PretrainConfig, train_state: TrainState):
+         "optimizer_states": [optim.state_dict() for optim in train_state.optimizers],
+     }
+ 
++    if extra:
++        state.update(extra)
+     state["rng_state"] = torch.random.get_rng_state()
+     if torch.cuda.is_available():
+         try:
+@@ -466,6 +477,13 @@ def load_checkpoint(train_state: TrainState, config: PretrainConfig, rank: int):
+     if step is not None:
+         train_state.step = int(step)
+ 
++    # [LT 2026-08-26] 재개: raw 가중치가 있으면 그것으로 덮어쓰고, EMA shadow 는 train_state 에 보관해 launch 에서 복원
++    if isinstance(checkpoint, dict) and checkpoint.get("raw_model_state_dict") is not None:
++        train_state.model.load_state_dict(checkpoint["raw_model_state_dict"], strict=config.load_strict)
++        if rank == 0:
++            print("Resumed from raw (non-EMA) weights")
++    train_state.ema_shadow_to_restore = checkpoint.get("ema_shadow") if isinstance(checkpoint, dict) else None
++
+     # Reset carry since we do not serialize it
+     train_state.carry = None
+ 
+@@ -702,6 +720,14 @@ def evaluate(
  
          # Reduce to rank 0
          if metric_values is not None:
@@ -139,7 +179,19 @@ index b523632..1ba6a1f 100644
              if world_size > 1:
                  dist.reduce(metric_values, dst=0)
  
-@@ -900,7 +917,13 @@ def launch(hydra_config: DictConfig):
+@@ -885,6 +911,11 @@ def launch(hydra_config: DictConfig):
+             print("Setup EMA")
+         ema_helper = EMAHelper(mu=config.ema_rate)
+         ema_helper.register(train_state.model)
++        _sh = getattr(train_state, "ema_shadow_to_restore", None)   # [LT 2026-08-26]
++        if _sh:
++            ema_helper.load_state_dict({k: v.to(next(train_state.model.parameters()).device) for k, v in _sh.items()})
++            if RANK == 0:
++                print("Restored EMA shadow from checkpoint")
+ 
+     # Progress bar and logger
+     progress_bar = None
+@@ -900,7 +931,13 @@ def launch(hydra_config: DictConfig):
              settings=wandb.Settings(_disable_stats=True),
          )
          wandb.log({"num_params": sum(x.numel() for x in train_state.model.parameters())}, step=0)
@@ -154,7 +206,7 @@ index b523632..1ba6a1f 100644
  
      # Training Loop
      for _iter_id in range(total_iters):
-@@ -929,6 +952,13 @@ def launch(hydra_config: DictConfig):
+@@ -929,6 +966,13 @@ def launch(hydra_config: DictConfig):
              if RANK == 0 and metrics is not None:
                  wandb.log(metrics, step=train_state.step)
                  progress_bar.update(train_state.step - progress_bar.n)
@@ -168,3 +220,16 @@ index b523632..1ba6a1f 100644
  
          ############ Evaluation
          if eval_loader is not None and eval_metadata is not None:
+@@ -976,7 +1020,11 @@ def launch(hydra_config: DictConfig):
+                 # 临时拷贝一个带 EMA 权重的 state 来保存
+                 ts_to_save = copy.deepcopy(train_state)
+                 ts_to_save.model = ema_helper.ema_copy(ts_to_save.model)
+-                save_train_state(config, ts_to_save)
++                # [LT 2026-08-26] 재개용 원시(raw) 가중치 + EMA shadow 를 함께 저장 — model_state_dict 는 EMA 그대로(평가·호환)
++                save_train_state(config, ts_to_save, extra={
++                    "raw_model_state_dict": {k: v.detach().cpu() for k, v in train_state.model.state_dict().items()},
++                    "ema_shadow": {k: v.detach().cpu() for k, v in ema_helper.state_dict().items()},
++                })
+                 del ts_to_save
+             else:
+                 save_train_state(config, train_state)

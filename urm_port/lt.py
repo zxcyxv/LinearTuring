@@ -71,6 +71,10 @@ class LTConfig(pydantic.BaseModel):
                                # 상태 연속·순수 흐름 보존·접기 무추가. 전 장 동일 init → init 에서 K=1 과 동치.
     mlp_expansion: float = 4.0
     forward_dtype: str = "float32"
+    bilinear: bool = False     # [2026-08-26] 경계 게이트 silu 제거: h + W_d[(W_g h)⊙(W_u h)]·½ — 활성화 0개, 채널곱 유지.
+                               # 근거: R1B8 추론에서 silu→x/2 치환 0.673/0.6995 (gate_swap.py). ½ 은 silu'(0) 정합(하이퍼 이월용)
+    gate_quad: bool = False   # [2026-08-26] 게이트 = g/2 + g²/4 (silu 테일러 2차, 활성화 0개, 홀수 3차항 포함). 쌍선형(1차)은 벽(0.628@7812) — 우함수뿐
+    amp: bool = False          # [2026-08-26] 세그먼트 forward 를 bf16 autocast (추론 정합 검증: 0.6996 vs 0.6995). 로짓은 fp32 로 반환
 
 
 class LT_Inner(nn.Module):
@@ -165,13 +169,17 @@ class LT_Inner(nn.Module):
         return replace(carry, current_hidden=torch.where(
             reset_flag.view(-1, 1, 1), self.init_hidden, carry.current_hidden))
 
+    def _act(self, g):
+        if self.config.gate_quad: return 0.5 * g + 0.25 * g * g
+        return 0.5 * g if self.config.bilinear else F.silu(g)
+
     def _boundary(self, h):
         gate, up = self.b_gate_up(h).chunk(2, dim=-1)
-        h = self.b_carry * h + self.b_down(F.silu(gate) * up)
+        h = self.b_carry * h + self.b_down(self._act(gate) * up)
         if self.config.boundary_layers > 1:
             for gu, dn in zip(self.b_gu2, self.b_dn2):      # 층 2..N: h + SwiGLU_i(h)
                 g2, u2 = gu(h).chunk(2, dim=-1)
-                h = h + dn(F.silu(g2) * u2)
+                h = h + dn(self._act(g2) * u2)
         return h
 
     def _injection(self, batch: Dict[str, torch.Tensor]) -> torch.Tensor:
@@ -185,6 +193,13 @@ class LT_Inner(nn.Module):
         return inj
 
     def forward(self, carry: LTCarry, batch: Dict[str, torch.Tensor]):
+        if self.config.amp:
+            with torch.autocast("cuda", dtype=torch.bfloat16):
+                new_carry, logits, q = self._forward(carry, batch)
+            return replace(new_carry, current_hidden=new_carry.current_hidden.float()), logits.float(), (q[0].float(), q[1].float())
+        return self._forward(carry, batch)
+
+    def _forward(self, carry: LTCarry, batch: Dict[str, torch.Tensor]):
         m = self.core
         h = carry.current_hidden
         # ── 경계: 재부호화 + 입력 주입 ─────────────────────────────

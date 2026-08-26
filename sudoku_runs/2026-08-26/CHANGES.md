@@ -29,3 +29,11 @@
 ## 저녁 — 완주 런 중단·체크포인트
 - `R1B8_bilin_ok` 76,167 step 에서 중단 (eval 0.800·835/2048). `checkpoints/R1B8_bilin_ok_step76167.pt` = model_state_dict(EMA)+step 만 (GitHub 100MB 한도). 옵티마이저 상태 포함 151MB 전체본은 `refs/URM/checkpoints/R1B8_bilin_ok/`(gitignore). `checkpoints/R1B8_bilin_ok_config.yaml` = 하네스 저장 설정.
 - 무효 런 체크포인트 전부 삭제, 현재 런은 최신 2개만 보존.
+
+## 밤 — CA 다중 규칙 · 2D CA(ARC 형식) 파이프라인
+- `ca_multi.py` (루트): 1D 기본 CA + 규칙 id 임베딩(전 칸 가산 = 스도쿠 puzzle_emb 방식). Wolfram 클래스별 학습 가능성 표 + 다중 규칙 동시 학습. 코어(`model1.py`) 직접 호출 — **빠른 선별용, ARC 이식용 아님**.
+  큐 `code/queue_camulti.sh` (k=4: 규칙 4·184·232·30·45·90·54·110 단독 → 8규칙 동시), 로그 `ca_multi_k4.log`, 결과 `runs/cam_*`.
+- `code/build_ca2d_dataset.py`: 2D Life-like CA 를 **URM/ARC 데이터 형식 그대로**(30×30 캔버스, PAD 0·EOS 1·색 2.., 가변 격자, 평행이동 증강, `puzzle_identifiers`=규칙) 생성.
+  규칙 vote·flakes(클래스 2)·life·daynight(4)·seeds·replicator(3), `--fixpoint` 옵션. ARC 전환 = `data_path` 교체.
+  주의: vote 는 밀도 0.35 시작 시 4스텝 후 생존 2.4% (사실상 전멸) — 밀도 0.5 로 재생성 필요.
+- `code/launch_ca2d.sh`: 스도쿠와 동일한 LT 하네스·R1B8 쌍선형 구성으로 2D CA 학습 (`arch.grid=30`, d 인자). 파일럿 `ca2d_k4_pilot`(d256, 배치 64, 40 에폭=7.5k step, ~20GB) 진행 중.

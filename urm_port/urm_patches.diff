@@ -111,7 +111,7 @@ index 4791a3d..a845fe9 100644
  
                  # Exploration
 diff --git a/pretrain.py b/pretrain.py
-index b523632..5495666 100644
+index b523632..ff98456 100644
 --- a/pretrain.py
 +++ b/pretrain.py
 @@ -229,7 +229,16 @@ def create_model(config: PretrainConfig, train_metadata: PuzzleDatasetMetadata,
@@ -150,6 +150,15 @@ index b523632..5495666 100644
      state["rng_state"] = torch.random.get_rng_state()
      if torch.cuda.is_available():
          try:
+@@ -437,7 +448,7 @@ def load_checkpoint(train_state: TrainState, config: PretrainConfig, rank: int):
+     _resize_puzzle_embedding_if_needed(train_state.model, state_dict)
+     try:
+         load_result = train_state.model.load_state_dict(
+-            state_dict, strict=config.load_strict, assign=True
++            state_dict, strict=config.load_strict, assign=False   # [LT 2026-08-27] assign=True 는 Parameter 객체를 교체해 이미 생성된 옵티마이저가 옛 객체를 참조 → grad None → 전 파라미터 스킵 (재개 무학습 버그, 업스트림)
+         )
+     except RuntimeError:
+         # Re-raise with clearer guidance if strict loading was requested.
 @@ -466,6 +477,13 @@ def load_checkpoint(train_state: TrainState, config: PretrainConfig, rank: int):
      if step is not None:
          train_state.step = int(step)

@@ -1,0 +1,20 @@
+{
+ "depth": 1,
+ "topk": 2,
+ "W": 64,
+ "baseline": {
+  "exact": 947,
+  "frozen": 826,
+  "exact_given_frozen": 1.0
+ },
+ "branch": {
+  "exact": 1126,
+  "cell_blank": 0.7674133277246118,
+  "accepted": 1163,
+  "exact_given_accepted": 0.9518486672398968,
+  "exact_given_rejected": 0.021468926553672316,
+  "unfrozen_base_to_exact": 300,
+  "lost_from_base": 2,
+  "mean_rollouts_per_puzzle": 2.193359375
+ }
+}

@@ -5,3 +5,4 @@ nohup.out
 refs/
 /train.csv
 results/logs/*.log.tmp
+results/json/*.npz

@@ -1,0 +1,60 @@
+{
+ "16": {
+  "exact": 947,
+  "cell": 0.7350930697234199,
+  "frozen": 870,
+  "exact_given_frozen": 0.9494252873563218,
+  "exact_given_unfrozen": 0.10271646859083192
+ },
+ "32": {
+  "exact": 992,
+  "cell": 0.7414204087355838,
+  "frozen": 1148,
+  "exact_given_frozen": 0.8545296167247387,
+  "exact_given_unfrozen": 0.012222222222222223
+ },
+ "64": {
+  "exact": 1031,
+  "cell": 0.7479054930416799,
+  "frozen": 1207,
+  "exact_given_frozen": 0.8467274233637117,
+  "exact_given_unfrozen": 0.01070154577883472
+ },
+ "128": {
+  "exact": 1049,
+  "cell": 0.7511392715672871,
+  "frozen": 1235,
+  "exact_given_frozen": 0.8469635627530364,
+  "exact_given_unfrozen": 0.0036900369003690036
+ },
+ "track_unfrozen_at_16": {
+  "n_unfrozen@16": 1178,
+  "n_frozen@16": 870,
+  "per_loops": {
+   "16": {
+    "unfrozen@16 \u2192 exact": 121,
+    "unfrozen@16 \u2192 frozen": 0,
+    "frozen@16 \u2192 still exact": 826,
+    "exact@16 \u2192 lost": 0
+   },
+   "32": {
+    "unfrozen@16 \u2192 exact": 166,
+    "unfrozen@16 \u2192 frozen": 294,
+    "frozen@16 \u2192 still exact": 826,
+    "exact@16 \u2192 lost": 0
+   },
+   "64": {
+    "unfrozen@16 \u2192 exact": 205,
+    "unfrozen@16 \u2192 frozen": 351,
+    "frozen@16 \u2192 still exact": 826,
+    "exact@16 \u2192 lost": 0
+   },
+   "128": {
+    "unfrozen@16 \u2192 exact": 223,
+    "unfrozen@16 \u2192 frozen": 380,
+    "frozen@16 \u2192 still exact": 826,
+    "exact@16 \u2192 lost": 0
+   }
+  }
+ }
+}

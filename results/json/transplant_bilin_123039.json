@@ -1,0 +1,33 @@
+{
+ "n_puzzles": 296,
+ "extra_loops": 8,
+ "base_cells_ok_mean": 0.49735735735735737,
+ "base_exact": 0,
+ "none(연장만)": {
+  "t_correct_frac": 0.0945945945945946,
+  "cells_ok_mean": 0.5041441441441441,
+  "exact": 6,
+  "cells_gained_mean": 0.38175675675675674
+ },
+ "h*_own": {
+  "t_correct_frac": 0.16554054054054054,
+  "cells_ok_mean": 0.5294294294294294,
+  "exact": 22,
+  "cells_gained_mean": 1.804054054054054,
+  "t_correct_at_insert": 1.0
+ },
+ "h*_other_puzzle": {
+  "t_correct_frac": 0.11486486486486487,
+  "cells_ok_mean": 0.5064264264264264,
+  "exact": 9,
+  "cells_gained_mean": 0.5101351351351351,
+  "t_correct_at_insert": 0.10472972972972973
+ },
+ "init_hidden": {
+  "t_correct_frac": 0.09797297297297297,
+  "cells_ok_mean": 0.5064864864864865,
+  "exact": 6,
+  "cells_gained_mean": 0.5135135135135135,
+  "t_correct_at_insert": 0.06418918918918919
+ }
+}

@@ -43,6 +43,7 @@ def peer_mask():
 def rollout(m, batch, act=None, hook=None):
     """LT_Inner 를 블록 단위로 수동 전개. act: 게이트 함수 치환 (None = 모델 설정).
     hook(loop, blk, stage, h, a) 는 stage ∈ {'pre','post_bnd','post_inj','post_step'} 마다 호출.
+    act=lambda g: 0*g 이면 경계가 항등 (쌍선형 끔).
     반환: 최종 h."""
     inner = m.inner; core = inner.core; cfg = m.config
     fc = core.kernel_fast(); AB = core.W_C(); dt = 1.0 / core.R
@@ -63,6 +64,7 @@ def rollout(m, batch, act=None, hook=None):
             for _ in range(core.R):
                 hh = core.phi(h, dt / 2)
                 f, a, *_ = core.field(hh, None, None, None, AB, fast_ctx=fc)
+                if getattr(cfg, "conn_sheaf", False): f = inner._conn_field(hh, AB, fc)
                 h = core.phi(hh + dt * f, dt / 2)
             if hook: hook(loop, blk, "post_step", h, a)
     return h

@@ -8,7 +8,7 @@
 #   - 옵티마이저 없는 EMA-only 체크포인트면 LOAD_OPT=False.
 #   - 재개 후 첫 체크포인트의 raw_model_state_dict 가 로드값과 달라야 정상 (같으면 무학습 — assign 패치 확인).
 set -e
-ROOT=${LT_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}
+ROOT=${LT_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}; export LT_ROOT=$ROOT
 RN=${1:?런 이름}; shift
 OUT=$ROOT/results/logs/${RN}.log
 cd "$ROOT/refs/URM"

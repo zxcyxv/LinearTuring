@@ -15,6 +15,7 @@ import sys
 from typing import Dict, Optional
 from dataclasses import dataclass, replace
 
+import math
 import torch
 import torch.nn.functional as F
 from torch import nn
@@ -56,6 +57,11 @@ class LTConfig(pydantic.BaseModel):
     ckpt: bool = False          # 스텝 단위 gradient checkpointing
     amp: bool = True            # 세그먼트 forward bf16 autocast, 로짓·carry 는 fp32
     forward_dtype: str = "float32"
+    lam_mode: str = "full"      # 코어 Λ: full / diag / none
+    # [2026-08-28] 연결 sheaf 수송: 값 경로 W_vᵀ W_v h_n → W_vᵀ R_tn W_v h_n.  R_tn = 채널별 회전 e^{i(ψ_j + θ_j·Δ_tn)}
+    #   (어텐션과 같은 ψ·θ). 제한 사상 F_n = R_n W_v 가 노드마다 다르고 되돌림은 수신자 사상의 전치 → δᵀδ.
+    #   어텐션 a_tn 은 그대로 간선. 회전을 항등으로 두면 원판과 동치. 파라미터 동일 (w_sh 가 W_v).
+    conn_sheaf: bool = False
 
 
 class LT_Inner(nn.Module):
@@ -68,7 +74,7 @@ class LT_Inner(nn.Module):
         pos = torch.stack([torch.arange(T).float() // g, torch.arange(T).float() % g], 1)
         self.core = Model1(d=d, H=config.num_heads, R=config.R, n_classes=config.vocab_size,
                            positions=pos, vocab=config.vocab_size, pool=False,
-                           sheaf=True, lam_mode="full", alpha_per_head=True,
+                           sheaf=True, lam_mode=config.lam_mode, alpha_per_head=True,
                            boundary_wo=True, wo_mode="contract")   # w_bo: 체크포인트 호환용 유령
         self.puzzle_emb_ndim = config.puzzle_emb_ndim
         if config.puzzle_emb_ndim > 0:
@@ -101,6 +107,29 @@ class LT_Inner(nn.Module):
     def _act(self, g):
         return 0.5 * g if self.config.bilinear else F.silu(g)
 
+    def _conn_field(self, hh, AB, fc):
+        """연결 sheaf 값 경로. 코어 field() 와 동일하되 v_n 을 회전해 수송한다.
+        v_n = W_v h_n 을 복소 채널 (v_x, v_y) 로 보고, 수신 t 에서 R_tn v_n 의 합을 RoPE 식으로 계산:
+          R_tn = e^{i(ψ + θ·(pos_t − pos_n))} = e^{i(ψ/2 + θ·pos_t)} · e^{i(ψ/2 − θ·pos_n)}
+          → 송신측 회전 B_n' = (ψ/2 − θ·pos_n) 을 v_n 에, 수신측 회전 A_t = (ψ/2 + θ·pos_t) 을 합에 적용."""
+        m = self.core; decay_h, cosA, sinA, cosB, sinB = fc
+        a, *_ = m.attn_fast(hh, decay_h, cosA, sinA, cosB, sinB, AB=AB)              # [B,H,T,T] 간선 (원판 그대로)
+        B_, T_, _ = hh.shape; p = m.p
+        v = torch.einsum('btd,hcd->bthc', hh, m.w_sh).view(B_, T_, m.H, 2, p)            # [B,T,H,2,p] (실, 허)
+        vx, vy = v[..., 0, :], v[..., 1, :]
+        # 송신측: e^{i(ψ/2 − θ·pos_n)} = conj( e^{i(−ψ/2 + θ·pos_n)} ) = (cosB, −sinB)
+        sx = vx * cosB + vy * sinB; sy = vy * cosB - vx * sinB
+        ox = torch.einsum('bhtn,bnhj->bthj', a, sx); oy = torch.einsum('bhtn,bnhj->bthj', a, sy)
+        # 수신측: e^{iA_t}
+        rx = ox * cosA - oy * sinA; ry = ox * sinA + oy * cosA
+        o = torch.stack([rx, ry], -2).reshape(B_, T_, m.H, 2 * p)
+        f = torch.einsum('bthc,hcd->btd', o, m.w_sh)                                       # W_vᵀ
+        dt_ = a.sum(-1)
+        if m.b is not None: f = f + dt_.sum(1).unsqueeze(-1) * m.b
+        if m.lam_mode == "full": f = f + hh @ m.lam.t()
+        elif m.lam_mode == "diag": f = f + hh * m.lam
+        return f
+
     def _boundary(self, h):
         gate, up = self.b_gate_up(h).chunk(2, dim=-1)
         return self.b_carry * h + self.b_down(self._act(gate) * up)
@@ -131,7 +160,7 @@ class LT_Inner(nn.Module):
 
         def micro(hh):
             hh = m.phi(hh, dt / 2)
-            f, *_ = m.field(hh, None, None, None, AB, fast_ctx=fc)
+            f = self._conn_field(hh, AB, fc) if self.config.conn_sheaf else m.field(hh, None, None, None, AB, fast_ctx=fc)[0]
             return m.phi(hh + dt * f, dt / 2)
 
         use_ckpt = self.config.ckpt and self.training and torch.is_grad_enabled()
@@ -196,6 +225,16 @@ def load_lt(ckpt_path: str, device: str = "cuda", **overrides) -> LT:
     cfg = dict(batch_size=128, seq_len=81, vocab_size=11, num_puzzle_identifiers=1, puzzle_emb_ndim=832,
                hidden_size=832, num_heads=8, R=1, loops=16, blocks_per_seg=8, block_inj=True,
                bilinear=True, amp=False, ckpt=False, causal=False)
+    # 체크포인트 폴더의 config.yaml (하네스 저장) 이 있으면 arch 플래그를 그대로 가져온다
+    cfg_yaml = os.path.join(os.path.dirname(os.path.abspath(ckpt_path)), "config.yaml")
+    if os.path.exists(cfg_yaml):
+        try:
+            import yaml
+            arch = yaml.safe_load(open(cfg_yaml)).get("arch", {})
+            cfg.update({k: v for k, v in arch.items() if k in LTConfig.model_fields and k not in ("batch_size",)})
+            cfg["amp"] = False
+        except Exception as e:                                    # noqa: BLE001
+            print("config.yaml 읽기 실패, 기본값 사용:", e)
     cfg.update(overrides)
     with torch.device(device):
         m = LT(cfg)

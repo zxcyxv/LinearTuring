@@ -6,7 +6,7 @@
 # 1 iter = 250 에폭 = 1,953 step. eval 은 held-out 2048 (truncate_test.py), loops 16.
 # 발사 직후 확인: checkpoints/<RUN>/config.yaml 의 arch 플래그, 첫 체크포인트 파라미터 키.
 set -e
-ROOT=${LT_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}
+ROOT=${LT_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}; export LT_ROOT=$ROOT
 RN=${1:?런 이름}; shift
 mkdir -p "$ROOT/results/logs"; OUT=$ROOT/results/logs/${RN}.log
 cd "$ROOT/refs/URM"

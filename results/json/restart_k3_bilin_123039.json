@@ -1,0 +1,21 @@
+{
+ "k": 3,
+ "rounds": 1,
+ "sigma": 1.0,
+ "base": {
+  "exact": 947,
+  "valid": 947
+ },
+ "rounds_log": [
+  {
+   "round": 0,
+   "todo": 1101,
+   "unresolved_cells_mean": 37.67938237965486,
+   "gained_valid": 108,
+   "exact": 1055,
+   "accepted": 1055,
+   "exact_given_accepted": 1.0,
+   "mean_rollouts": 2.61279296875
+  }
+ ]
+}

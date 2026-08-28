@@ -1,5 +1,0 @@
-[cap90k7_d128_full] rule=90 k=7 T=32 freeze_A=False FINAL 셀 0.6655 전체일치 0.0000 (659s)
-[cap90k7_d192_full] rule=90 k=7 T=32 freeze_A=False FINAL 셀 0.7152 전체일치 0.0000 (593s)
-[cap90k7_d256_full] rule=90 k=7 T=32 freeze_A=False FINAL 셀 1.0000 전체일치 1.0000 (649s)
-[cap110k8_d192_full] rule=110 k=8 T=32 tau=1 freeze_A=False FINAL 셀 0.9980 전체일치 0.9403 (589s)
-=== CAP DONE ===

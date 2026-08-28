@@ -1,8 +1,0 @@
-[hop64_n1_full_long] T=20 V=64 N=8 Q=4 n=1 tau=1 freeze_A=False noov=False d=64 params=33154 우연=0.1250
-  [hop64_n1_full_long] step   250 loss 4.1608 질의 0.0271 전체일치 0.0000
-  [hop64_n1_full_long] step   500 loss 3.4268 질의 0.1110 전체일치 0.0010
-  [hop64_n1_full_long] step   750 loss 2.9641 질의 0.1326 전체일치 0.0015
-  [hop64_n1_full_long] step  1000 loss 2.7624 질의 0.1477 전체일치 0.0010
-  [hop64_n1_full_long] step  1250 loss 2.7271 질의 0.1470 전체일치 0.0024
-  [hop64_n1_full_long] step  1500 loss 2.6332 질의 0.1411 전체일치 0.0005
-  [hop64_n1_full_long] step  1750 loss 2.5914 질의 0.1388 전체일치 0.0000

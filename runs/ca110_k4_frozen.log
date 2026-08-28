@@ -1,5 +1,0 @@
-  [ca110_k4_frozen] step   500 loss 0.3967 셀 0.8096 전체일치 0.0010
-  [ca110_k4_frozen] step  1000 loss 0.2627 셀 0.8847 전체일치 0.0166
-  [ca110_k4_frozen] step  1500 loss 0.1988 셀 0.9202 전체일치 0.0601
-  [ca110_k4_frozen] step  2000 loss 0.1876 셀 0.9254 전체일치 0.0825
-[ca110_k4_frozen] rule=110 k=4 T=32 freeze_A=True FINAL 셀 0.9262 전체일치 0.0829 (303s)

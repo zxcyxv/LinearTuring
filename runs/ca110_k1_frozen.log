@@ -1,5 +1,0 @@
-  [ca110_k1_frozen] step   500 loss 0.0002 셀 1.0000 전체일치 1.0000
-  [ca110_k1_frozen] step  1000 loss 0.0001 셀 1.0000 전체일치 1.0000
-  [ca110_k1_frozen] step  1500 loss 0.0000 셀 1.0000 전체일치 1.0000
-  [ca110_k1_frozen] step  2000 loss 0.0000 셀 1.0000 전체일치 1.0000
-[ca110_k1_frozen] rule=110 k=1 T=32 freeze_A=True FINAL 셀 1.0000 전체일치 1.0000 (255s)

@@ -1,4 +1,0 @@
-cap90k7_d128_full 90 7 0 128
-cap90k7_d192_full 90 7 0 192
-cap90k7_d256_full 90 7 0 256
-cap110k8_d192_full 110 8 0 192

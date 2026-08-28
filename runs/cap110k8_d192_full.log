@@ -1,5 +1,0 @@
-  [cap110k8_d192_full] step   500 loss 0.3079 셀 0.8454 전체일치 0.0054
-  [cap110k8_d192_full] step  1000 loss 0.0900 셀 0.9671 전체일치 0.3604
-  [cap110k8_d192_full] step  1500 loss 0.0172 셀 0.9935 전체일치 0.8179
-  [cap110k8_d192_full] step  2000 loss 0.0074 셀 0.9979 전체일치 0.9341
-[cap110k8_d192_full] rule=110 k=8 T=32 tau=1 freeze_A=False FINAL 셀 0.9980 전체일치 0.9403 (589s)

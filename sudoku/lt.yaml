@@ -1,0 +1,20 @@
+name: lt.lt@LT
+loss:
+  name: losses@ACTLossHead
+  loss_type: stablemax_cross_entropy
+
+loops: 16
+R: 1
+hidden_size: 832
+num_heads: 8
+grid: 9
+blocks_per_seg: 8
+block_inj: true
+bilinear: true        # 경계 게이트 g/2 (활성화 0개). false = silu (SwiGLU 판)
+mlp_expansion: 4.0
+inj_gate_init: 0.25
+
+puzzle_emb_ndim: ${.hidden_size}
+forward_dtype: float32
+ckpt: false
+amp: true

@@ -1,0 +1,101 @@
+{
+ "L0_b0": {
+  "ent_pre": 0.001,
+  "ent_postBnd": 1.11,
+  "ent_postInj": 1.117,
+  "ent_postAttn": 1.695,
+  "acc_pre": 0.11,
+  "acc_postBnd": 0.111,
+  "acc_postAttn": 0.073,
+  "flip_Bnd": 1.0,
+  "flip_Attn": 0.712
+ },
+ "L0_b3": {
+  "ent_pre": 0.619,
+  "ent_postBnd": 1.469,
+  "ent_postInj": 1.471,
+  "ent_postAttn": 0.426,
+  "acc_pre": 0.446,
+  "acc_postBnd": 0.433,
+  "acc_postAttn": 0.48,
+  "flip_Bnd": 0.119,
+  "flip_Attn": 0.225
+ },
+ "L0_b7": {
+  "ent_pre": 0.27,
+  "ent_postBnd": 0.63,
+  "ent_postInj": 0.63,
+  "ent_postAttn": 0.251,
+  "acc_pre": 0.531,
+  "acc_postBnd": 0.532,
+  "acc_postAttn": 0.542,
+  "flip_Bnd": 0.046,
+  "flip_Attn": 0.097
+ },
+ "L1_b0": {
+  "ent_pre": 0.251,
+  "ent_postBnd": 0.642,
+  "ent_postInj": 0.643,
+  "ent_postAttn": 0.241,
+  "acc_pre": 0.542,
+  "acc_postBnd": 0.536,
+  "acc_postAttn": 0.56,
+  "flip_Bnd": 0.065,
+  "flip_Attn": 0.11
+ },
+ "L1_b3": {
+  "ent_pre": 0.272,
+  "ent_postBnd": 0.882,
+  "ent_postInj": 0.883,
+  "ent_postAttn": 0.266,
+  "acc_pre": 0.591,
+  "acc_postBnd": 0.586,
+  "acc_postAttn": 0.607,
+  "flip_Bnd": 0.059,
+  "flip_Attn": 0.1
+ },
+ "L1_b7": {
+  "ent_pre": 0.197,
+  "ent_postBnd": 0.491,
+  "ent_postInj": 0.491,
+  "ent_postAttn": 0.176,
+  "acc_pre": 0.628,
+  "acc_postBnd": 0.627,
+  "acc_postAttn": 0.636,
+  "flip_Bnd": 0.034,
+  "flip_Attn": 0.06
+ },
+ "L15_b0": {
+  "ent_pre": 0.076,
+  "ent_postBnd": 0.251,
+  "ent_postInj": 0.251,
+  "ent_postAttn": 0.076,
+  "acc_pre": 0.755,
+  "acc_postBnd": 0.755,
+  "acc_postAttn": 0.755,
+  "flip_Bnd": 0.013,
+  "flip_Attn": 0.017
+ },
+ "L15_b3": {
+  "ent_pre": 0.078,
+  "ent_postBnd": 0.261,
+  "ent_postInj": 0.26,
+  "ent_postAttn": 0.078,
+  "acc_pre": 0.755,
+  "acc_postBnd": 0.753,
+  "acc_postAttn": 0.753,
+  "flip_Bnd": 0.013,
+  "flip_Attn": 0.019
+ },
+ "L15_b7": {
+  "ent_pre": 0.078,
+  "ent_postBnd": 0.257,
+  "ent_postInj": 0.257,
+  "ent_postAttn": 0.078,
+  "acc_pre": 0.752,
+  "acc_postBnd": 0.753,
+  "acc_postAttn": 0.753,
+  "flip_Bnd": 0.013,
+  "flip_Attn": 0.019
+ }
+}

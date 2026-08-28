@@ -1,5 +1,0 @@
-  [cap90k7_d256_full] step   500 loss 0.5366 셀 0.6278 전체일치 0.0000
-  [cap90k7_d256_full] step  1000 loss 0.0160 셀 0.9910 전체일치 0.7456
-  [cap90k7_d256_full] step  1500 loss 0.0001 셀 1.0000 전체일치 1.0000
-  [cap90k7_d256_full] step  2000 loss 0.0001 셀 1.0000 전체일치 1.0000
-[cap90k7_d256_full] rule=90 k=7 T=32 freeze_A=False FINAL 셀 1.0000 전체일치 1.0000 (649s)

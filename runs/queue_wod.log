@@ -1,5 +1,0 @@
-[b110k8_woR_t4] rule=110 k=8 T=32 tau=4 freeze_A=False FINAL 셀 0.9740 전체일치 0.4531 (1542s)
-[b110k8_woO_t4] rule=110 k=8 T=32 tau=4 freeze_A=False FINAL 셀 0.9768 전체일치 0.4915 (1649s)
-[b110k8_woC_t4] rule=110 k=8 T=32 tau=4 freeze_A=False FINAL 셀 0.9862 전체일치 0.6655 (1655s)
-[b110k8_woH_t4] rule=110 k=8 T=32 tau=4 freeze_A=False FINAL 셀 0.9488 전체일치 0.2007 (1655s)
-=== WOD DONE ===

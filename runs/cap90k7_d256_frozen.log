@@ -1,5 +1,0 @@
-  [cap90k7_d256_frozen] step   500 loss 0.6313 셀 0.5576 전체일치 0.0000
-  [cap90k7_d256_frozen] step  1000 loss 0.5808 셀 0.5951 전체일치 0.0000
-  [cap90k7_d256_frozen] step  1500 loss 0.5498 셀 0.6253 전체일치 0.0000
-  [cap90k7_d256_frozen] step  2000 loss 0.5360 셀 0.6287 전체일치 0.0000
-[cap90k7_d256_frozen] rule=90 k=7 T=32 tau=1 freeze_A=True FINAL 셀 0.6327 전체일치 0.0000 (152s)

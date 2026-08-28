@@ -1,5 +1,0 @@
-  [cap110k8_d256_frozen] step   500 loss 0.5867 셀 0.6467 전체일치 0.0000
-  [cap110k8_d256_frozen] step  1000 loss 0.5509 셀 0.6895 전체일치 0.0000
-  [cap110k8_d256_frozen] step  1500 loss 0.5279 셀 0.7097 전체일치 0.0000
-  [cap110k8_d256_frozen] step  2000 loss 0.5229 셀 0.7188 전체일치 0.0005
-[cap110k8_d256_frozen] rule=110 k=8 T=32 tau=1 freeze_A=True FINAL 셀 0.7169 전체일치 0.0002 (154s)

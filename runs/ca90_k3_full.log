@@ -1,5 +1,0 @@
-  [ca90_k3_full] step   500 loss 0.0001 셀 1.0000 전체일치 0.9995
-  [ca90_k3_full] step  1000 loss 0.0000 셀 1.0000 전체일치 1.0000
-  [ca90_k3_full] step  1500 loss 0.0000 셀 1.0000 전체일치 1.0000
-  [ca90_k3_full] step  2000 loss 0.0000 셀 1.0000 전체일치 1.0000
-[ca90_k3_full] rule=90 k=3 T=32 freeze_A=False FINAL 셀 1.0000 전체일치 1.0000 (856s)

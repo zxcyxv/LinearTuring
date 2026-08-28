@@ -1,4 +1,0 @@
-[cap90k7_d256_frozen] rule=90 k=7 T=32 tau=1 freeze_A=True FINAL 셀 0.6327 전체일치 0.0000 (152s)
-[cap110k8_d256_full] rule=110 k=8 T=32 tau=1 freeze_A=False FINAL 셀 0.9999 전체일치 0.9967 (635s)
-[cap110k8_d256_frozen] rule=110 k=8 T=32 tau=1 freeze_A=True FINAL 셀 0.7169 전체일치 0.0002 (154s)
-=== CAP2 DONE ===

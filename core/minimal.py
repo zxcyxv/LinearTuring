@@ -67,6 +67,7 @@ class LTConfig(pydantic.BaseModel):
                                 #   product: Γ = a_tn·⟨v̂_t,v̂_n⟩ — 결합 에너지 E(h,w)=−½Σ w a⟨Wh,Wh⟩+½Σw² 의 ∂/∂w. 그래프 부호 × 값 일치 (STDP.md)
     stdp_eta_init: float = 0.1
     stdp_lam_init: float = 0.25
+    stdp_lam_fixed: float = -1.0  # ≥0 이면 λ 를 이 값으로 고정(학습 안 함). 1.0 = 전달을 w 가 전담하는 STDP 충실형
     psi_zero: bool = False      # [2단계] ψ≡0 고정 → a_tn = a_nt (명제 7), 값 수송이 대칭 → 스텝이 E_adj 의 경사 (STDP.md §3)
 
 
@@ -169,7 +170,7 @@ class LT_Inner(nn.Module):
     def step(self, h, AB, kc, w=None, fresh=None, kcb=None):
         a = self.attn(h, AB, kc)
         if self.stdp:
-            eta = torch.sigmoid(self.eta_raw); lam = torch.sigmoid(self.lam_raw)
+            eta = torch.sigmoid(self.eta_raw); lam = torch.sigmoid(self.lam_raw) if self.config.stdp_lam_fixed < 0 else torch.full_like(self.lam_raw, float(self.config.stdp_lam_fixed))
             if self.config.stdp_target in ("value", "product"):
                 hv0 = h[..., self.d_a:] if self.split else h
                 vv = torch.einsum('btd,hcd->bthc', hv0, self.w_sh); vv = vv / (vv.norm(dim=-1, keepdim=True) + self.config.eps)

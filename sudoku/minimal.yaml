@@ -24,3 +24,4 @@ stdp: false
 stdp_eta_init: 0.1
 stdp_lam_init: 0.25
 stdp_target: addr
+stdp_lam_fixed: -1.0

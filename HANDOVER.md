@@ -50,6 +50,7 @@ CKPT_PATH=checkpoints/R1B8_bilin_r2/step_123039.pt EPOCHS=34250 LOAD_OPT=False b
 ## 4. 분석
 
 `analysis/*.py` 는 전부 학습 불필요·기본 인자로 `checkpoints/R1B8_bilin_r2_step123039.pt` 를 읽는다. 목록과 재생산 명령은 `RESULTS.md` 끝.
+minimal 계열 체크포인트(`checkpoints/R1B8_min_stdp1_step228501.pt`, 설정 `checkpoints/R1B8_min_stdp1_config.yaml`)는 `sudoku/lt.py` 가 아니라 `core/minimal.py` 의 `LT` 로 로드한다 — `analysis/stdp_eval.py: load(path, stdp)` 참고(`stdp=True, stdp_target=product, stdp_lam_fixed=1.0`).
 공용 로더 `sudoku/lt.py: load_lt(ckpt, **overrides)` — `_orig_mod.model.` 접두 정리·strict 로드. SwiGLU 판은 `bilinear=0`.
 수동 전개는 `analysis/common.py: rollout(m, batch, act=, hook=)` — 게이트 치환과 단계별 훅 지원.
 

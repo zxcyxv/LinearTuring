@@ -26,7 +26,7 @@ sudoku/*.sh, *.diff   발사·재개 스크립트, URM 패치, 데이터 빌드
 analysis/             체크포인트 진단·게이트 치환·해석·시각화 (학습 불필요)
 tasks/                코어 단독 검증: MNIST (train.py), 1D CA (ca_task.py)
 results/              곡선 CSV · 진단 JSON · 그림 · 원 로그
-checkpoints/          R1B8_bilin_r2 @123,039 (현재 최고, EMA) · R1B8_swiglu @9,765 (SwiGLU 대조)
+checkpoints/          R1B8_bilin_r2 @123,039 (현재 최고, EMA) · R1B8_swiglu @9,765 (SwiGLU 대조) · R1B8_min_stdp1 @228,501 (minimal+STDP 충실형 7.16M, 완답 974; `core/minimal.py`)
 ```
 
 ## 빠른 시작
@@ -48,4 +48,5 @@ bash sudoku/launch.sh R1B8_bilin_s1 seed=1
 ## 상태 (2026-08-29)
 
 - 원판 `R1B8_bilin_r2` 123,039 중단(재개 가능). 7일차: minimal→ψ=0→분할→STDP 단계 학습(STDP.md §6), 손실은 ψ=0 하나(2×2), 자기교정 루프 947→1198(원판+결합 기억+위반 초기화). 장기 계획은 `PLAN.md`.
+- `R1B8_min_stdp1`(minimal+STDP 충실형, 7.16M) 236,313 에서 정지. 완답 974@228,501(보존)·980@236,313(삭제), 원판 14.1M 의 959@123,039 와 같은 수준을 절반 파라미터·2배 스텝으로 (STDP.md §6.11).
 - 다음 목표: ARC Prize 2026. 스도쿠 판 구조 그대로 2D 격자 과제로 이식 예정.

@@ -1,0 +1,41 @@
+{
+ "checkpoint": "R1B8_bilin_r2 step123039",
+ "n": 2048,
+ "base": 947,
+ "loops": {
+  "cell_reset": [
+   1000,
+   1028,
+   1047
+  ],
+  "unit_reset": [
+   992,
+   1007,
+   1018
+  ],
+  "random_reset_matched": [
+   1012,
+   1044,
+   1062
+  ],
+  "cell_reset+memory(eta.05,lam.25)": {
+   "base_with_memory": 999,
+   "rounds": [
+    1128,
+    1169,
+    1198
+   ]
+  },
+  "random_reset+memory": {
+   "base_with_memory": 999,
+   "rounds": [
+    1114,
+    1159,
+    1188
+   ]
+  }
+ },
+ "wrong_accepted": 0,
+ "violated_cells_per_puzzle": 18.4,
+ "note": "탐지(위반 칸)와 무작위의 차이는 +10~15; 이득은 섭동×결합 기억. 유효 격자 = 유일해라 오답 채택 0."
+}

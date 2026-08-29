@@ -1,0 +1,26 @@
+name: lt.minimal@LT
+loss:
+  name: losses@ACTLossHead
+  loss_type: stablemax_cross_entropy
+
+loops: 16
+hidden_size: 832
+num_heads: 8
+grid: 9
+blocks_per_seg: 8
+mlp_expansion: 4.0
+inj_gate_init: 0.25
+gamma_init: 0.1
+alpha_init: 0.1
+eps: 1e-4
+
+puzzle_emb_ndim: ${.hidden_size}
+forward_dtype: float32
+amp: true
+ckpt: false
+psi_zero: false
+addr_dim: 0
+stdp: false
+stdp_eta_init: 0.1
+stdp_lam_init: 0.25
+stdp_target: addr

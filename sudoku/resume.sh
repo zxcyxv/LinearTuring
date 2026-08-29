@@ -14,7 +14,7 @@ OUT=$ROOT/results/logs/${RN}.log
 cd "$ROOT/refs/URM"
 WANDB_MODE=offline OMP_NUM_THREADS=4 nohup torchrun --nproc-per-node 1 --master_port=$((29500+RANDOM%400)) pretrain.py \
   data_path=${DATA:-data/sudoku-extreme-1k-aug-1000} \
-  arch=lt arch.hidden_size=${D:-832} arch.ckpt=${CKPT:-false} arch.amp=${AMP:-true} \
+  arch=${ARCH:-lt} arch.hidden_size=${D:-832} arch.ckpt=${CKPT:-false} arch.amp=${AMP:-true} \
   "$@" \
   epochs=${EPOCHS:?남은 에폭} eval_interval=250 evaluators=[] \
   lr=1e-4 puzzle_emb_lr=1e-4 weight_decay=1.0 puzzle_emb_weight_decay=1.0 global_batch_size=128 \

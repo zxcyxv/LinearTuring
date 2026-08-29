@@ -1,0 +1,151 @@
+{
+ "held_out_2048": {
+  "step": [
+   3906,
+   5859,
+   7812,
+   9765
+  ],
+  "minimal_psi_free_nosplit": [
+   [
+    0.583,
+    0
+   ],
+   [
+    0.633,
+    27
+   ],
+   [
+    0.668,
+    52
+   ],
+   null
+  ],
+  "psi0_nosplit": [
+   [
+    0.543,
+    0
+   ],
+   [
+    0.576,
+    1
+   ],
+   [
+    0.623,
+    15
+   ],
+   [
+    0.652,
+    55
+   ]
+  ],
+  "psi0_split": [
+   [
+    0.54,
+    0
+   ],
+   [
+    0.582,
+    1
+   ],
+   [
+    0.603,
+    16
+   ],
+   [
+    0.62,
+    26
+   ]
+  ],
+  "psi_free_split": [
+   [
+    0.573,
+    0
+   ],
+   [
+    0.636,
+    20
+   ],
+   [
+    0.664,
+    53
+   ],
+   [
+    0.68,
+    71
+   ]
+  ],
+  "original_bilin": [
+   [
+    0.599,
+    0
+   ],
+   [
+    0.661,
+    48
+   ],
+   [
+    0.677,
+    53
+   ],
+   [
+    0.69,
+    119
+   ]
+  ]
+ },
+ "conclusion": "지연·완답 손실은 ψ=0(대칭) 하나에서 옴. 분할 비용 ≈ 0.",
+ "directedness_7812": {
+  "psi0_split": {
+   "antisym_frac": 0.0,
+   "flux_given_to_blank": 9.27,
+   "flux_blank_to_given": 2.6,
+   "amp_given": 5.56,
+   "amp_blank_right": 1.66,
+   "amp_blank_wrong": 1.58,
+   "cell": 0.424
+  },
+  "psi_free_split": {
+   "antisym_frac": 0.62,
+   "flux_given_to_blank": 9.16,
+   "flux_blank_to_given": 2.58,
+   "amp_given": 6.63,
+   "amp_blank_right": 2.84,
+   "amp_blank_wrong": 2.51,
+   "cell": 0.523,
+   "learned_psi_mean_abs": [
+    1.7,
+    1.44,
+    1.71,
+    1.77,
+    1.57,
+    1.52,
+    1.74,
+    1.67
+   ],
+   "antisym_by_offset": {
+    "row_dc+1": -0.069,
+    "row_dc-1": 0.069,
+    "col_dr+1": -0.146,
+    "col_dr-1": 0.146,
+    "row_dc+3": 0.035,
+    "diag++": -0.206,
+    "diag--": 0.206
+   }
+  }
+ },
+ "error_composition_7812": {
+  "psi0_split": {
+   "osc_frac": 0.023,
+   "wrong_osc": 0.03,
+   "wrong_settled": 0.97,
+   "settled_wrong_with_swap": 0.88
+  },
+  "psi_free_split": {
+   "osc_frac": 0.002,
+   "wrong_osc": 0.0,
+   "wrong_settled": 1.0,
+   "settled_wrong_with_swap": 0.88
+  }
+ }
+}

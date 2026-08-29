@@ -62,6 +62,7 @@ class LTConfig(pydantic.BaseModel):
     #   (어텐션과 같은 ψ·θ). 제한 사상 F_n = R_n W_v 가 노드마다 다르고 되돌림은 수신자 사상의 전치 → δᵀδ.
     #   어텐션 a_tn 은 그대로 간선. 회전을 항등으로 두면 원판과 동치. 파라미터 동일 (w_sh 가 W_v).
     conn_sheaf: bool = False
+    addr_dim: int = 0           # [2026-08-29] >0 이면 상태를 [주소 addr_dim | 값 나머지] 로 분할 (row(W_C) ⟂ row(W)). STDP.md
 
 
 class LT_Inner(nn.Module):
@@ -75,7 +76,8 @@ class LT_Inner(nn.Module):
         self.core = Model1(d=d, H=config.num_heads, R=config.R, n_classes=config.vocab_size,
                            positions=pos, vocab=config.vocab_size, pool=False,
                            sheaf=True, lam_mode=config.lam_mode, alpha_per_head=True,
-                           boundary_wo=True, wo_mode="contract")   # w_bo: 체크포인트 호환용 유령
+                           boundary_wo=True, wo_mode="contract",   # w_bo: 체크포인트 호환용 유령
+                           addr_dim=(config.addr_dim or None))
         self.puzzle_emb_ndim = config.puzzle_emb_ndim
         if config.puzzle_emb_ndim > 0:
             self.puzzle_emb = CastedSparseEmbedding(config.num_puzzle_identifiers, config.puzzle_emb_ndim,

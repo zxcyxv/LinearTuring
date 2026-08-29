@@ -1,0 +1,148 @@
+{
+ "n": 2048,
+ "base_exact": 947,
+ "depth_check": {
+  "18.0": {
+   "pin_correct_depth1": 7584,
+   "pin_correct_depth_other": 3552,
+   "pin_wrong_depth1": 0,
+   "pin_wrong_depth_other": 237,
+   "depth1_total": 8336,
+   "depth1_pinned": 7584
+  },
+  "21.0": {
+   "pin_correct_depth1": 6966,
+   "pin_correct_depth_other": 1976,
+   "pin_wrong_depth1": 0,
+   "pin_wrong_depth_other": 58,
+   "depth1_total": 8336,
+   "depth1_pinned": 6966
+  }
+ },
+ "loops": {
+  "18.0": [
+   {
+    "round": 0,
+    "new_pins": 11373,
+    "new_correct": 11136,
+    "new_wrong": 237,
+    "cum_pins": 11373,
+    "puzzles_with_wrong_pin": 200,
+    "exact": 868,
+    "valid": 868,
+    "exact_among_clean": 868,
+    "clean": 1848
+   },
+   {
+    "round": 1,
+    "new_pins": 3539,
+    "new_correct": 3253,
+    "new_wrong": 286,
+    "cum_pins": 14912,
+    "puzzles_with_wrong_pin": 344,
+    "exact": 797,
+    "valid": 797,
+    "exact_among_clean": 797,
+    "clean": 1704
+   },
+   {
+    "round": 2,
+    "new_pins": 2443,
+    "new_correct": 2156,
+    "new_wrong": 287,
+    "cum_pins": 17355,
+    "puzzles_with_wrong_pin": 406,
+    "exact": 766,
+    "valid": 766,
+    "exact_among_clean": 766,
+    "clean": 1642
+   },
+   {
+    "round": 3,
+    "new_pins": 2067,
+    "new_correct": 1822,
+    "new_wrong": 245,
+    "cum_pins": 19422,
+    "puzzles_with_wrong_pin": 438,
+    "exact": 738,
+    "valid": 738,
+    "exact_among_clean": 738,
+    "clean": 1610
+   },
+   {
+    "round": 4,
+    "new_pins": 1707,
+    "new_correct": 1493,
+    "new_wrong": 214,
+    "cum_pins": 21129,
+    "puzzles_with_wrong_pin": 455,
+    "exact": 722,
+    "valid": 722,
+    "exact_among_clean": 722,
+    "clean": 1593
+   }
+  ],
+  "21.0": [
+   {
+    "round": 0,
+    "new_pins": 9000,
+    "new_correct": 8942,
+    "new_wrong": 58,
+    "cum_pins": 9000,
+    "puzzles_with_wrong_pin": 56,
+    "exact": 916,
+    "valid": 916,
+    "exact_among_clean": 916,
+    "clean": 1992
+   },
+   {
+    "round": 1,
+    "new_pins": 2310,
+    "new_correct": 2261,
+    "new_wrong": 49,
+    "cum_pins": 11310,
+    "puzzles_with_wrong_pin": 89,
+    "exact": 892,
+    "valid": 892,
+    "exact_among_clean": 892,
+    "clean": 1959
+   },
+   {
+    "round": 2,
+    "new_pins": 960,
+    "new_correct": 934,
+    "new_wrong": 26,
+    "cum_pins": 12270,
+    "puzzles_with_wrong_pin": 108,
+    "exact": 869,
+    "valid": 869,
+    "exact_among_clean": 869,
+    "clean": 1940
+   },
+   {
+    "round": 3,
+    "new_pins": 587,
+    "new_correct": 560,
+    "new_wrong": 27,
+    "cum_pins": 12857,
+    "puzzles_with_wrong_pin": 116,
+    "exact": 868,
+    "valid": 868,
+    "exact_among_clean": 868,
+    "clean": 1932
+   },
+   {
+    "round": 4,
+    "new_pins": 388,
+    "new_correct": 372,
+    "new_wrong": 16,
+    "cum_pins": 13245,
+    "puzzles_with_wrong_pin": 121,
+    "exact": 869,
+    "valid": 869,
+    "exact_among_clean": 869,
+    "clean": 1927
+   }
+  ]
+ }
+}

@@ -30,13 +30,21 @@ class Model1(nn.Module):
                  use_ov=True, lam_mode="full", orth_wc=True,
                  use_bias_v=True, learn_gamma=True, psi_zero=False, freeze_A=False,
                  positions=None, vocab=None, pool=True, boundary_wo=False, wo_mode='plain', sheaf=False,
-                 alpha_per_head=False):
+                 alpha_per_head=False, addr_dim=None):
         super().__init__()
         assert d % H == 0
         self.d, self.H, self.R = d, H, R
         self.dh = d // H
         assert self.dh % 2 == 0
-        self.p = self.dh // 2
+        # [2026-08-29] addr_dim: 상태를 [주소 d_a | 값 d_v] 로 분할. W_C 는 주소 블록만 읽고, 값 경로·Λ·b 는 값 블록에만 쓴다
+        #   → row(W_C) ⟂ row(W) 가 구조적으로 성립: 스텝 안에서 a 불변, 주소 재작성은 경계·주입에서만. (STDP.md, 주소/값 분리)
+        self.split = addr_dim is not None and addr_dim > 0
+        self.d_a = int(addr_dim) if self.split else d
+        self.d_v = d - self.d_a if self.split else d
+        assert self.d_a % H == 0 and self.d_v % H == 0
+        self.dh_a = self.d_a // H; self.dh_v = self.d_v // H
+        assert self.dh_a % 2 == 0
+        self.p = self.dh_a // 2
         self.grid, self.patch, self.eps = grid, patch, eps
         self.use_ov, self.lam_mode, self.orth_wc = use_ov, lam_mode, orth_wc
         self.use_bias_v = use_bias_v
@@ -74,9 +82,9 @@ class Model1(nn.Module):
         # --- W_C^(m): C^{p×d}, 행-직교(Stiefel) 파라미터화 (§1.1/(d)) ------
         # [A;B] ∈ R^{d_h×d} 를 exp(skew) 의 상단 d_h 행으로 둔다 (추가 제약 불필요).
         if orth_wc:
-            self.wc_skew = nn.Parameter(torch.randn(H, d, d) * (1.0 / math.sqrt(d)))
+            self.wc_skew = nn.Parameter(torch.randn(H, self.d_a, self.d_a) * (1.0 / math.sqrt(self.d_a)))
         else:
-            self.wc_raw = nn.Parameter(torch.randn(H, self.dh, d) / math.sqrt(d))
+            self.wc_raw = nn.Parameter(torch.randn(H, self.dh_a, self.d_a) / math.sqrt(self.d_a))
 
         # --- 위상/주파수/감쇠 ----------------------------------------------
         # ψ init U(-π,π) : 0 근처 초기화 금지 (대칭 함정, §2.4)
@@ -109,8 +117,10 @@ class Model1(nn.Module):
         # 헤드 간 기저 불일치가 채널 혼합을 만든다. 간선별 에너지 귀속이 혼합 아래서도 보존.
         self.sheaf = sheaf
         if sheaf:
-            self.w_sh = nn.Parameter(self._block_identity(d, H, self.dh).transpose(1, 2).contiguous()
-                                     + 0.01 * torch.randn(H, self.dh, d) / math.sqrt(d))
+            self.w_sh = nn.Parameter(self._block_identity(self.d_v, H, self.dh_v).transpose(1, 2).contiguous()
+                                     + 0.01 * torch.randn(H, self.dh_v, self.d_v) / math.sqrt(self.d_v))
+        # 값 블록 마스크 (split 이면 주소 블록 [:d_a] 에는 Λ·b·값 메시지가 쓰이지 않음)
+        self.register_buffer("val_mask", torch.cat([torch.zeros(self.d_a), torch.ones(self.d_v)]) if self.split else torch.ones(d), persistent=False)
         # value bias b : 우함수(2차) 항 생성 (§1.5 마지막 항)
         self.b = nn.Parameter(torch.zeros(d)) if use_bias_v else None
 
@@ -167,7 +177,7 @@ class Model1(nn.Module):
         if self.orth_wc:
             S = self.wc_skew - self.wc_skew.transpose(-1, -2)
             Q = torch.matrix_exp(S)                    # [H,d,d] orthogonal
-            AB = Q[:, :self.dh, :]                     # [H,dh,d] row-orthonormal
+            AB = Q[:, :self.dh_a, :]                   # [H,dh_a,d_a] row-orthonormal
         else:
             AB = self.wc_raw
         return AB[:, :self.p, :], AB[:, self.p:, :]
@@ -202,8 +212,9 @@ class Model1(nn.Module):
         Q̃ = ẑ 를 각 A_t 로 회전, K̃ = ẑ 를 각 B_t 로 회전.  느린 경로와 수학적으로 동일
         (alpha_per_head 제약 하에서), 수치 검증: tests 참조."""
         A, Bm = self.W_C() if AB is None else AB
-        x = torch.einsum('btd,hjd->bthj', h, A)
-        y = torch.einsum('btd,hjd->bthj', h, Bm)
+        ha = h[..., :self.d_a] if self.split else h
+        x = torch.einsum('btd,hjd->bthj', ha, A)
+        y = torch.einsum('btd,hjd->bthj', ha, Bm)
         nrm = (x.pow(2) + y.pow(2)).sum(-1, keepdim=True).sqrt()
         x = x / (nrm + self.eps); y = y / (nrm + self.eps)
         qx = x * cosA - y * sinA; qy = x * sinA + y * cosA                    # e^{+iA_t} ẑ_t
@@ -219,8 +230,9 @@ class Model1(nn.Module):
         """a^(m)_{tn} : [B,H,T,T] , ẑ 성분도 반환 (해석가능성용).
         AB 를 주면 W_C 를 다시 만들지 않는다 — matrix_exp 는 h 에 무관하므로 forward 당 1회면 된다."""
         A, Bm = self.W_C() if AB is None else AB              # [H,p,d]
-        x = torch.einsum('btd,hjd->bthj', h, A)               # Re z
-        y = torch.einsum('btd,hjd->bthj', h, Bm)              # Im z
+        ha = h[..., :self.d_a] if self.split else h
+        x = torch.einsum('btd,hjd->bthj', ha, A)              # Re z
+        y = torch.einsum('btd,hjd->bthj', ha, Bm)             # Im z
         nrm = (x.pow(2) + y.pow(2)).sum(-1, keepdim=True).sqrt()   # ||z||_2 [B,T,H,1]
         x = x / (nrm + self.eps)
         y = y / (nrm + self.eps)
@@ -246,20 +258,22 @@ class Model1(nn.Module):
             zx = zy = torch.zeros(B, T, self.H, self.p, device=h.device)
             znorm = torch.zeros(B, T, self.H, device=h.device)
         if getattr(self, 'sheaf', False):
-            v = torch.einsum('btd,hcd->bthc', h, self.w_sh)    # v = W^(m) h
+            hv = h[..., self.d_a:] if self.split else h
+            v = torch.einsum('btd,hcd->bthc', hv, self.w_sh)   # v = W^(m) h_val
             o = torch.einsum('bhtn,bnhc->bthc', a, v)
-            f = torch.einsum('bthc,hcd->btd', o, self.w_sh)    # 출력 = W^(m)ᵀ o
+            f = torch.einsum('bthc,hcd->btd', o, self.w_sh)    # 출력 = W^(m)ᵀ o  (값 블록)
+            if self.split: f = F.pad(f, (self.d_a, 0))          # 주소 블록에는 0
         else:
             v = h.view(B, T, self.H, self.dh)                  # P_m = 슬라이스
             o = torch.einsum('bhtn,bnhc->bthc', a, v)
             f = torch.einsum('bthc,hdc->btd', o, self.OV())
         dt = a.sum(-1)                                         # d_t^(m)  [B,H,T]
         if self.b is not None:
-            f = f + dt.sum(1).unsqueeze(-1) * self.b
+            f = f + dt.sum(1).unsqueeze(-1) * (self.b * self.val_mask)
         if self.lam_mode == "full":
-            f = f + h @ self.lam.t()
+            f = f + (h @ self.lam.t()) * self.val_mask
         elif self.lam_mode == "diag":
-            f = f + h * self.lam
+            f = f + h * self.lam * self.val_mask
         return f, a, dt, zx, zy, znorm
 
     def phi(self, h, tau):

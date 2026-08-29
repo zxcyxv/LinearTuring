@@ -6,7 +6,7 @@ GPU 인스턴스가 매번 바뀐다. 이 문서대로 하면 클론 → 분석 
 
 ```bash
 git clone -b clean <repo> LinearTuring && cd LinearTuring
-pip install -q torch einops tqdm coolname pydantic argdantic omegaconf hydra-core huggingface_hub matplotlib
+pip install -q torch einops tqdm coolname pydantic argdantic omegaconf hydra-core huggingface_hub matplotlib wandb scipy
 pip install -q flash-attn --no-build-isolation        # URM layers.py 가 import (우리 모델은 안 씀). 실패 시 sudoku/urm_patches.diff 의 SDPA 폴백이 대신 잡음
 git clone --depth 1 https://github.com/UbiquantAI/URM.git refs/URM
 NAUG=1000 bash sudoku/setup_urm.sh                    # 어댑터·패치·데이터(≈4분)·테스트 2048·전파깊이·체크포인트 배치. 분석만이면 NAUG=0 (수 초)
@@ -54,6 +54,13 @@ CKPT_PATH=checkpoints/R1B8_bilin_r2/step_123039.pt EPOCHS=34250 LOAD_OPT=False b
 수동 전개는 `analysis/common.py: rollout(m, batch, act=, hook=)` — 게이트 치환과 단계별 훅 지원.
 
 `sudoku/lt.py` 는 원판(`main` 의 `urm_port/lt.py`, 실험 플래그 15개)에서 R1B8 경로만 남긴 것이다. 두 체크포인트 모두에서 16 세그먼트 로짓·carry 가 원판과 **비트 동일**함을 확인했다(2026-08-28).
+
+## 4.5 7일차 추가 (2026-08-29)
+- 모델: `core/minimal.py` (URM 에는 `refs/URM/models/lt/minimal.py` 로 복사, arch yaml `sudoku/minimal.yaml` → `refs/URM/config/arch/minimal.yaml`). 플래그: `psi_zero`(2단계), `addr_dim`(3단계, 1248 에서 416), `stdp` + `stdp_target ∈ {addr, value, product}`(4단계; product 가 정합).
+- 발사: `ARCH=minimal D=1248 bash sudoku/launch.sh <RUN> arch.psi_zero=true arch.addr_dim=416 arch.stdp=true arch.stdp_target=product`. `resume.sh` 도 `ARCH` 지원. 웜스타트용 병합 체크포인트 예: `refs/URM/checkpoints/warm/step_15624.pt` (3단계 가중치 + η·λ·β 초기값; 재구축 시 사라짐).
+- 함정 추가: (i) `pkill -f`/`pgrep -f` 에 `pretrain.py` 문자열이 든 명령은 자기 셸을 죽인다 → `pgrep -f "[p]retrain"` 또는 `run_name=<RUN>` 의 마지막 글자를 `[x]` 로. (ii) 가소성 파라미터(`eta_raw·lam_raw·beta`)는 wd 제외 목록에 있어야 한다(패치 적용됨; 빠지면 sigmoid(0)=0.5 로 끌려감). (iii) `puzzle_emb` 는 batch_size 고정 — 부분 배치 추론은 batch_size=1 모델을 따로 만들 것. (iv) `wandb`·`scipy` 설치 필요.
+- 분석 스크립트(7일차): `quadrant_view.py`(칸 범주·궤적) · `early_commit.py`(조기 여유 핀 루프) · `selfgrad.py`(정착 gradient 흔들기) · `stdp_infer.py`(결합 기억 추론) · `stdp_eval.py`(4단계 유용성) · `graph_transplant.py`(학습 그래프 이식) · `dist_sanity.py`/`phase_vs_dist.py`(위상 vs 분포) · `selfcorrect.py`(자기교정 루프). 결과 JSON `results/json/`, 곡선 `results/curves/R1B8_min*_{train,eval}.csv`, `R1B8_min_psi0_split_stdpp_*.csv`.
+- 기록 문서: `STDP.md`(7일차 전체) · `STAGES.md`(단계별 필요성) · `PLAN.md`(장기 계획) · `ARC.md`(ARC 설계).
 
 ## 5. 다음 목표 — ARC Prize 2026 (2026-08-27 조사)
 

@@ -38,6 +38,8 @@ class LTCarry:
     steps: Optional[torch.Tensor] = None
     halted: Optional[torch.Tensor] = None
     current_data: Optional[Dict[str, torch.Tensor]] = None
+    coupling: Optional[torch.Tensor] = None       # [4단계] STDP 결합 기억 w [B,H,T,T]
+    fresh: Optional[torch.Tensor] = None          # [B] bool — 이 퍼즐의 w 가 아직 초기화 전
 
 
 class LTConfig(pydantic.BaseModel):
@@ -59,6 +61,13 @@ class LTConfig(pydantic.BaseModel):
     eps: float = 1e-4
     amp: bool = True
     forward_dtype: str = "float32"
+    addr_dim: int = 0           # [3단계] >0 이면 상태 = [주소 addr_dim | 값 나머지]. W_C 는 주소 블록만, 값 경로는 값 블록만 → row(W_C) ⟂ row(W), 스텝 안 a 불변 (STDP.md)
+    stdp: bool = False          # [4단계] 결합 기억 w ← w + η(a−w), 결합 = (1−λ)a + λw. η,λ 헤드별 학습 (sigmoid). STDP.md §2
+    stdp_target: str = "addr"  # addr: Γ = a (주소 위상 커널, β 비대칭) / value: Γ = D(Δ)·⟨v̂_t,v̂_n⟩ (값 겹침만; 부호 없음 → 거부됨)
+                                #   product: Γ = a_tn·⟨v̂_t,v̂_n⟩ — 결합 에너지 E(h,w)=−½Σ w a⟨Wh,Wh⟩+½Σw² 의 ∂/∂w. 그래프 부호 × 값 일치 (STDP.md)
+    stdp_eta_init: float = 0.1
+    stdp_lam_init: float = 0.25
+    psi_zero: bool = False      # [2단계] ψ≡0 고정 → a_tn = a_nt (명제 7), 값 수송이 대칭 → 스텝이 E_adj 의 경사 (STDP.md §3)
 
 
 def inv_softplus(y: float) -> float:
@@ -72,8 +81,14 @@ class LT_Inner(nn.Module):
         self.forward_dtype = getattr(torch, config.forward_dtype)
         T, g, d, H = config.seq_len, config.grid, config.hidden_size, config.num_heads
         assert T == g * g and d % H == 0 and (d // H) % 2 == 0
-        self.d, self.H, self.dh = d, H, d // H
-        self.p = self.dh // 2
+        self.split = config.addr_dim > 0
+        self.d_a = config.addr_dim if self.split else d
+        self.d_v = d - self.d_a if self.split else d
+        assert self.d_a % H == 0 and self.d_v % H == 0 and (self.d_a // H) % 2 == 0
+        self.d, self.H = d, H
+        self.dh_a, self.dh_v = self.d_a // H, self.d_v // H     # 주소·값 헤드 폭 (분할 없으면 둘 다 d/H)
+        self.dh = self.dh_v
+        self.p = self.dh_a // 2
         # 위치 (행, 열) 와 차 Δ
         u = torch.arange(T).float() // g; w = torch.arange(T).float() % g
         self.register_buffer("pos_u", u, persistent=False); self.register_buffer("pos_w", w, persistent=False)
@@ -83,15 +98,25 @@ class LT_Inner(nn.Module):
         self.w_cls = nn.Linear(d, config.vocab_size)
         self.inj_gate = nn.Parameter(torch.tensor(float(config.inj_gate_init)))
         # 복소 주소: W_C = [A;B] 행직교 (QR), ψ 위상차, θ 2D 파수, α 감쇠(헤드별)
-        self.wc_raw = nn.Parameter(torch.randn(H, self.dh, d) / math.sqrt(d))
-        self.psi = nn.Parameter(torch.rand(H, self.p) * 2 * math.pi - math.pi)
+        self.wc_raw = nn.Parameter(torch.randn(H, self.dh_a, self.d_a) / math.sqrt(self.d_a))
+        if config.psi_zero:
+            self.register_buffer("psi", torch.zeros(H, self.p), persistent=False)
+        else:
+            self.psi = nn.Parameter(torch.rand(H, self.p) * 2 * math.pi - math.pi)
         self.theta = nn.Parameter((torch.rand(H, self.p, 2) * 2 - 1) * (math.pi / 2))
         self.alpha_raw = nn.Parameter(torch.full((H, 1), inv_softplus(config.alpha_init)))
         # 값 경로 (W, Wᵀ): 블록 항등 init
-        w_sh = torch.zeros(H, self.dh, d)
+        w_sh = torch.zeros(H, self.dh_v, self.d_v)
         for m in range(H):
-            w_sh[m, :, m * self.dh:(m + 1) * self.dh] = torch.eye(self.dh)
-        self.w_sh = nn.Parameter(w_sh + 0.01 * torch.randn(H, self.dh, d) / math.sqrt(d))
+            w_sh[m, :, m * self.dh_v:(m + 1) * self.dh_v] = torch.eye(self.dh_v)
+        self.w_sh = nn.Parameter(w_sh + 0.01 * torch.randn(H, self.dh_v, self.d_v) / math.sqrt(self.d_v))
+        # [4단계] STDP 결합 기억: η, λ 헤드별 (sigmoid 재매개화)
+        self.stdp = config.stdp
+        if self.stdp:
+            lg = lambda x: math.log(x / (1 - x))
+            self.eta_raw = nn.Parameter(torch.full((H, 1, 1), lg(config.stdp_eta_init)))
+            self.lam_raw = nn.Parameter(torch.full((H, 1, 1), lg(config.stdp_lam_init)))
+            self.beta = nn.Parameter(torch.zeros(H, self.p))          # 위상 STDP 창의 비대칭 β_h (ψ 와 별개, 0 = 대칭 Hebb)
         # 4차 소산
         self.gamma_raw = nn.Parameter(torch.tensor(inv_softplus(config.gamma_init)))
         # 쌍선형 경계 (down 영init → 시작 시 항등)
@@ -119,17 +144,19 @@ class LT_Inner(nn.Module):
         AB = Q.transpose(-1, -2)
         return AB[:, :self.p, :], AB[:, self.p:, :]
 
-    def kernel(self):
-        """decay_h [H,T,T], 위상각 A_t = ψ/2 + θ·pos_t (q), B_t = −ψ/2 + θ·pos_t (k) → cos/sin [T,H,p]."""
+    def kernel(self, psi=None):
+        """decay_h [H,T,T], 위상각 A_t = ψ/2 + θ·pos_t (q), B_t = −ψ/2 + θ·pos_t (k) → cos/sin [T,H,p]. psi 를 주면 그 위상차로 (STDP 창 β 용)."""
+        psi = self.psi if psi is None else psi
         decay_h = torch.exp(-self.alpha[:, 0, None, None] * self.l1)
         ppos = self.theta[..., 0, None] * self.pos_u + self.theta[..., 1, None] * self.pos_w   # [H,p,T]
-        A = (ppos + self.psi[..., None] / 2).permute(2, 0, 1); B = (ppos - self.psi[..., None] / 2).permute(2, 0, 1)
+        A = (ppos + psi[..., None] / 2).permute(2, 0, 1); B = (ppos - psi[..., None] / 2).permute(2, 0, 1)
         return decay_h, torch.cos(A), torch.sin(A), torch.cos(B), torch.sin(B)
 
     def attn(self, h, AB, kc):
         """a_tn [B,H,T,T] = e^{−α‖Δ‖} · Re[conj(q̂_t) k̂_n],  q̂/k̂ = 위상 정규화 후 각각 회전."""
         A, Bm = AB; decay_h, cosA, sinA, cosB, sinB = kc
-        x = torch.einsum('btd,hjd->bthj', h, A); y = torch.einsum('btd,hjd->bthj', h, Bm)
+        ha = h[..., :self.d_a] if self.split else h                         # 주소 블록만 읽음
+        x = torch.einsum('btd,hjd->bthj', ha, A); y = torch.einsum('btd,hjd->bthj', ha, Bm)
         nrm = (x.pow(2) + y.pow(2)).sum(-1, keepdim=True).sqrt(); x = x / (nrm + self.config.eps); y = y / (nrm + self.config.eps)
         qx = x * cosA - y * sinA; qy = x * sinA + y * cosA
         kx = x * cosB - y * sinB; ky = x * sinB + y * cosB
@@ -139,12 +166,28 @@ class LT_Inner(nn.Module):
     def phi(self, h):
         return h / torch.sqrt(1.0 + self.gamma * h.pow(2).sum(-1, keepdim=True))
 
-    def step(self, h, AB, kc):
+    def step(self, h, AB, kc, w=None, fresh=None, kcb=None):
         a = self.attn(h, AB, kc)
-        v = torch.einsum('btd,hcd->bthc', h, self.w_sh)                   # W h_n
+        if self.stdp:
+            eta = torch.sigmoid(self.eta_raw); lam = torch.sigmoid(self.lam_raw)
+            if self.config.stdp_target in ("value", "product"):
+                hv0 = h[..., self.d_a:] if self.split else h
+                vv = torch.einsum('btd,hcd->bthc', hv0, self.w_sh); vv = vv / (vv.norm(dim=-1, keepdim=True) + self.config.eps)
+                agree = torch.einsum('bthc,bnhc->bhtn', vv, vv)
+                G = agree * kc[0].unsqueeze(0) if self.config.stdp_target == "value" else a * agree   # product: 그래프 × 값 일치
+            else:
+                G = self.attn(h, AB, kcb) if kcb is not None else a      # STDP 창 Γ = cos(Δφ − θ·Δ − β)
+            if w is None: w = G
+            else:
+                w = torch.where(fresh.view(-1, 1, 1, 1), G, w) if fresh is not None else w
+                w = w + eta * (G - w)
+            a = (1 - lam) * a + lam * w
+        hv = h[..., self.d_a:] if self.split else h                         # 값 블록만 수송
+        v = torch.einsum('btd,hcd->bthc', hv, self.w_sh)                  # W h_n
         o = torch.einsum('bhtn,bnhc->bthc', a, v)                         # Σ_n a_tn v_n
         f = torch.einsum('bthc,hcd->btd', o, self.w_sh)                   # Wᵀ o
-        return self.phi(h + f), a
+        if self.split: f = F.pad(f, (self.d_a, 0))                         # 주소 블록에는 0 → 스텝 안 a 불변
+        return self.phi(h + f), (w if self.stdp else a)
 
     def boundary(self, h):
         g, u = self.b_gate_up(h).chunk(2, dim=-1)
@@ -176,11 +219,14 @@ class LT_Inner(nn.Module):
     def _forward(self, carry, batch):
         h = carry.current_hidden; inj = self.injection(batch)
         AB = self.W_C(); kc = self.kernel()
+        w = carry.coupling if self.stdp else None; fresh = carry.fresh if self.stdp else None
+        kcb = self.kernel(self.beta) if self.stdp else None
         for _ in range(self.config.blocks_per_seg):
             h = self.boundary(h)
             h = h + self.inj_gate * inj
-            h, _ = self.step(h, AB, kc)
-        return replace(carry, current_hidden=h.detach()), self.w_cls(h)
+            h, w = self.step(h, AB, kc, w, fresh, kcb)
+            fresh = None                                                   # 첫 블록에서만 초기화
+        return replace(carry, current_hidden=h.detach(), coupling=(w.detach() if self.stdp else None), fresh=None), self.w_cls(h)
 
 
 class LT(nn.Module):
@@ -202,6 +248,7 @@ class LT(nn.Module):
 
     def forward(self, carry, batch, compute_target_q: bool = False):
         inner = self.inner.reset_carry(carry.halted, carry)
+        inner = replace(inner, fresh=carry.halted.clone())
         steps = torch.where(carry.halted, 0, carry.steps)
         data = {k: torch.where(carry.halted.view((-1,) + (1,) * (batch[k].ndim - 1)), batch[k], v) for k, v in carry.current_data.items()}
         inner, logits = self.inner(inner, data)
@@ -209,4 +256,4 @@ class LT(nn.Module):
         outputs = {"logits": logits, "q_halt_logits": q, "q_continue_logits": q}
         with torch.no_grad():
             steps = steps + 1; halted = steps >= self.config.loops
-        return LTCarry(current_hidden=inner.current_hidden, steps=steps, halted=halted, current_data=data), outputs
+        return LTCarry(current_hidden=inner.current_hidden, steps=steps, halted=halted, current_data=data, coupling=inner.coupling), outputs

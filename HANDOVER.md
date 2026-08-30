@@ -47,6 +47,9 @@ CKPT_PATH=checkpoints/R1B8_bilin_r2/step_123039.pt EPOCHS=34250 LOAD_OPT=False b
 | 학습 13.9 → 5.8 it/s | 같은 GPU 에 분석 스크립트 | 분석은 학습 GPU 와 분리 |
 | `epochs=50000` 으로 재개 | 재개 시점부터 390,600 을 **더** 돈다 | `EPOCHS` 는 남은 만큼만 |
 
+## 3.9 다음 학습 (사양 확정됨)
+`STDP.md §6.17` 에 충실 이식(differentiable plasticity / backpropamine) 구조·절제 사다리 P0~P3·초기화·판정선·사전 등록 예측이 전부 적혀 있다. 구현은 `core/minimal.py` 에 버퍼 둘(E, H)과 파라미터 셋(α 테이블, u, b) 추가. 시작 전에 §6.16 의 "내 이식의 오류 셋" 을 먼저 읽을 것.
+
 ## 4. 분석
 
 `analysis/*.py` 는 전부 학습 불필요·기본 인자로 `checkpoints/R1B8_bilin_r2_step123039.pt` 를 읽는다. 목록과 재생산 명령은 `RESULTS.md` 끝.

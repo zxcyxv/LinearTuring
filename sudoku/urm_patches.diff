@@ -123,11 +123,11 @@ index b523632..ff98456 100644
 +                # wd=1.0 이 약한 그래디언트의 커널을 (0.9999)^t 로 잠식 (loss 역행의 기전)
 +                [{"params": [p for n, p in model.named_parameters()
 +                             if p.ndim <= 1 or n.endswith(".b")
-+                             or any(k in n for k in ("psi", "theta", "alpha_raw", "gamma_raw", "inj_gate", "st_gain", "eta_raw", "lam_raw", "beta"))],
++                             or any(k in n for k in ("psi", "theta", "alpha_raw", "gamma_raw", "inj_gate", "st_gain", "eta_raw", "lam_raw", "beta", "mu"))],
 +                  "weight_decay": 0.0},
 +                 {"params": [p for n, p in model.named_parameters()
 +                             if not (p.ndim <= 1 or n.endswith(".b")
-+                             or any(k in n for k in ("psi", "theta", "alpha_raw", "gamma_raw", "inj_gate", "st_gain", "eta_raw", "lam_raw", "beta")))],
++                             or any(k in n for k in ("psi", "theta", "alpha_raw", "gamma_raw", "inj_gate", "st_gain", "eta_raw", "lam_raw", "beta", "mu")))],
 +                  "weight_decay": config.weight_decay}],
                  lr=0,  # Needs to be set by scheduler
                  weight_decay=config.weight_decay,

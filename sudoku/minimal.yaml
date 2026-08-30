@@ -25,3 +25,6 @@ stdp_eta_init: 0.1
 stdp_lam_init: 0.25
 stdp_target: addr
 stdp_lam_fixed: -1.0
+stdp_mu_init: 0.5
+gate: false
+gate_s_init: 5.0

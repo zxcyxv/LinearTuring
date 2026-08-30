@@ -40,6 +40,8 @@ class LTCarry:
     current_data: Optional[Dict[str, torch.Tensor]] = None
     coupling: Optional[torch.Tensor] = None       # [4단계] STDP 결합 기억 w [B,H,T,T]
     fresh: Optional[torch.Tensor] = None          # [B] bool — 이 퍼즐의 w 가 아직 초기화 전
+    vprev: Optional[torch.Tensor] = None          # [causal] 직전 블록의 정규화 값 v̂ [B,T,H,C]
+    gate: Optional[torch.Tensor] = None           # [gate] 직전 블록 메시지의 판별력에서 나온 굳힘 이득 K [B,T]
 
 
 class LTConfig(pydantic.BaseModel):
@@ -65,9 +67,17 @@ class LTConfig(pydantic.BaseModel):
     stdp: bool = False          # [4단계] 결합 기억 w ← w + η(a−w), 결합 = (1−λ)a + λw. η,λ 헤드별 학습 (sigmoid). STDP.md §2
     stdp_target: str = "addr"  # addr: Γ = a (주소 위상 커널, β 비대칭) / value: Γ = D(Δ)·⟨v̂_t,v̂_n⟩ (값 겹침만; 부호 없음 → 거부됨)
                                 #   product: Γ = a_tn·⟨v̂_t,v̂_n⟩ — 결합 에너지 E(h,w)=−½Σ w a⟨Wh,Wh⟩+½Σw² 의 ∂/∂w. 그래프 부호 × 값 일치 (STDP.md)
+                                #   causal: Γ = a_tn·⟨v̂_t,v̂_n⟩ + μ_h · a^β_tn·⟨Δv̂_t, v̂_n⟩ — 창의 비대칭(sin) 성분이 곱하는 항.
+                                #     STDP 발화율 축약에서 창의 홀수 부분은 pre 활동 × post 활동의 시간 미분을 낳는다(Kempter–Gerstner–van Hemmen).
+                                #     Δv̂_t = 이 블록의 값 변화 → "t 가 바뀌는 순간 서 있던 n" 이 결합에 남는다 = 의존 그래프 (STDP.md §6.13)
     stdp_eta_init: float = 0.1
     stdp_lam_init: float = 0.25
     stdp_lam_fixed: float = -1.0  # ≥0 이면 λ 를 이 값으로 고정(학습 안 함). 1.0 = 전달을 w 가 전담하는 STDP 충실형
+    stdp_mu_init: float = 0.5   # [causal] 인과 항의 헤드별 계수 μ_h 초기값 (학습; softplus 아님, 부호 자유)
+    gate: bool = False          # [굳힘 게이트] 경계(추론) 항의 이득 = K(d) = (s·d)²/(1+(s·d)²)  — 칼만 이득 형.
+                                #   d_t = (직전 블록 메시지가 만든 로짓의 top1−top2) / std_v  — 척도 불변 판별력(증거 정밀도의 대리).
+                                #   K≡1 (현재) = 모든 메시지를 무한 정밀로 취급 = 전제 확인 없는 단정 규칙. STDP.md §6.13
+    gate_s_init: float = 5.0   # K(d) 가 초기에 관대(≈0.85)하도록: 무작위 초기 모델의 d 중앙값 ≈0.46
     psi_zero: bool = False      # [2단계] ψ≡0 고정 → a_tn = a_nt (명제 7), 값 수송이 대칭 → 스텝이 E_adj 의 경사 (STDP.md §3)
 
 
@@ -118,6 +128,13 @@ class LT_Inner(nn.Module):
             self.eta_raw = nn.Parameter(torch.full((H, 1, 1), lg(config.stdp_eta_init)))
             self.lam_raw = nn.Parameter(torch.full((H, 1, 1), lg(config.stdp_lam_init)))
             self.beta = nn.Parameter(torch.zeros(H, self.p))          # 위상 STDP 창의 비대칭 β_h (ψ 와 별개, 0 = 대칭 Hebb)
+            if config.stdp_target == "causal":
+                self.mu = nn.Parameter(torch.full((H, 1, 1), float(config.stdp_mu_init)))   # 인과 항 계수 (부호 자유)
+                self.beta.data.normal_(0.0, 0.5)                        # β=0 이면 a^β = a 라 인과 항의 창이 대칭 → 작은 무작위 비대칭에서 출발
+        assert not (config.gate and config.stdp_target == "causal"), "gate + causal 동시 사용은 미구현"
+        self.gate_on = config.gate
+        if self.gate_on:
+            self.gate_s_raw = nn.Parameter(torch.tensor(inv_softplus(config.gate_s_init)))
         # 4차 소산
         self.gamma_raw = nn.Parameter(torch.tensor(inv_softplus(config.gamma_init)))
         # 쌍선형 경계 (down 영init → 시작 시 항등)
@@ -167,15 +184,24 @@ class LT_Inner(nn.Module):
     def phi(self, h):
         return h / torch.sqrt(1.0 + self.gamma * h.pow(2).sum(-1, keepdim=True))
 
-    def step(self, h, AB, kc, w=None, fresh=None, kcb=None):
+    def step(self, h, AB, kc, w=None, fresh=None, kcb=None, vprev=None):
+        """vprev: 직전 블록의 정규화 값 v̂ [B,T,H,C] (causal 전용). 반환에 현재 v̂ 를 함께 돌려준다."""
         a = self.attn(h, AB, kc)
         if self.stdp:
             eta = torch.sigmoid(self.eta_raw); lam = torch.sigmoid(self.lam_raw) if self.config.stdp_lam_fixed < 0 else torch.full_like(self.lam_raw, float(self.config.stdp_lam_fixed))
-            if self.config.stdp_target in ("value", "product"):
+            if self.config.stdp_target in ("value", "product", "causal"):
                 hv0 = h[..., self.d_a:] if self.split else h
                 vv = torch.einsum('btd,hcd->bthc', hv0, self.w_sh); vv = vv / (vv.norm(dim=-1, keepdim=True) + self.config.eps)
                 agree = torch.einsum('bthc,bnhc->bhtn', vv, vv)
-                G = agree * kc[0].unsqueeze(0) if self.config.stdp_target == "value" else a * agree   # product: 그래프 × 값 일치
+                if self.config.stdp_target == "causal":
+                    G = a * agree
+                    if vprev is not None:
+                        dv = vv - vprev                                                     # 이 블록의 값 변화 (post 의 시간 미분)
+                        ab = self.attn(h, AB, kcb) if kcb is not None else a                # 비대칭 창 a^β
+                        G = G + self.mu * ab * torch.einsum('bthc,bnhc->bhtn', dv, vv)      # 인과 항: t 가 변할 때 서 있던 n
+                    vcur = vv
+                else:
+                    G = agree * kc[0].unsqueeze(0) if self.config.stdp_target == "value" else a * agree   # product: 그래프 × 값 일치
             else:
                 G = self.attn(h, AB, kcb) if kcb is not None else a      # STDP 창 Γ = cos(Δφ − θ·Δ − β)
             if w is None: w = G
@@ -188,11 +214,22 @@ class LT_Inner(nn.Module):
         o = torch.einsum('bhtn,bnhc->bthc', a, v)                         # Σ_n a_tn v_n
         f = torch.einsum('bthc,hcd->btd', o, self.w_sh)                   # Wᵀ o
         if self.split: f = F.pad(f, (self.d_a, 0))                         # 주소 블록에는 0 → 스텝 안 a 불변
-        return self.phi(h + f), (w if self.stdp else a)
+        hout = self.phi(h + f)
+        if self.gate_on:                                                   # 메시지가 만드는 로짓 변화의 척도 불변 마진 → 다음 블록 굳힘 이득
+            ell = torch.einsum('btd,vd->btv', f, self.w_cls.weight)
+            t2 = ell.topk(2, dim=-1).values
+            z = F.softplus(self.gate_s_raw) * (t2[..., 0] - t2[..., 1]) / (ell.std(-1) + self.config.eps)
+            return hout, (w if self.stdp else a), z * z / (1.0 + z * z)
+        if self.stdp and self.config.stdp_target == "causal":
+            hv1 = hout[..., self.d_a:] if self.split else hout
+            v1 = torch.einsum('btd,hcd->bthc', hv1, self.w_sh); v1 = v1 / (v1.norm(dim=-1, keepdim=True) + self.config.eps)
+            return hout, w, v1
+        return hout, (w if self.stdp else a)
 
-    def boundary(self, h):
+    def boundary(self, h, gate=None):
         g, u = self.b_gate_up(h).chunk(2, dim=-1)
-        return h + self.b_down(0.5 * g * u)
+        delta = self.b_down(0.5 * g * u)
+        return h + (delta if gate is None else gate.unsqueeze(-1) * delta)
 
     def injection(self, batch):
         inj = self.embed(batch["inputs"].to(torch.long))
@@ -222,12 +259,24 @@ class LT_Inner(nn.Module):
         AB = self.W_C(); kc = self.kernel()
         w = carry.coupling if self.stdp else None; fresh = carry.fresh if self.stdp else None
         kcb = self.kernel(self.beta) if self.stdp else None
+        gate = carry.gate if self.gate_on else None
+        if self.gate_on and fresh is not None and gate is not None: gate = torch.where(fresh.view(-1, 1), torch.zeros_like(gate), gate)
+        causal = self.stdp and self.config.stdp_target == "causal"
+        vprev = carry.vprev if causal else None
+        if causal and vprev is not None and fresh is not None: vprev = torch.where(fresh.view(-1, 1, 1, 1), torch.zeros_like(vprev), vprev)
         for _ in range(self.config.blocks_per_seg):
-            h = self.boundary(h)
+            h = self.boundary(h, gate)                                     # 굳힘 = 직전 블록 증거의 판별력에 비례
             h = h + self.inj_gate * inj
-            h, w = self.step(h, AB, kc, w, fresh, kcb)
+            if self.gate_on:
+                h, w, gate = self.step(h, AB, kc, w, fresh, kcb)
+            elif causal:
+                h, w, vprev = self.step(h, AB, kc, w, fresh, kcb, vprev)   # vprev = 직전 블록 값 (세그먼트 넘어 carry)
+            else:
+                h, w = self.step(h, AB, kc, w, fresh, kcb)
             fresh = None                                                   # 첫 블록에서만 초기화
-        return replace(carry, current_hidden=h.detach(), coupling=(w.detach() if self.stdp else None), fresh=None), self.w_cls(h)
+        return replace(carry, current_hidden=h.detach(), coupling=(w.detach() if self.stdp else None), fresh=None,
+                       vprev=(vprev.detach() if causal and vprev is not None else None),
+                       gate=(gate.detach() if self.gate_on else None)), self.w_cls(h)
 
 
 class LT(nn.Module):
@@ -257,4 +306,4 @@ class LT(nn.Module):
         outputs = {"logits": logits, "q_halt_logits": q, "q_continue_logits": q}
         with torch.no_grad():
             steps = steps + 1; halted = steps >= self.config.loops
-        return LTCarry(current_hidden=inner.current_hidden, steps=steps, halted=halted, current_data=data, coupling=inner.coupling), outputs
+        return LTCarry(current_hidden=inner.current_hidden, steps=steps, halted=halted, current_data=data, coupling=inner.coupling, vprev=inner.vprev, gate=inner.gate), outputs

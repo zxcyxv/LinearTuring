@@ -26,6 +26,7 @@ sudoku/*.sh, *.diff   발사·재개 스크립트, URM 패치, 데이터 빌드
 analysis/             체크포인트 진단·게이트 치환·해석·시각화 (학습 불필요)
 tasks/                코어 단독 검증: MNIST (train.py), 1D CA (ca_task.py)
 results/              곡선 CSV · 진단 JSON · 그림 · 원 로그
+papers/               참고 논문 PDF (differentiable plasticity · backpropamine · eligibility trace · e-prop · CTDS) + 대조표
 checkpoints/          R1B8_bilin_r2 @123,039 (현재 최고, EMA) · R1B8_swiglu @9,765 (SwiGLU 대조) · R1B8_min_stdp1 @228,501 (minimal+STDP 충실형 7.16M, 완답 974; `core/minimal.py`)
 ```
 

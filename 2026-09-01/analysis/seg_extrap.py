@@ -24,6 +24,7 @@ ap.add_argument("--bs", type=int, default=128)
 ap.add_argument("--weights", default="ema", choices=["ema", "raw"])
 ap.add_argument("--config", default=None, help="arch config yaml (기본: 체크포인트 옆 config.yaml)")
 ap.add_argument("--tag", default="faith")
+ap.add_argument("--diag", default="keep", choices=["keep","zero","only"])
 ap.add_argument("--lam", type=float, default=-1.0, help=">=0 이면 λ 를 이 값으로 고정 (0 = 기억 끔, 대조군)")
 ap.add_argument("--out", default=os.path.join(ROOT, "2026-09-01", "results", "json", "seg_extrap.json"))
 args = ap.parse_args()
@@ -45,6 +46,7 @@ cfg = {k: v for k, v in cfg.items() if k not in ("name", "loss")}
 cfg.update(batch_size=args.bs, seq_len=81, vocab_size=11,
            num_puzzle_identifiers=int(pid.max().item()) + 1, loops=args.segs + 1)
 if args.lam >= 0: cfg["stdp_lam_fixed"] = args.lam
+cfg["stdp_diag"] = args.diag
 ck = torch.load(args.ckpt, map_location="cpu", weights_only=False)
 # ema_shadow 는 파라미터만 담는다 — 버퍼(init_hidden, puzzle_emb.weights)는 raw 에서 가져와야 한다
 # model_state_dict = EMA 적용본 (ema_shadow 와 비트 동일, 확인함). ema_shadow 는 파라미터만이라 버퍼가 빠진다.
@@ -61,6 +63,7 @@ if miss.missing_keys:   # gain_raw 는 stdp1 이후 추가된 파라미터 — i
 print(f"step={ck['step']}  weights={args.weights}  loops={cfg['loops']}  npi={npi}")
 
 print(f"  λ={torch.sigmoid(m.inner.lam_raw).flatten().tolist() if cfg['stdp_lam_fixed']<0 else cfg['stdp_lam_fixed']}")
+print(f"  diag={args.diag}")
 print(f"  δ={torch.sigmoid(m.inner.eta_raw).flatten().mean().item():.4f}  "
       f"G={torch.nn.functional.softplus(m.inner.gain_raw).flatten().mean().item():.4f}")
 

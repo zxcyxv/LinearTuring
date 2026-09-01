@@ -8,3 +8,4 @@ results/logs/*.log.tmp
 results/json/*.npz
 *.npy
 results/logs/R1B8_min_faith.log
+refs/ckpt_hrm/

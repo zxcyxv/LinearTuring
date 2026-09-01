@@ -1,0 +1,28 @@
+     격자   STDP       경로 |       메모리        시간
+9x9     False    eager |    1.057G     59.3ms
+9x9     False  compile |    0.747G    115.3ms
+9x9      True    eager |    1.528G     84.0ms
+W0901 08:11:11.228000 30172 torch/_inductor/utils.py:1436] [7/0] Not enough SMs to use max_autotune_gemm mode
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+9x9      True  compile |    1.133G     97.9ms
+30x30    False    eager |    4.620G    201.0ms
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+30x30    False  compile |    3.417G    113.3ms
+30x30     True    eager |   14.342G    474.3ms
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+30x30     True  compile |   10.989G    211.6ms
+
+=== STDP 도입 배수 ===
+  9x9 eager  : 메모리  1.44×  시간  1.42×
+  9x9 compile: 메모리  1.52×  시간  0.85×
+  30x30 eager  : 메모리  3.10×  시간  2.36×
+  30x30 compile: 메모리  3.22×  시간  1.87×
+
+=== compile 이 준 이득 ===
+  9x9 stdp=False: 메모리 1.057→0.747G (0.71×)  시간    59.3→  115.3ms (1.95×)
+  9x9 stdp=True : 메모리 1.528→1.133G (0.74×)  시간    84.0→   97.9ms (1.17×)
+  30x30 stdp=False: 메모리 4.620→3.417G (0.74×)  시간   201.0→  113.3ms (0.56×)
+  30x30 stdp=True : 메모리 14.342→10.989G (0.77×)  시간   474.3→  211.6ms (0.45×)

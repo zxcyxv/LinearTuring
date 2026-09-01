@@ -77,7 +77,8 @@ class LTConfig(pydantic.BaseModel):
                                 #   G=1 이면 기존과 비트 동치. δ=잊음률(eta_raw 재사용), G=축적량 으로 역할 분리.
     stdp_lam_init: float = 0.25
     stdp_lam_fixed: float = -1.0  # ≥0 이면 λ 를 이 값으로 고정(학습 안 함). 1.0 = 전달을 w 가 전담하는 STDP 충실형
-    stdp_mu_init: float = 0.5   # [causal] 인과 항의 헤드별 계수 μ_h 초기값 (학습; softplus 아님, 부호 자유)
+    stdp_mu_init: float = 0.5
+    stdp_diag: str = "keep"      # keep | zero(자기시냅스 제거) | only(관계항 제거) — 절제용, 기본은 무변경   # [causal] 인과 항의 헤드별 계수 μ_h 초기값 (학습; softplus 아님, 부호 자유)
     gate: bool = False          # [굳힘 게이트] 경계(추론) 항의 이득 = K(d) = (s·d)²/(1+(s·d)²)  — 칼만 이득 형.
                                 #   d_t = (직전 블록 메시지가 만든 로짓의 top1−top2) / std_v  — 척도 불변 판별력(증거 정밀도의 대리).
                                 #   K≡1 (현재) = 모든 메시지를 무한 정밀로 취급 = 전제 확인 없는 단정 규칙. STDP.md §6.13
@@ -226,6 +227,10 @@ class LT_Inner(nn.Module):
             else:
                 G = self.attn_xy(xy, kcb) if kcb is not None else a      # STDP 창 Γ = cos(Δφ − θ·Δ − β)
             tgt = F.softplus(self.gain_raw) * G                      # 고정점 목표 = G·Γ (이득)
+            if self.config.stdp_diag != "keep":
+                # [2026-09-01 절제] STDP 에 자기시냅스(t=n)는 없다. Γ 단계에서 걸러야 w 대각이 항상 0 이다.
+                eye = torch.eye(tgt.shape[-1], device=tgt.device, dtype=tgt.dtype)
+                tgt = tgt * (eye if self.config.stdp_diag == "only" else (1 - eye))
             if w is None: w = tgt
             else:
                 w = torch.where(fresh.view(-1, 1, 1, 1), tgt, w) if fresh is not None else w

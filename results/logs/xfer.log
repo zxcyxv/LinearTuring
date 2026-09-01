@@ -1,0 +1,16 @@
+W0901 08:17:59.461000 34415 torch/_inductor/utils.py:1436] [6/0] Not enough SMs to use max_autotune_gemm mode
+URM (4층·H2·L6, h512)       T=  81 |  13.66M |   0.488G |     51.8ms
+URM (4층·H2·L6, h512)       T= 900 |  13.66M |   4.387G |    197.3ms
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+우리 STDP 끔 (h832)           T=  81 |   7.15M |   0.252G |     24.0ms
+우리 STDP 끔 (h832)           T= 900 |   7.15M |   3.414G |    112.4ms
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+우리 STDP 켬 (h832)           T=  81 |   7.16M |   0.338G |     27.0ms
+우리 STDP 켬 (h832)           T= 900 |   7.16M |  10.773G |    210.9ms
+
+모델                         |       메모리 81→900 |        시간 81→900
+URM (4층·H2·L6, h512)       | 0.488→  4.387G   8.98× |   51.8→  197.3ms   3.81×
+우리 STDP 끔 (h832)           | 0.252→  3.414G  13.56× |   24.0→  112.4ms   4.69×
+우리 STDP 켬 (h832)           | 0.338→ 10.773G  31.89× |   27.0→  210.9ms   7.80×

@@ -65,12 +65,16 @@ class LTConfig(pydantic.BaseModel):
     forward_dtype: str = "float32"
     addr_dim: int = 0           # [3단계] >0 이면 상태 = [주소 addr_dim | 값 나머지]. W_C 는 주소 블록만, 값 경로는 값 블록만 → row(W_C) ⟂ row(W), 스텝 안 a 불변 (STDP.md)
     stdp: bool = False          # [4단계] 결합 기억 w ← w + η(a−w), 결합 = (1−λ)a + λw. η,λ 헤드별 학습 (sigmoid). STDP.md §2
-    stdp_target: str = "addr"  # addr: Γ = a (주소 위상 커널, β 비대칭) / value: Γ = D(Δ)·⟨v̂_t,v̂_n⟩ (값 겹침만; 부호 없음 → 거부됨)
+    stdp_target: str = "addr"  # faithful: Γ = a^β·⟨v̂_t,v̂_n⟩ — 가소성 창(β) × 동시활동. STDP 세 인자를 모두 담는 형태 (2026-08-31)
+                                #   addr: Γ = a (주소 위상 커널, β 비대칭) / value: Γ = D(Δ)·⟨v̂_t,v̂_n⟩ (값 겹침만; 부호 없음 → 거부됨)
                                 #   product: Γ = a_tn·⟨v̂_t,v̂_n⟩ — 결합 에너지 E(h,w)=−½Σ w a⟨Wh,Wh⟩+½Σw² 의 ∂/∂w. 그래프 부호 × 값 일치 (STDP.md)
                                 #   causal: Γ = a_tn·⟨v̂_t,v̂_n⟩ + μ_h · a^β_tn·⟨Δv̂_t, v̂_n⟩ — 창의 비대칭(sin) 성분이 곱하는 항.
                                 #     STDP 발화율 축약에서 창의 홀수 부분은 pre 활동 × post 활동의 시간 미분을 낳는다(Kempter–Gerstner–van Hemmen).
                                 #     Δv̂_t = 이 블록의 값 변화 → "t 가 바뀌는 순간 서 있던 n" 이 결합에 남는다 = 의존 그래프 (STDP.md §6.13)
     stdp_eta_init: float = 0.1
+    stdp_gain_init: float = 1.0  # [2026-08-31] 누적 이득 G (헤드별 학습, softplus). w ← (1−δ)w + δ·G·Γ 의 고정점 = G·⟨Γ⟩.
+                                #   기존 EMA 는 고정점이 ⟨Γ⟩ 로 이득이 δ 와 무관하게 정확히 1 — 필터지 적분기가 아니다.
+                                #   G=1 이면 기존과 비트 동치. δ=잊음률(eta_raw 재사용), G=축적량 으로 역할 분리.
     stdp_lam_init: float = 0.25
     stdp_lam_fixed: float = -1.0  # ≥0 이면 λ 를 이 값으로 고정(학습 안 함). 1.0 = 전달을 w 가 전담하는 STDP 충실형
     stdp_mu_init: float = 0.5   # [causal] 인과 항의 헤드별 계수 μ_h 초기값 (학습; softplus 아님, 부호 자유)
@@ -127,10 +131,12 @@ class LT_Inner(nn.Module):
             lg = lambda x: math.log(x / (1 - x))
             self.eta_raw = nn.Parameter(torch.full((H, 1, 1), lg(config.stdp_eta_init)))
             self.lam_raw = nn.Parameter(torch.full((H, 1, 1), lg(config.stdp_lam_init)))
+            self.gain_raw = nn.Parameter(torch.full((H, 1, 1), inv_softplus(config.stdp_gain_init)))
             self.beta = nn.Parameter(torch.zeros(H, self.p))          # 위상 STDP 창의 비대칭 β_h (ψ 와 별개, 0 = 대칭 Hebb)
+            if config.stdp_target in ("causal", "faithful"):
+                self.beta.data.normal_(0.0, 0.5)                        # β=0 이면 a^β = a 라 창이 대칭 → 작은 무작위 비대칭에서 출발
             if config.stdp_target == "causal":
                 self.mu = nn.Parameter(torch.full((H, 1, 1), float(config.stdp_mu_init)))   # 인과 항 계수 (부호 자유)
-                self.beta.data.normal_(0.0, 0.5)                        # β=0 이면 a^β = a 라 인과 항의 창이 대칭 → 작은 무작위 비대칭에서 출발
         assert not (config.gate and config.stdp_target == "causal"), "gate + causal 동시 사용은 미구현"
         self.gate_on = config.gate
         if self.gate_on:
@@ -170,48 +176,62 @@ class LT_Inner(nn.Module):
         A = (ppos + psi[..., None] / 2).permute(2, 0, 1); B = (ppos - psi[..., None] / 2).permute(2, 0, 1)
         return decay_h, torch.cos(A), torch.sin(A), torch.cos(B), torch.sin(B)
 
-    def attn(self, h, AB, kc):
-        """a_tn [B,H,T,T] = e^{−α‖Δ‖} · Re[conj(q̂_t) k̂_n],  q̂/k̂ = 위상 정규화 후 각각 회전."""
-        A, Bm = AB; decay_h, cosA, sinA, cosB, sinB = kc
+    def addr(self, h, AB):
+        """정규화된 복소 주소 ẑ 의 (실부, 허부). **커널 위상(ψ/β)과 무관** — 한 블록에서 여러 커널로
+        attn 을 부를 때 이것을 공유한다. 이 사영이 T×T einsum 보다 10배 비싸다 (7.18 vs 0.70 G-MAC)."""
+        A, Bm = AB
         ha = h[..., :self.d_a] if self.split else h                         # 주소 블록만 읽음
         x = torch.einsum('btd,hjd->bthj', ha, A); y = torch.einsum('btd,hjd->bthj', ha, Bm)
-        nrm = (x.pow(2) + y.pow(2)).sum(-1, keepdim=True).sqrt(); x = x / (nrm + self.config.eps); y = y / (nrm + self.config.eps)
+        nrm = (x.pow(2) + y.pow(2)).sum(-1, keepdim=True).sqrt()
+        return x / (nrm + self.config.eps), y / (nrm + self.config.eps)
+
+    def attn_xy(self, xy, kc):
+        """정규화된 주소에서 커널 kc 로 a 를 만든다 (회전 + 내적 + 감쇠)."""
+        x, y = xy; decay_h, cosA, sinA, cosB, sinB = kc
         qx = x * cosA - y * sinA; qy = x * sinA + y * cosA
         kx = x * cosB - y * sinB; ky = x * sinB + y * cosB
         a = torch.einsum('bthj,bnhj->bhtn', qx, kx) + torch.einsum('bthj,bnhj->bhtn', qy, ky)
         return a * decay_h.unsqueeze(0)
+
+    def attn(self, h, AB, kc):
+        """a_tn [B,H,T,T] = e^{−α‖Δ‖} · Re[conj(q̂_t) k̂_n].  (분석 스크립트 호환용 래퍼)"""
+        return self.attn_xy(self.addr(h, AB), kc)
 
     def phi(self, h):
         return h / torch.sqrt(1.0 + self.gamma * h.pow(2).sum(-1, keepdim=True))
 
     def step(self, h, AB, kc, w=None, fresh=None, kcb=None, vprev=None):
         """vprev: 직전 블록의 정규화 값 v̂ [B,T,H,C] (causal 전용). 반환에 현재 v̂ 를 함께 돌려준다."""
-        a = self.attn(h, AB, kc)
+        xy = self.addr(h, AB)                                               # 주소 사영 — 블록당 1회
+        a = self.attn_xy(xy, kc)
+        hv = h[..., self.d_a:] if self.split else h
+        v = torch.einsum('btd,hcd->bthc', hv, self.w_sh)                    # 값 사영 — 블록당 1회 (수송·agree 공용)
         if self.stdp:
             eta = torch.sigmoid(self.eta_raw); lam = torch.sigmoid(self.lam_raw) if self.config.stdp_lam_fixed < 0 else torch.full_like(self.lam_raw, float(self.config.stdp_lam_fixed))
-            if self.config.stdp_target in ("value", "product", "causal"):
-                hv0 = h[..., self.d_a:] if self.split else h
-                vv = torch.einsum('btd,hcd->bthc', hv0, self.w_sh); vv = vv / (vv.norm(dim=-1, keepdim=True) + self.config.eps)
+            if self.config.stdp_target in ("value", "product", "causal", "faithful"):
+                vv = v / (v.norm(dim=-1, keepdim=True) + self.config.eps)   # 재사용 (재계산 안 함)
                 agree = torch.einsum('bthc,bnhc->bhtn', vv, vv)
                 if self.config.stdp_target == "causal":
                     G = a * agree
                     if vprev is not None:
                         dv = vv - vprev                                                     # 이 블록의 값 변화 (post 의 시간 미분)
-                        ab = self.attn(h, AB, kcb) if kcb is not None else a                # 비대칭 창 a^β
+                        ab = self.attn_xy(xy, kcb) if kcb is not None else a                # 비대칭 창 a^β (사영 재사용)
                         G = G + self.mu * ab * torch.einsum('bthc,bnhc->bhtn', dv, vv)      # 인과 항: t 가 변할 때 서 있던 n
-                    vcur = vv
+                elif self.config.stdp_target == "faithful":
+                    # [2026-08-31] 충실형 STDP: 가소성 창(β) × 동시활동. 창 × pre × post 의 세 인자를 모두 담는다.
+                    #   addr 은 창만, product 는 동시활동만(창은 전달용 ψ 를 빌려 씀) 담았다.
+                    G = (self.attn_xy(xy, kcb) if kcb is not None else a) * agree   # 사영 재사용
                 else:
-                    G = agree * kc[0].unsqueeze(0) if self.config.stdp_target == "value" else a * agree   # product: 그래프 × 값 일치
+                    G = agree * kc[0].unsqueeze(0) if self.config.stdp_target == "value" else a * agree   # product: 전달 창(ψ) × 값 일치
             else:
-                G = self.attn(h, AB, kcb) if kcb is not None else a      # STDP 창 Γ = cos(Δφ − θ·Δ − β)
-            if w is None: w = G
+                G = self.attn_xy(xy, kcb) if kcb is not None else a      # STDP 창 Γ = cos(Δφ − θ·Δ − β)
+            tgt = F.softplus(self.gain_raw) * G                      # 고정점 목표 = G·Γ (이득)
+            if w is None: w = tgt
             else:
-                w = torch.where(fresh.view(-1, 1, 1, 1), G, w) if fresh is not None else w
-                w = w + eta * (G - w)
+                w = torch.where(fresh.view(-1, 1, 1, 1), tgt, w) if fresh is not None else w
+                w = (1 - eta) * w + eta * tgt                        # 고정점 = G·⟨Γ⟩.  G=1 이면 기존 EMA 와 동일
             a = (1 - lam) * a + lam * w
-        hv = h[..., self.d_a:] if self.split else h                         # 값 블록만 수송
-        v = torch.einsum('btd,hcd->bthc', hv, self.w_sh)                  # W h_n
-        o = torch.einsum('bhtn,bnhc->bthc', a, v)                         # Σ_n a_tn v_n
+        o = torch.einsum('bhtn,bnhc->bthc', a, v)                         # Σ_n a_tn v_n  (위에서 계산한 v 재사용)
         f = torch.einsum('bthc,hcd->btd', o, self.w_sh)                   # Wᵀ o
         if self.split: f = F.pad(f, (self.d_a, 0))                         # 주소 블록에는 0 → 스텝 안 a 불변
         hout = self.phi(h + f)

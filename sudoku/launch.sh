@@ -8,6 +8,17 @@
 set -e
 ROOT=${LT_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}; export LT_ROOT=$ROOT
 RN=${1:?런 이름}; shift
+# [2026-08-31] 발사 전 학습 데이터 증강 확인 — NAUG=0 으로 빌드한 분석용 데이터로 학습을 돌린 사고 방지
+DATA_DIR=${DATA:-data/sudoku-extreme-1k-aug-1000}
+NTRAIN=$(cd "$ROOT/refs/URM" && python3 -c "import numpy as np;print(np.load('$DATA_DIR/train/all__inputs.npy',mmap_mode='r').shape[0])" 2>/dev/null || echo 0)
+if [ "${SKIP_DATA_CHECK:-0}" != "1" ] && [ "$NTRAIN" -lt 100000 ]; then
+  echo "!!! 학습 데이터 증강 확인 실패: $DATA_DIR/train 예제 $NTRAIN 개 (10만 미만)"
+  echo "    증강 빌드: cd refs/URM && PYTHONPATH=. python data/build_sudoku_dataset.py \\"
+  echo "               --output-dir $DATA_DIR --subsample-size 1000 --num-aug 1000"
+  echo "    의도한 것이면 SKIP_DATA_CHECK=1 로 우회"
+  exit 1
+fi
+echo "학습 데이터 $NTRAIN 예제 확인"
 mkdir -p "$ROOT/results/logs"; OUT=$ROOT/results/logs/${RN}.log
 cd "$ROOT/refs/URM"
 WANDB_MODE=offline OMP_NUM_THREADS=4 nohup torchrun --nproc-per-node 1 --master_port=$((29500+RANDOM%400)) pretrain.py \

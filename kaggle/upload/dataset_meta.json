@@ -1,0 +1,32 @@
+{
+  "source_repo": "sapientinc/sudoku-extreme",
+  "lt_seed": 0,
+  "subsample_size": 1000,
+  "test_size": 2048,
+  "train_total_rows": 3831994,
+  "shapes": {
+    "train_inputs": [
+      1000,
+      9,
+      9
+    ],
+    "train_labels": [
+      1000,
+      9,
+      9
+    ],
+    "test_inputs": [
+      2048,
+      9,
+      9
+    ],
+    "test_labels": [
+      2048,
+      9,
+      9
+    ]
+  },
+  "encoding": "uint8 9x9, 0=빈칸, 1..9=숫자 (학습 코드가 +1 하여 vocab 0..10 으로 씀)",
+  "sha256_npz": "b209d23895b87a64942a5e525af7a0c826a41cfff45cbe13b90041aaeaf52a3e",
+  "note": "증강(9!·전치·밴드/스택)은 train_kaggle.py 가 학습 중 생성. test 는 증강하지 않음."
+}

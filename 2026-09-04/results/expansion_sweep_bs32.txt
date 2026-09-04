@@ -1,0 +1,8 @@
+ok
+RESULT bs=32 exp=4.0 params=14.29M fix=nopersist     95.32 ms  (10.49 it/s)
+RESULT bs=32 exp=2.0 params= 9.18M fix=nopersist     79.07 ms  (12.65 it/s)
+RESULT bs=32 exp=1.0 params= 6.62M fix=nopersist     71.36 ms  (14.01 it/s)
+RESULT bs=32 exp=0.5 params= 5.35M fix=nopersist     66.30 ms  (15.08 it/s)
+=== thaw10 ===
+
+[exited with code 0]

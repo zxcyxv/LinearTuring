@@ -1,0 +1,41 @@
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+Setup EMA
+  0%|          | 0/390625 [00:00<?, ?it/s]wandb: Tracking run with wandb version 0.29.0
+wandb: W&B syncing is set to `offline` in this directory. Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+wandb: Run data is saved locally in /workspace/LinearTuring/refs/URM/wandb/offline-run-20260904_025746-6xyboss1
+wandb: View this run in the terminal with `wandb leet`
+_iter_id: 0
+train_epochs_per_iter: 250
+total_iters: 200
+train_loader len: 1953
+Epoch 0
+  0%|          | 1/390625 [00:47<5113:01:25, 47.12s/it]  0%|          | 2/390625 [00:50<2320:54:24, 21.39s/it]  0%|          | 3/390625 [00:50<1280:54:39, 11.80s/it]  0%|          | 4/390625 [00:51<792:22:27,  7.30s/it]   0%|          | 5/390625 [00:51<521:53:52,  4.81s/it]  0%|          | 6/390625 [00:52<359:01:34,  3.31s/it]  0%|          | 7/390625 [00:52<255:36:24,  2.36s/it]  0%|          | 8/390625 [00:52<186:34:57,  1.72s/it]  0%|          | 9/390625 [00:53<141:49:00,  1.31s/it]  0%|          | 10/390625 [00:53<108:11:36,  1.00it/s]  0%|          | 11/390625 [00:53<88:16:37,  1.23it/s]   0%|          | 12/390625 [00:54<74:36:41,  1.45it/s]  0%|          | 13/390625 [00:54<65:09:46,  1.67it/s]  0%|          | 14/390625 [00:55<55:38:17,  1.95it/s]  0%|          | 15/390625 [00:55<51:43:54,  2.10it/s]  0%|          | 16/390625 [00:55<49:06:43,  2.21it/s]  0%|          | 17/390625 [00:56<44:23:13,  2.44it/s]  0%|          | 18/390625 [00:56<43:50:03,  2.48it/s]  0%|          | 19/390625 [00:56<40:49:41,  2.66it/s]  0%|          | 20/390625 [00:57<41:13:29,  2.63it/s]  0%|          | 21/390625 [00:57<38:59:08,  2.78it/s]  0%|          | 22/390625 [00:57<40:10:56,  2.70it/s]  0%|          | 23/390625 [00:58<38:45:46,  2.80it/s]  0%|          | 24/390625 [00:58<41:34:57,  2.61it/s]  0%|          | 25/390625 [00:59<41:52:30,  2.59it/s]  0%|          | 26/390625 [00:59<42:09:22,  2.57it/s]  0%|          | 27/390625 [00:59<42:37:42,  2.55it/s]  0%|          | 28/390625 [01:00<45:34:54,  2.38it/s]  0%|          | 29/390625 [01:01<54:51:57,  1.98it/s]  0%|          | 30/390625 [01:01<58:00:20,  1.87it/s]  0%|          | 31/390625 [01:02<64:24:14,  1.68it/s]  0%|          | 32/390625 [01:03<68:31:20,  1.58it/s]  0%|          | 33/390625 [01:03<71:38:40,  1.51it/s]  0%|          | 34/390625 [01:04<73:01:53,  1.49it/s]  0%|          | 35/390625 [01:05<74:36:37,  1.45it/s]  0%|          | 36/390625 [01:06<76:14:51,  1.42it/s]  0%|          | 37/390625 [01:06<76:55:03,  1.41it/s]  0%|          | 38/390625 [01:07<77:15:52,  1.40it/s]  0%|          | 39/390625 [01:08<77:17:04,  1.40it/s]  0%|          | 40/390625 [01:08<76:50:14,  1.41it/s]  0%|          | 41/390625 [01:09<77:20:37,  1.40it/s]W0904 02:58:57.178000 26451 torch/distributed/elastic/agent/server/api.py:723] Received 15 death signal, shutting down workers
+W0904 02:58:57.178000 26451 torch/distributed/elastic/multiprocessing/api.py:900] Sending process 26570 closing signal SIGTERM
+Traceback (most recent call last):
+  File "/usr/local/bin/torchrun", line 7, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 357, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 901, in main
+    run(args)
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/run.py", line 892, in run
+    elastic_launch(
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 143, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/launcher/api.py", line 268, in launch_agent
+    result = agent.run()
+             ^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/metrics/api.py", line 138, in wrapper
+    result = f(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 715, in run
+    result = self._invoke_run(role)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/agent/server/api.py", line 879, in _invoke_run
+    time.sleep(monitor_interval)
+  File "/usr/local/lib/python3.12/dist-packages/torch/distributed/elastic/multiprocessing/api.py", line 84, in _terminate_process_handler
+    raise SignalException(f"Process {os.getpid()} got signal: {sigval}", sigval=sigval)
+torch.distributed.elastic.multiprocessing.api.SignalException: Process 26451 got signal: 15

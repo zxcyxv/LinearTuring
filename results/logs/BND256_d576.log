@@ -1,0 +1,6 @@
+[Gloo] Rank 0 is connected to 0 peer ranks. Expected number of connected peer ranks is : 0
+Setup EMA
+  0%|          | 0/390625 [00:00<?, ?it/s]wandb: Tracking run with wandb version 0.29.0
+wandb: W&B syncing is set to `offline` in this directory. Run `wandb online` or set WANDB_MODE=online to enable cloud syncing.
+wandb: Run data is saved locally in /workspace/LinearTuring/refs/URM/wandb/offline-run-20260904_082057-v63c3e87
+wandb: View this run in the terminal with `wandb leet`

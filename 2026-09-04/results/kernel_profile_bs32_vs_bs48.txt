@@ -1,0 +1,61 @@
+##### bs32 #####
+                                                                  Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+----------------------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+              triton_per_fused__to_copy_add_cos_div_mul_neg_sin_sum_43         0.01%     202.309us         0.01%     229.648us      38.275us        1.370s        84.42%        1.370s     228.386ms             6  
+              triton_per_fused__to_copy_add_cos_div_mul_neg_sin_sum_43         0.00%       0.000us         0.00%       0.000us       0.000us        1.370s        84.42%        1.370s     228.386ms             6  
+                                                              aten::mm         0.54%       8.914ms         0.82%      13.494ms      15.564us     102.588ms         6.32%     102.588ms     118.325us           867  
+            ampere_bf16_s1688gemm_bf16_128x128_ldg8_f2f_stages_32x1_nn         0.00%       0.000us         0.00%       0.000us       0.000us      34.653ms         2.13%      34.653ms     121.589us           285  
+                                                             aten::bmm         0.41%       6.678ms         0.55%       8.952ms      15.225us      28.894ms         1.78%      28.894ms      49.140us           588  
+            ampere_bf16_s1688gemm_bf16_128x128_ldg8_f2f_stages_32x1_nt         0.00%       0.000us         0.00%       0.000us       0.000us      24.581ms         1.51%      24.581ms     256.053us            96  
+                                                       aten::linalg_qr         0.25%       4.020ms         0.62%      10.096ms       1.683ms      22.343ms         1.38%      22.509ms       3.752ms             6  
+                        ampere_bf16_s1688gemm_bf16_128x128_ldg8_f2f_tn         0.00%       0.000us         0.00%       0.000us       0.000us      20.976ms         1.29%      20.976ms     145.668us           144  
+void geqr2_smem_domino_fast<float, float, 8, 1024>(int, int, float*...         0.00%       0.000us         0.00%       0.000us       0.000us      19.066ms         1.17%      19.066ms     397.199us            48  
+                                         Optimizer.step#AdamATan2.step         0.00%       0.000us         0.00%       0.000us       0.000us      12.808ms         0.79%      12.808ms       4.269ms             3  
+void cutlass::Kernel2<cutlass_75_wmma_tensorop_bf16_s161616gemm_bf1...         0.00%       0.000us         0.00%       0.000us       0.000us      11.900ms         0.73%      11.900ms      61.978us           192  
+void cutlass::Kernel2<cutlass_75_wmma_tensorop_bf16_s161616gemm_bf1...         0.00%       0.000us         0.00%       0.000us       0.000us       9.934ms         0.61%       9.934ms      51.742us           192  
+                                               triton_poi_fused_cat_18         0.02%     246.577us         0.02%     375.884us       7.831us       8.621ms         0.53%       8.621ms     179.609us            48  
+                                               triton_poi_fused_cat_18         0.00%       0.000us         0.00%       0.000us       0.000us       8.621ms         0.53%       8.621ms     179.609us            48  
+            ampere_bf16_s1688gemm_bf16_128x128_ldg8_f2f_stages_32x1_tn         0.00%       0.000us         0.00%       0.000us       0.000us       7.665ms         0.47%       7.665ms     159.687us            48  
+           ampere_bf16_s16816gemm_bf16_128x128_ldg8_f2f_stages_64x3_nt         0.00%       0.000us         0.00%       0.000us       0.000us       6.904ms         0.43%       6.904ms      71.915us            96  
+                 triton_per_fused__to_copy_add_div_mul_pow_sqrt_sum_25         0.04%     717.342us         0.06%     976.142us      23.241us       6.123ms         0.38%       6.123ms     145.786us            42  
+                 triton_per_fused__to_copy_add_div_mul_pow_sqrt_sum_25         0.00%       0.000us         0.00%       0.000us       0.000us       6.123ms         0.38%       6.123ms     145.786us            42  
+            triton_poi_fused__to_copy_add_mul_rsub_sigmoid_softplus_26         0.06%     914.379us         0.07%       1.131ms      31.412us       5.669ms         0.35%       5.669ms     157.484us            36  
+            triton_poi_fused__to_copy_add_mul_rsub_sigmoid_softplus_26         0.00%       0.000us         0.00%       0.000us       0.000us       5.669ms         0.35%       5.669ms     157.484us            36  
+                              triton_poi_fused__to_copy_add_div_mul_23         0.04%     590.964us         0.05%     854.470us      18.988us       4.841ms         0.30%       4.841ms     107.569us            45  
+                              triton_poi_fused__to_copy_add_div_mul_23         0.00%       0.000us         0.00%       0.000us       0.000us       4.841ms         0.30%       4.841ms     107.569us            45  
+----------------------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 1.637s
+Self CUDA time total: 1.623s
+
+##### bs48 #####
+                                                                  Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls  
+----------------------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+                                                              aten::mm         1.76%       7.255ms         2.62%      10.799ms      12.456us     153.373ms        38.70%     153.373ms     176.901us           867  
+            ampere_bf16_s1688gemm_bf16_128x128_ldg8_f2f_stages_32x1_nn         0.00%       0.000us         0.00%       0.000us       0.000us      51.156ms        12.91%      51.156ms     179.494us           285  
+                                                             aten::bmm         1.29%       5.297ms         1.74%       7.174ms      12.201us      48.312ms        12.19%      48.312ms      82.163us           588  
+            ampere_bf16_s1688gemm_bf16_128x128_ldg8_f2f_stages_32x1_nt         0.00%       0.000us         0.00%       0.000us       0.000us      37.330ms         9.42%      37.330ms     388.855us            96  
+                        ampere_bf16_s1688gemm_bf16_128x128_ldg8_f2f_tn         0.00%       0.000us         0.00%       0.000us       0.000us      31.339ms         7.91%      31.339ms     217.629us           144  
+                                                       aten::linalg_qr         0.89%       3.672ms         2.25%       9.264ms       1.544ms      29.423ms         7.42%      29.622ms       4.937ms             6  
+void geqr2_smem_domino_fast<float, float, 8, 1024>(int, int, float*...         0.00%       0.000us         0.00%       0.000us       0.000us      25.249ms         6.37%      25.249ms     526.011us            48  
+              triton_per_fused__to_copy_add_cos_div_mul_neg_sin_sum_41         0.05%     201.294us         0.06%     227.483us      37.914us      19.926ms         5.03%      19.926ms       3.321ms             6  
+              triton_per_fused__to_copy_add_cos_div_mul_neg_sin_sum_41         0.00%       0.000us         0.00%       0.000us       0.000us      19.926ms         5.03%      19.926ms       3.321ms             6  
+void cutlass::Kernel2<cutlass_75_wmma_tensorop_bf16_s161616gemm_bf1...         0.00%       0.000us         0.00%       0.000us       0.000us      18.511ms         4.67%      18.511ms      96.413us           192  
+                                               triton_poi_fused_cat_16         0.05%     225.872us         0.08%     347.426us       7.238us      16.052ms         4.05%      16.052ms     334.408us            48  
+                                               triton_poi_fused_cat_16         0.00%       0.000us         0.00%       0.000us       0.000us      16.052ms         4.05%      16.052ms     334.408us            48  
+void cutlass::Kernel2<cutlass_75_wmma_tensorop_bf16_s161616gemm_bf1...         0.00%       0.000us         0.00%       0.000us       0.000us      15.185ms         3.83%      15.185ms      79.086us           192  
+                                         Optimizer.step#AdamATan2.step         0.00%       0.000us         0.00%       0.000us       0.000us      15.034ms         3.79%      15.034ms       5.011ms             3  
+void cutlass::Kernel2<cutlass_75_wmma_tensorop_bf16_s161616gemm_bf1...         0.00%       0.000us         0.00%       0.000us       0.000us      14.380ms         3.63%      14.380ms      74.898us           192  
+            ampere_bf16_s1688gemm_bf16_128x128_ldg8_f2f_stages_32x1_tn         0.00%       0.000us         0.00%       0.000us       0.000us      11.319ms         2.86%      11.319ms     235.809us            48  
+           ampere_bf16_s16816gemm_bf16_128x128_ldg8_f2f_stages_64x3_nt         0.00%       0.000us         0.00%       0.000us       0.000us      10.666ms         2.69%      10.666ms     111.108us            96  
+            triton_poi_fused__to_copy_add_mul_rsub_sigmoid_softplus_21         0.18%     725.998us         0.22%     889.824us      22.816us       9.134ms         2.30%       9.134ms     234.195us            39  
+            triton_poi_fused__to_copy_add_mul_rsub_sigmoid_softplus_21         0.00%       0.000us         0.00%       0.000us       0.000us       9.134ms         2.30%       9.134ms     234.195us            39  
+                                                triton_poi_fused_mul_4         0.08%     314.709us         0.12%     504.932us      10.519us       8.986ms         2.27%       8.986ms     187.216us            48  
+                                                triton_poi_fused_mul_4         0.00%       0.000us         0.00%       0.000us       0.000us       8.986ms         2.27%       8.986ms     187.216us            48  
+                 triton_per_fused__to_copy_add_div_mul_pow_sqrt_sum_20         0.12%     504.958us         0.16%     677.863us      16.140us       7.908ms         2.00%       7.908ms     188.293us            42  
+----------------------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  
+Self CPU time total: 411.579ms
+Self CUDA time total: 396.362ms
+
+=== thaw5 ===
+
+[exited with code 0]

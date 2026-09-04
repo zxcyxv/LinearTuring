@@ -1,0 +1,13 @@
+RESULT bs=32 fix=none         544.66 ms  (1.84 it/s)
+RESULT bs=32 fix=nopersist     94.25 ms  (10.61 it/s)
+RESULT bs=32 fix=coord         94.58 ms  (10.57 it/s)
+=== thaw6 ===
+
+[exited with code 0]
+=== nopersist 가 큰 배치에 회귀를 주는가 ===
+RESULT bs=128 fix=nopersist    345.12 ms  (2.90 it/s)
+RESULT bs=64 fix=nopersist    173.45 ms  (5.77 it/s)
+RESULT bs=48 fix=nopersist    133.85 ms  (7.47 it/s)
+=== thaw7 ===
+
+[exited with code 0]

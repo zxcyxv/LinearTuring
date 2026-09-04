@@ -7,10 +7,9 @@ loops: 16
 hidden_size: 832
 num_heads: 8
 grid: 9
-blocks_per_seg: 8
+blocks_per_seg: 8      # 스택 반복 횟수
+num_layers: 1          # 물리 레이어 수. 총 블록 적용 = blocks_per_seg × num_layers
 mlp_expansion: 4.0
-inj_gate_init: 0.25
-gamma_init: 0.1
 alpha_init: 0.1
 eps: 1e-4
 
@@ -19,12 +18,14 @@ forward_dtype: float32
 amp: true
 ckpt: false
 psi_zero: false
+block_order: pre    # pre | post — post 는 [주입 → 스텝 → 경계] (표준 배치, 판독이 쌍선형 직후)
 addr_dim: 0
 stdp: false
 stdp_eta_init: 0.1
 stdp_lam_init: 0.25
 stdp_gain_init: 1.0
 stdp_target: addr
+stdp_window: beta      # beta | psi — psi 면 Γ 의 창을 β 로 다시 안 뜨고 전달용 a(ψ) 를 그대로 씀
 stdp_lam_fixed: -1.0
 stdp_mu_init: 0.5
 gate: false

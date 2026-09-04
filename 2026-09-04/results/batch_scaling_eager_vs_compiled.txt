@@ -1,0 +1,11 @@
+=== bs32 절벽 위치 + compile 유무 ===
+{"tag": "eager_bs96", "bs": 96, "T": 81, "d": 832, "blocks": 8, "stdp": true, "target": "faithful", "window": "psi", "compiled": false, "ms_median": 513.21, "ms_wall": 513.13, "it_s": 1.95, "peak_GB": 7.807, "params": 14292171}
+{"tag": "eager_bs64", "bs": 64, "T": 81, "d": 832, "blocks": 8, "stdp": true, "target": "faithful", "window": "psi", "compiled": false, "ms_median": 316.4, "ms_wall": 316.15, "it_s": 3.16, "peak_GB": 5.284, "params": 14292171}
+{"tag": "eager_bs48", "bs": 48, "T": 81, "d": 832, "blocks": 8, "stdp": true, "target": "faithful", "window": "psi", "compiled": false, "ms_median": 226.12, "ms_wall": 226.03, "it_s": 4.42, "peak_GB": 4.03, "params": 14292171}
+{"tag": "eager_bs32", "bs": 32, "T": 81, "d": 832, "blocks": 8, "stdp": true, "target": "faithful", "window": "psi", "compiled": false, "ms_median": 148.47, "ms_wall": 148.55, "it_s": 6.74, "peak_GB": 2.79, "params": 14292171}
+--- compile ---
+{"tag": "comp_bs48", "bs": 48, "T": 81, "d": 832, "blocks": 8, "stdp": true, "target": "faithful", "window": "psi", "compiled": true, "ms_median": 137.52, "ms_wall": 137.44, "it_s": 7.27, "peak_GB": 2.933, "params": 14292171}
+{"tag": "comp_bs32", "bs": 32, "T": 81, "d": 832, "blocks": 8, "stdp": true, "target": "faithful", "window": "psi", "compiled": true, "ms_median": 543.64, "ms_wall": 543.73, "it_s": 1.84, "peak_GB": 2.046, "params": 14292171}
+=== thaw2 ===
+
+[exited with code 0]

@@ -1,0 +1,14 @@
+freeze: 73217
+73223
+73329
+80697
+utilization.gpu [%], memory.used [MiB]
+0 %, 5104 MiB
+=== 깨끗한 배치 스케일링 (d832 N2 compile, GPU 단독) ===
+{"tag": "clean_bs128", "bs": 128, "T": 81, "d": 832, "blocks": 8, "stdp": true, "target": "faithful", "window": "psi", "compiled": true, "ms_median": 347.0, "ms_wall": 347.15, "it_s": 2.88, "peak_GB": 7.423, "params": 14292171}
+{"tag": "clean_bs64", "bs": 64, "T": 81, "d": 832, "blocks": 8, "stdp": true, "target": "faithful", "window": "psi", "compiled": true, "ms_median": 182.49, "ms_wall": 182.45, "it_s": 5.48, "peak_GB": 3.822, "params": 14292171}
+{"tag": "clean_bs32", "bs": 32, "T": 81, "d": 832, "blocks": 8, "stdp": true, "target": "faithful", "window": "psi", "compiled": true, "ms_median": 544.1, "ms_wall": 544.14, "it_s": 1.84, "peak_GB": 2.046, "params": 14292171}
+=== thaw ===
+4
+
+[exited with code 0]

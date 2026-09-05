@@ -88,8 +88,6 @@ CFG = dict(
     vocab_size=11,
     mlp_expansion=4.0,
     alpha_init=0.1,
-    dist_decay=False,             # [2026-09-05 v2] 거리 감쇠 e^{−α|Δ|₁} 제거 (decay_h ≡ 1). 측정: 안정성에 불필요, #155 실패 원인도 아님.
-                                  #   위치 정보는 θ·pos 회전이 맡고(칸 위상에 정확히 흡수, 오차 2e-7), 동료 구조는 학습이 ψ·θ 로 만든다.
     eps=1e-4,
     psi_zero=False,
     addr_dim=0,
@@ -106,17 +104,11 @@ CFG = dict(
     stdp_lam_init=0.25,
     stdp_lam_fixed=1.0,           # [2026-09-05] λ=1 고정: 읽기 = Σ_n w_tn v_n, w 만 읽는다. (1−λ)a 를 더하는 것은 현재 상태를
                                   #   쓰기(δ)와 읽기 양쪽에 두 번 세는 것. 시냅스가 이득, v_n 이 현재 pre 신호 — 스파이크 전달 모형 그대로.
-    stdp_read="mul",              # [2026-09-05 v2.1] 읽기 = a ⊙ exp(sign(a)·w). 시냅스 × 순간 위상 커널 (쿠라모토 K_ij·F(Δφ_ij)).
-                                  #   λ=1 런(212k: seg128 60%)은 순간 커널 a 를 전달에서 뺀 것이 원인 — 곱으로 두면 λ 자체가 사라진다.
-                                  #   w 는 로그 이득(무차원, 초기 0 → a 와 동일), 목표는 헤드별 RMS 1 로 정규화한 â. "add" 면 이전 (1−λ)a+λw.
     stdp_gain_fixed=1.0,          # [2026-09-05] G=1 고정: w ← w + δ(a − w) 를 글자 그대로. <0 이면 학습(softplus(gain_raw)).
     stdp_mu_init=0.5,
-    stdp_diag="zero",             # [2026-09-05 v2] STDP 에 자기시냅스 없음. mul 읽기에서 w_tt=0 → exp(0)=1, 자기 결합은 a 그대로.
-                                  #   자기항 a_tt 가 동료항의 ~10배라(continual_stdp_whatS) 정규화 rms 를 지배하는 것도 막는다.
+    stdp_diag="keep",
     gate=False,
     gate_s_init=5.0,
-    boundary="bilinear",          # [2026-09-05] bilinear: Δ = W_d(½ g⊙u) (현행) | sym: 같은 파라미터로 삼선형 퍼텐셜 U = ½ Σ_i g_i u_i c_i (c = W_dᵀh) 의
-                                  #   경사 Δ = ∇U = ½[W_d(g⊙u) + W_gᵀ(u⊙c) + W_uᵀ(g⊙c)]. 야코비안 = 헤시안(대칭). 새 파라미터 없음, 초기 Δ=0 동일.
     block_order="post",          # [2026-09-04 추가 플래그] 블록 안 연산 순서. post = 주입→스텝→경계 (판독이 쌍선형 직후,
                                   #   표준 트랜스포머 배치). pre 는 흐름 사양 이월값이고 R=1 에서는 논거가 없다
 
@@ -347,7 +339,6 @@ class LTConfig:
     mlp_expansion: float = 4.0
     # [2026-09-04 폐기] inj_gate_init — 아래 §주입 참조. 남아 있으면 발사가 죽는다(_DEPRECATED)
     alpha_init: float = 0.1
-    dist_decay: bool = True     # False 면 kernel() 의 decay_h ≡ 1 (alpha_raw 미사용)
     eps: float = 1e-4
     amp: bool = True
     forward_dtype: str = "float32"
@@ -369,14 +360,12 @@ class LTConfig:
     stdp_lam_init: float = 0.25
     stdp_gain_fixed: float = -1.0  # [2026-09-05] ≥0 이면 G 를 이 값으로 고정(학습 안 함). 1.0 = 순수 EMA w ← w + δ(Γ − w)
     stdp_lam_fixed: float = -1.0  # ≥0 이면 λ 를 이 값으로 고정(학습 안 함). 1.0 = 전달을 w 가 전담하는 STDP 충실형
-    stdp_read: str = "add"       # add: a_eff=(1−λ)a+λw | mul: a_eff = a·exp(w), w ← (1−δ)w + δ·G·â (â = a/rms_h(a)), w 초기 0
     stdp_mu_init: float = 0.5
     stdp_diag: str = "keep"      # keep | zero(자기시냅스 제거) | only(관계항 제거) — 절제용, 기본은 무변경   # [causal] 인과 항의 헤드별 계수 μ_h 초기값 (학습; softplus 아님, 부호 자유)
     gate: bool = False          # [굳힘 게이트] 경계(추론) 항의 이득 = K(d) = (s·d)²/(1+(s·d)²)  — 칼만 이득 형.
                                 #   d_t = (직전 블록 메시지가 만든 로짓의 top1−top2) / std_v  — 척도 불변 판별력(증거 정밀도의 대리).
                                 #   K≡1 (현재) = 모든 메시지를 무한 정밀로 취급 = 전제 확인 없는 단정 규칙. STDP.md §6.13
     gate_s_init: float = 5.0   # K(d) 가 초기에 관대(≈0.85)하도록: 무작위 초기 모델의 d 중앙값 ≈0.46
-    boundary: str = "bilinear"  # bilinear | sym (삼선형 퍼텐셜의 경사, 대칭 야코비안)
     block_order: str = "pre"    # [2026-09-04] 블록 안 연산 순서. pre: 경계 → 주입 → 스텝 (현행, 흐름 사양 이월 —
                                 #   경계 = 적분 구간의 경계조건이라 구간 앞. R=8 흐름판의 논거이고 R=1 에서는 근거가 없다)
                                 #   post: 주입 → 어텐션+수송 → 경계 → Φ (표준 배치. 판독이 쌍선형 직후)
@@ -512,7 +501,7 @@ class LT_Inner(nn.Module):
     def kernel(self, L, psi=None):
         """decay_h [H,T,T], 위상각 A_t = ψ/2 + θ·pos_t (q), B_t = −ψ/2 + θ·pos_t (k) → cos/sin [T,H,p]. psi 를 주면 그 위상차로 (STDP 창 β 용)."""
         psi = L.psi if psi is None else psi
-        decay_h = torch.exp(-L.alpha[:, 0, None, None] * self.l1) if self.config.dist_decay else torch.ones_like(self.l1).expand(L.alpha.shape[0], -1, -1)
+        decay_h = torch.exp(-L.alpha[:, 0, None, None] * self.l1)
         ppos = L.theta[..., 0, None] * self.pos_u + L.theta[..., 1, None] * self.pos_w         # [H,p,T]
         A = (ppos + psi[..., None] / 2).permute(2, 0, 1); B = (ppos - psi[..., None] / 2).permute(2, 0, 1)
         return decay_h, torch.cos(A), torch.sin(A), torch.cos(B), torch.sin(B)
@@ -573,23 +562,11 @@ class LT_Inner(nn.Module):
                 # [2026-09-01 절제] STDP 에 자기시냅스(t=n)는 없다. Γ 단계에서 걸러야 w 대각이 항상 0 이다.
                 eye = torch.eye(tgt.shape[-1], device=tgt.device, dtype=tgt.dtype)
                 tgt = tgt * (eye if self.config.stdp_diag == "only" else (1 - eye))
-            if self.config.stdp_read == "mul":
-                # [v2] 시냅스 = 로그 이득. 목표 â 는 헤드별 RMS 1 (무차원, 부호 보존). 첫 블록 w=0 → a_eff = a (STDP 없는 모델과 동일).
-                tgt = tgt / (tgt.float().pow(2).mean(dim=(-2, -1), keepdim=True).sqrt().to(tgt.dtype) + self.config.eps)
-                if w is None: w = torch.zeros_like(tgt)
-                elif fresh is not None: w = torch.where(fresh.view(-1, 1, 1, 1), torch.zeros_like(w), w)
-                w = (1 - eta) * w + eta * tgt                        # K̇ = ε(G(Δφ) − K)
-                # [2026-09-05 v2.1] 부호 대칭 일관성 이득. exp(w) 만 곱하면 일관된 반발(a<0, w<0)이 e^{−|w|} 로 약해지고
-                #   인력만 커져 긴 지평에서 인력 우세(과평활)로 기운다 — 로컬 1000스텝 ckpt 16세그 측정: 인력 3.0×, 반발 0.75×
-                #   (analysis/v2_sign_asym_check.py). sign(a)·w 는 "지금 관계가 이력과 같은 부호면 강화, 다르면 약화" 라 인력·반발 대칭.
-                #   Seliger 의 K·sin = (α/2)sin(2Δφ) 가 동위상·반위상을 똑같이 굳히는 것에 대응.
-                a = a * torch.exp((torch.sign(a) * w).clamp(-4.0, 4.0))   # K_ij · F(Δφ_ij): 시냅스 × 순간 커널, 부호 대칭
+            if w is None: w = tgt
             else:
-                if w is None: w = tgt
-                else:
-                    w = torch.where(fresh.view(-1, 1, 1, 1), tgt, w) if fresh is not None else w
-                    w = (1 - eta) * w + eta * tgt                        # 고정점 = G·⟨Γ⟩.  G=1 이면 기존 EMA 와 동일
-                a = (1 - lam) * a + lam * w
+                w = torch.where(fresh.view(-1, 1, 1, 1), tgt, w) if fresh is not None else w
+                w = (1 - eta) * w + eta * tgt                        # 고정점 = G·⟨Γ⟩.  G=1 이면 기존 EMA 와 동일
+            a = (1 - lam) * a + lam * w
         o = torch.einsum('bhtn,bnhc->bthc', a, v)                         # Σ_n a_tn v_n  (위에서 계산한 v 재사용)
         f = torch.einsum('bthc,hcd->btd', o, L.w_sh)                   # Wᵀ o
         if self.split: f = F.pad(f, (self.d_a, 0))                         # 주소 블록에는 0 → 스텝 안 a 불변
@@ -609,13 +586,7 @@ class LT_Inner(nn.Module):
 
     def boundary(self, L, h, gate=None):
         g, u = L.b_gate_up(h).chunk(2, dim=-1)
-        if self.config.boundary == "sym":
-            # [2026-09-05] Δ = ∇_h U,  U(h) = ½ Σ_i g_i u_i c_i,  g = W_g h, u = W_u h, c = W_dᵀ h.  세 항이 같은 U 의 편미분.
-            Wg, Wu = L.b_gate_up.weight.chunk(2, dim=0)                       # [inter, d] ×2
-            c = F.linear(h, L.b_down.weight.t())                              # W_dᵀ h  [.., inter]
-            delta = 0.5 * (L.b_down(g * u) + F.linear(u * c, Wg.t()) + F.linear(g * c, Wu.t()))
-        else:
-            delta = L.b_down(0.5 * g * u)
+        delta = L.b_down(0.5 * g * u)
         return h + (delta if gate is None else gate.unsqueeze(-1) * delta)
 
     def injection(self, batch):
@@ -1284,7 +1255,7 @@ def extrapolate(base, eval_in, eval_lb, cfg, rank, world_size, device, step: int
     be = int(np.argmax(exact)); ba = int(np.argmax(acc))
     lines = [f"# seg_extrap  step={step}  weights=ema  segs={segs}  n={N}  elapsed={time.time()-t0:.0f}s",
              f"# cfg: d={cfg['hidden_size']} H={cfg['num_heads']} blocks={cfg['blocks_per_seg']} layers={cfg['num_layers']} "
-             f"order={cfg['block_order']} stdp={cfg['stdp_target']}/{cfg['stdp_window']} lam_fixed={cfg['stdp_lam_fixed']} gain_fixed={cfg.get('stdp_gain_fixed')} read={cfg.get('stdp_read')} diag={cfg.get('stdp_diag')} dist_decay={cfg.get('dist_decay')}",
+             f"order={cfg['block_order']} stdp={cfg['stdp_target']}/{cfg['stdp_window']} lam_fixed={cfg['stdp_lam_fixed']} gain_fixed={cfg.get('stdp_gain_fixed')}",
              f"{'seg':>5} {'acc':>8} {'exact':>6} {'exact%':>8} {'churn':>8}"]
     for si in range(segs):
         lines.append(f"{si+1:5d} {acc[si]:8.4f} {int(exact[si]):6d} {100*exact[si]/max(N,1):8.2f} {churn[si]:8.5f}" + ("  <-train" if si == 15 else ""))
@@ -1588,7 +1559,7 @@ def main():
             except Exception:
                 c = {}
             keys = ("hidden_size", "num_heads", "loops", "blocks_per_seg", "grid", "addr_dim",
-                    "psi_zero", "stdp", "stdp_target", "stdp_window", "stdp_lam_fixed", "stdp_gain_fixed", "stdp_read", "stdp_diag", "dist_decay", "boundary", "block_order",
+                    "psi_zero", "stdp", "stdp_target", "stdp_window", "stdp_lam_fixed", "stdp_gain_fixed", "block_order",
                     # [2026-09-04] num_layers/mlp_expansion 이 빠져 있었다. 둘 다 파라미터 shape 을
                     #   바꾸므로 여기서 안 걸러지면 load_checkpoint 가 shape 오류로 죽는다.
                     "num_layers", "mlp_expansion")

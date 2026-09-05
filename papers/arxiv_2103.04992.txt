@@ -1,0 +1,3944 @@
+
+===== PAGE 1 =====
+Self-learning Machines based on Hamiltonian Echo Backpropagation
+Victor Lopez-Pastor1 and Florian Marquardt1,2
+1Max Planck Institute for the Science of Light, Erlangen, Germany
+2Physics Department, Friedrich-Alexander-Universität Erlangen-Nürnberg, Erlangen, Germany
+(Dated: February 8, 2023)
+A physical self-learning machine can be deﬁned as a nonlinear dynamical system that can be
+trained on data (similar to artiﬁcial neural networks), but where the update of the internal degrees
+of freedom that serve as learnable parameters happens autonomously. In this way, neither external
+processing and feedback nor knowledge of (and control of) these internal degrees of freedom is
+required. We introduce a general scheme for self-learning in any time-reversible Hamiltonian system.
+It relies on implementing a time-reversal operation and injecting a small error signal on top of the
+echo dynamics. We show how the physical dynamics itself will then lead to the required gradient
+update of learnable parameters, independent of the details of the Hamiltonian. We illustrate the
+training of such a self-learning machine numerically for the case of coupled nonlinear wave ﬁelds
+and other examples.
+I. INTRODUCTION
+In the last decade, the ﬁeld of Machine Learning (ML)
+has experienced an explosive growth, ﬁnding use in an
+ever-increasing number of applications in our everyday
+lives, from automatic driving to face recognition. To
+a large degree, this astonishing progress in ML can be
+attributed to the developments in Artiﬁcial Neural Net-
+works (ANN). Training deep ANN’s has only recently
+become possible in practice [1], thanks both to the avail-
+ability of large data sets and to the continued improve-
+ment in digital electronic hardware and the advent of
+fast Graphical Processing Units (GPU) and other spe-
+cialized hardware. However, while the demand for faster
+and more eﬃcient information processing will only grow
+in order to address the needs of increasingly larger and
+complex ANN’s, the exponential growth in the power of
+electronic devices that we enjoyed in the last half century
+appears to be coming to a halt.
+What is more, the von Neumann architecture that is
+currently employed by electronic devices is known to be
+highly ineﬃcient for most ML applications. In a von
+Neumann computer, the memory and processing units
+are separated, and the necessary transfer of data between
+themcanseverelyconstraintheoverallperformance. The
+ﬁeld ofneuromorphic computing [2, 3] aims to improve
+the eﬃciency of specialized hardware for ML by imitating
+the structure of biological neural networks. The hope
+is to realize devices that are as eﬃcient and massively
+parallel as the brain, while using much faster physical
+processes to carry out the information processing.
+In particular, the idea of constructing neuromorphic
+computing devices based on light has recently attracted a
+lot of attention, as it promises to unlock all the beneﬁts of
+optical computing: broad bandwidth, small latency, low
+power consumption and natural parallelism [4]. Apart
+from optics, other physical platforms have been consid-
+ered too, such as spin-based devices or memristor circuits
+[2].
+Nonetheless, training such machines eﬃciently is still a
+self-learning machinea b
+physical learning machines
+/uni03B8
+nonlinear 
+system /uni03B8
+physical backpropagation
+physical gradient update
+feedback
+learning 
+parameters
+Figure 1. Diﬀerent types of physical learning ma-
+chines. (a) Physical learning machine requiring feedback
+based on the outcome, to tune the internal "learning" param-
+etersθ inside the physical device. (b) A self-learning machine
+does not involve feedback. It updates the learning parameters
+in a fully autonomous way (for example using physical back-
+propagation and a physical gradient update; see main text).
+challenging problem. The simplest method, shifting each
+learning parameter individually and providing feedback
+based on the outcomes, is very ineﬃcient, scaling linearly
+in the number of parameters. Recently, a method using
+a combination of a physical forward pass but digitally
+simulated backpropagation was used successfully, but it
+requires relatively faithful models of the physical dynam-
+ics [5]. In another recent line of development, the concept
+of equilibrium propagation was introduced [6], leading to
+a local update rule for adapting weights based on a sys-
+tem’s response under externally forced conditions, and it
+was recently pointed out how to implement such ideas in
+electronic systems by designing suitable components [7].
+The best solution would be to realize aself-learning
+machine - i.e. a learning machine that is trained by
+means of entirely autonomous physical processes (Fig. 1),
+without the use of feedback for updating the learning pa-
+rameters and without any kind of external processing of
+information (except possibly that needed for feeding the
+training data). A ﬁrst step in this direction was already
+arXiv:2103.04992v2  [cs.LG]  7 Feb 2023
+
+===== PAGE 2 =====
+2
+suggested theoretically in a visionary paper by Psaltis et
+al. [8] and later implemented to some degree [9–11]. In
+Psaltis et al. [8], it was shown that it could be possible
+to approximately realize the backpropagation algorithm
+[12] in an optical neural network based on volume holo-
+grams. However, the nonlinear elements must be engi-
+neered so that the transmittance for the backpropagat-
+ing signal matches the derivative of the transmittance
+for the forward propagating signal, besides requiring a
+carefully designed geometric arrangement [13]. To this
+day, such stringent requirements have prevented a fully
+developed practical implementation of the backpropaga-
+tion algorithm in an optical learning machine [14].
+Other learning machines based on Hebbian learning or
+Spiking Timing-Dependent Synaptic Plasticity (STDSP)
+would also fall under our deﬁnition of a self-learning ma-
+chine, and restricted versions have been implemented,
+e.g. optically [15]. Still, both Hebbian learning and
+STDSP are motivated mainly by their plausibility in the
+context of biological neural networks, and it has to be
+seen in each case how well they optimize some training
+objective. In soft-matter systems, ideas based on equi-
+librium propagation have recently been explored [16].
+In this work we consider SL machines based on clas-
+sical Hamiltonian systems. We present a new training
+procedure based on time reversal operations, which we
+name Hamiltonian Echo Backpropagation (HEB). As op-
+posed to existing approaches, we do not need to consider
+a particular implementation of a SL machine or care-
+fully selected nonlinear elements; instead we present a
+completely general procedure to train SL machines in a
+wide class of physical systems. Indeed, HEB can realize
+gradient descent and update of the learning parameters
+via the dynamics inany time-reversible Hamiltonian sys-
+tem, and it does so in an eﬃcient way that exploits the
+parallelism of the learning machine. This new training
+procedure opens up many exciting possibilities, making
+it possible to construct self-learning machines in a wide
+range of physical platforms. One the one hand, HEB
+makes it feasible to realize SL devices based on already
+mature technologies, such as integrated photonic circuits.
+On the other hand, it expands the ﬁeld of SL machines
+to new interesting physical platforms, such as clouds of
+cold atoms or trains of optical pulses in a ﬁber loop.
+Given how broad are the suﬃcient conditions for HEB
+to work, we believe that it will instigate the discovery of
+completely new physical learning machines. Moreover,
+our training procedure is independent of the Hamiltonian
+thatdescribesthedynamicsofthelearningmachine. Sur-
+prisingly, one does not even need to know the dynamics
+of the physical device in order to train it.
+In the following, after deﬁning self-learning machines,
+we will introduce the Hamiltonian Echo Backpropagation
+procedure and present a mathematical proof of its core
+element. We will then discuss the ingredients of such a
+machine, illustrate the learning approach in two numer-
+ical examples, and ﬁnally comment on the prospects for
+diﬀerent physical platforms.
+II. SELF-LEARNING MACHINES
+Deﬁnitions: Physical learning machines vs. physical
+self-learning machines
+A physical learning machinecan be deﬁned as a phys-
+ical device provided with an internal memory that can
+process an input to produce an output, such that the
+functional dependence between the input and the out-
+put is parameterized by the state of the internal mem-
+ory. For example, a physical learning machine can be
+a photonic circuit made of beam-splitters, nonlinear el-
+ements and variable phase shifters. In this example, for
+any input signal that enters the circuit, the output will
+depend on the conﬁguration of the phase shifters, which
+in this case represent the internal memory. In a phys-
+ical learning machine, training is the process of ﬁnding
+the optimal state of the internal memory to realize some
+desired input-output relation.
+There are several possible ways of training a physical
+learning machine. It could be done entirely externally
+(using numerical simulations) or by employing feedback,
+i.e. external processing of the machine’s output to adapt
+the parameters. However, this step may spoil some of
+the advantages of using physical dynamics. Going be-
+yond that, the most advanced version would consist in a
+machine that uses an internal physical process for train-
+ing.
+We may thus deﬁne aself-learning machineas a phys-
+ical learning machine that, when presented a data set,
+can train itself in a fully autonomous way. During train-
+ing, a self-learning machine receives a sequence of inputs
+and some information about the target outputs. It is also
+legitimate to realize a preset sequence of external oper-
+ations on the SL machine or to supply energy. What is
+not permissible is to give any kind of feedback dependent
+on the internal state of the device. In this sense, a SL
+machine is a black box: the user provides an input and
+obtains an output, but requires neither knowledge of nor
+access to the internal degrees of freedom.
+In principle, physical (self-)learning machines could be
+used for any machine learning task. It is customary to
+classify machine learning tasks in three broad categories:
+supervised learning, unsupervised learningand reinforce-
+ment learning. In supervised learning, the task is to infer
+a function that maps an input to an output based on la-
+beled training data, which consists of example pairs of
+an input object and an output (usually called thelabel).
+In unsupervised learning, the goal is to ﬁnd patterns or
+model the probability distribution of the training data
+set, which unlike in the case of supervised learning is
+not provided with labels. Finally, reinforcement learn-
+ing comprises all tasks in which an intelligent agent has
+to take actions in an environment in order to maximize
+some reward. In this paper we concentrate on supervised
+learning, although there may also be exciting venues in
+the application of physical learning machines to unsu-
+pervised or reinforcement learning. Therefore, the self-
+
+===== PAGE 3 =====
+3
+learning machines that we consider throughout this pa-
+per are those that can learn autonomously when they are
+provided with pairs of input-output data.
+To avoid confusion, we should repeat that in our
+manuscript "self-learning" refers to an autonomous phys-
+ical training procedure, as opposed to the computer sci-
+ence terms, "unsupervised", "self-supervised" or "rein-
+forcement" learning, which refer to the type of training
+task.
+Diﬀerent types of physical learning
+The idea of constructing specialized physical hardware
+for machine learning, i.e. neuromorphic devices, has
+been explored in various physics-based platforms [2, 3].
+What we deﬁne as physical learning machines have been
+studied theoretically and for some cases already demon-
+strated experimentally in the context of photonic hard-
+ware [9, 10, 17, 18], memristor circuits [19–21], super-
+conducting circuits [22], and spintronic devices [23–25],
+among others. However, as pointed out above, learning
+is still a challenge. In many platforms, the focus has been
+on demonstrating individual components and ingredients
+believed to be useful for both inference and learning, or
+on implementing larger-scale devices, but without in-situ
+training.
+The space of potential learning rules is large. We may
+subdivide it in several ways. For our purposes, the two
+most signiﬁcant questions are whether any given learning
+approach is based directly onoptimization and whether
+the learning rule is local. Importantly, there is an overlap
+between these two categories, and we will be interested
+in that overlap region, since it promises the ability to ob-
+tain learning updates by physical dynamics (local rule)
+and at the same time have a rigorous mathematical foun-
+dation (being based on optimization). Another question
+is whether the update of the learning parameters requires
+external feedback and processingor can beimplemented
+by physical dynamics autonomously.
+There is a broad category of neuromorphic devices
+that makes use of learning rules inspired by biological
+neural networks. This corpus of ideas started histori-
+cally with Hebbian learning and it can be summarized
+in the motto ’neurons that ﬁre together, wire together’.
+A more sophisticated version in the context of spiking
+neurons is the so-called spike-timing-dependent synaptic
+plasticity (STDP). This has been suggested as a learn-
+ing mechanism in several neuromorphic hardware plat-
+forms, e.g. for spintronic devices (see simulations in [26]),
+for memristors (see implementation of a building block
+in [27]), and for superconducting circuits [22], and even
+optoelectronic-superconducting hybrid systems [28]. Im-
+portantly, these learning rules are always local in order to
+be biologically plausible (i.e. the update in the learning
+parameters is a function of only the nearest-neighbour
+neurons). However, the simplest versions of the Hebbian
+learning rule are in general not guaranteed to minimize
+some cost function, and they show a poor performance
+when applied to deep learning architectures.
+It is, therefore, remarkable that there have been recent
+discussions of biologically inspired learning algorithms
+that have been shown to approximately or exactly min-
+imize a cost function that measures the deviation from
+the desired behaviour. Thus, such approaches would fall
+in the particularly interesting region of overlap we men-
+tioned above. Sometimes, these are more abstract con-
+ceptual ideas (like the free-energy principle of the brain
+[29]), while other approaches may be more concrete, re-
+lating to particular situations like recurrent networks of a
+certain structure [30]. There are interesting models that
+combine local rules with top-down signals in biologically
+plausible models, whose learning dynamics approximates
+backpropagation under certain conditions [31]. The area
+of backpropagation-like mechanisms that may be oper-
+ating in the brain has been reviewed recently in [32]. In
+general, though, all these approaches, while very interest-
+ing, are not straightforward to implement physically in
+simple neuromorphic devices and their hardware imple-
+mentation would presumably require careful design and,
+often, tailored electronic components.
+Optimization of a cost function is of course at the core
+of deep learning in artiﬁcial neural networks. There, the
+required gradients of the cost function with respect to the
+learning parameters inside the network can be eﬃciently
+calculated using the backpropagation algorithm. Unfor-
+tunately, this algorithm is nonlocal. The update of any
+weight has a complicated nonlocal dependence on any
+other neuron in the network. It is therefore not a priori
+obvious how to implement backpropagation physically.
+In the domain of machine learning, the concept of so-
+called contrastive learning is at the basis of local update
+rules that could replace backpropagation. In general, for
+contrastive learning the learning update is the diﬀerence
+between two contributions obtained in diﬀerent learning
+phases. This was ﬁrst employed to suggest an alternative
+tobackpropagationinso-called’learningbyrecirculation’
+[33] and then more recently generalized and extended,
+leading eventually to the idea of equilibrium propaga-
+tion [6]. In equilibrium propagation, one considers a sys-
+tem which relaxes into some steady state, given exter-
+nal forces that represent inputs and outputs for a given
+training sample. Two learning phases are distinguished,
+where the outputs are free or are nudged towards their
+desired values. The diﬀerence between the network acti-
+vations in these two phases deﬁnes the weight update, in
+a local way. This procedure overcomes many problems
+of earlier similar ideas, and it implements backpropaga-
+tion for the optimization of a cost function. While it was
+ﬁrst suggested as a principled, local alternative to back-
+propagation, without immediate ideas on hardware real-
+izations, there has been recent work on possible imple-
+mentations of this (and related) ideas, both in electronic
+circuits [7] and in soft-matter systems [16]. In contrast to
+the method we will describe, the basic assumption here is
+always that the system relaxes to an equilibrium steady
+
+===== PAGE 4 =====
+4
+state (or begins to relax towards that state), for each
+presented training example.
+LOCAL LEARNING RULES
+OPTIMIZATION
+PHYSICAL 
+BACKPROP
+HAMILTONIAN INDEPENDENT 
+SELF-LEARNING
+BACKPROPAGATION
+SELF-LEARNING
+Our 
+work Psaltis et al.
+Guo et al.
+Hughes et al.
+Bengio et al.
+Hebbian
+McMahon et al.
+Shen et al.
+Frinston
+Bellec et al.
+STDP
+Figure 2. Overview: The landscape of physical learn-
+ing machines. Our work falls into the broad class of opti-
+mization approaches. It belongs to the small class of works
+that involve both physical backpropagation and self-learning,
+but in contrast to other approaches our scheme is universal,
+i.e. independent of the speciﬁc Hamiltonian. (some related
+works, see main text: Shen et al [17], Guo et al [18], Skinner
+et al [11], Psaltis et al [8, 10]).
+The problem of training
+In some of the earlier attempts (like [11]), training was
+performed in silico, by means of numerical simulations.
+The problem with this approach is that the size of the
+learning machine is limited by the computational power
+required to simulate the physical hardware. Moreover,
+training is performed for an idealized model of the actual
+physical hardware. As a result, fabrication imperfections
+cannot be taken into account. This has been addressed
+recently by introducing a hybrid approach, combining
+physical forward propagation on actual hardware with
+backpropagation using simulation [5].
+A general approach to remedy this shortcoming is to
+employ feedback.
+The simplest feedback-based training technique uses
+a ﬁnite-diﬀerence approximation to the gradient of the
+cost function. This can be realized physically in a very
+simple manner: (1) estimate the cost functionC for the
+current state of the learning parameters, (2) change the
+i-th parameter by a small amount and estimateC again,
+(3) add the diﬀerence of these results to thei-th param-
+eter. However, this idea is far from optimal, since the
+number of evaluations needed scales with the number of
+parameters.
+Towards physical self-learning machines
+As described above, ideally we would want to both ob-
+tain the required training update of the learning param-
+eters and eventually also implement that update using
+only autonomous physical dynamics.
+In this subsection we are going to review those previ-
+ous developments along this line that we feel are most
+closely related to our idea. They happen to be in the op-
+tical domain – not surprisingly, given the coherent, time-
+reversible character of wave propagation.
+We know that the backpropagation algorithm that
+forms the cornerstone of artiﬁcial neural network train-
+ing can extract the required parameter update (the gra-
+dient of the cost function) using only two evaluations of
+the network, independent of the number of parameters.
+A crucial improvement of a physical learning machine
+therefore consists in realizing the backpropagation algo-
+rithm by physical means, even in cases where the even-
+tual update is implemented by other means. This idea
+was ﬁrst introduced in Wagner et al. [8], in the context of
+optical neural networks. In a typical optical neural net-
+work, an optical ﬁeld propagates inside some nonlinear
+medium with elements that provide controllable phase
+shifts. The controllable phase shifts play the role of the
+learning weights. The optical ﬁeld would be injected at
+the input and propagate towards the output. The idea
+advocated in [8] then is to create a physicalerror signal
+that propagates in the opposite direction, from output to
+input. The error signal is prepared according to the dif-
+ference of the output of the device and the desired target
+output. Without going into any further detail (we refer
+to the original paper), in their approach the backward-
+propagating weak error signal interferes with the strong
+forward-propagating optical ﬁeld. In this way, for the
+speciﬁc choice of optical nonlinearities in their setup it
+was possible to ensure that the error signal is (approxi-
+mately) equal at any point of the device to the required
+gradient of the cost function.
+Once the error signal is prepared, one can measure it
+and use the result to update the parameters via feedback.
+All learning parameters could be updated at once, in a
+fully parallel fashion. This idea was originally proposed
+for optical neural networks using Kerr nonlinearities [8],
+but it was recently extended to setups that employ sat-
+urable absorption for the activation function [18]. In a
+similar spirit, in Hermans et al [34], the idea of physical
+backpropagation is used to train a physical linear system
+with controllable nonlinear feedback. An optical imple-
+mentation based on this concept was demonstrated in a
+follow-up paper [35]. A related idea by Hughes, Fan et
+
+===== PAGE 5 =====
+5
+al. [36] uses an auxiliary circuit to backpropagate the
+error signal. A recent paper proposes a training method
+that combines in-situ measurements with digital back-
+propagation [5]. Other implementations only train the
+last layer, in a similar fashion to reservoir computing.
+Nonetheless, there is a potential drawback in using
+feedback to update the learning parameters. The error
+signal has to be measured in order to update the learn-
+ing weights. If that is done by means of electronic sen-
+sors, that could potentially introduce a bottleneck. The
+potential advantage of using ultrafast physical dynam-
+ics for evaluating the network could be lost because of
+a relatively slow electronic response. In addition, some
+of these approaches require further computation steps.
+These problems can be addressed if the error signal could
+directly inﬂuence the learning parameters via physical
+dynamics, without external feedback.
+The possibility of using a physical mechanism to up-
+datethelearningparametersautonomouslywasproposed
+for the ﬁrst time also in the above-mentioned work by
+Wagner and Psaltis [8]. In their paper, they consider a
+setup in which the learning parameters are recorded in
+the form of a hologram in a photorefractive material. In
+thisway, theinterferencebetweentheerrorsignalandthe
+forward-propagating beam could in principle provide the
+means to update the holographic recording in the right
+way. A simple version was partially demonstrated in a
+linear optical device in a follow-up paper by Li, Psaltis
+et al [9]. However, that experimental setup did actually
+still involve some form of feedback.
+The ideas ﬁrst advanced in [8] could potentially lead to
+ultrafast training and a huge density of interconnections
+between neurons. By combining physical backpropaga-
+tion with an autonomous process to update the parame-
+ters according to the error signal, it would be possible to
+realize self-learning machines. Nevertheless, all presently
+existing proposals for physical backpropagation are suit-
+ableonlyforsomesetupswithveryspeciﬁcnonlinearities.
+In some cases, such as [8] or [18], it is required that the
+forward propagating beams and the error signal experi-
+ence a diﬀerent dynamics at the nonlinear elements, that
+nonetheless has to be matched in a precise way. What is
+more, recording the learning parameters in a holographic
+pattern requires a very careful engineering of the geome-
+try of the device [13]. In other cases, such as [11], phys-
+ical backpropagation is only realized approximately in a
+particular limit.
+In this work, we show how to realize self-learning (i.e.
+the combination of physical backpropagation and au-
+tonomous parameter update) in a much broader set of
+physical systems. Since our idea does not rely on a spe-
+ciﬁc choice of the system, it is not restricted to optical
+setups. Hence, it could be applied to many other possible
+platforms, ranging from cold atom clouds to solid state
+spin networks. In fact, the training procedure that we
+propose is a sequence of operations that do not even de-
+pend on the particular dynamics of the device, provided
+that some weak assumptions are met. Essentially, we
+only require that the physical learning machine is based
+on a time-reversible nonlinear Hamiltonian system.
+III. OVERVIEW OF HAMILTONIAN ECHO
+BACKPROPAGATION
+The main contribution of this paper is to introduce
+a new technique for self-learning in Hamiltonian sys-
+tems, which we term Hamiltonian Echo Backpropagation
+(HEB, for short). Before moving to the more technical
+sections, we provide here a high-level overview of HEB.
+A. Requirements
+Let us be more precise about the requirements for the
+implementation of a self-learning machine based on HEB.
+Hamiltonian systems – First of all, we only con-
+sider Hamiltonian systems, where the dynamical degrees
+of freedom consist in the learning parameters and the
+variables needed to process the information. From the
+point of view of the physical realization, requiring Hamil-
+tonian dynamics means that the timescale of dissipation
+in the self-learning device must be much larger than the
+time interval between the injection of the input and the
+production of the output (for a given training sample).
+Since we aim to use fast dynamical processes, this seems
+to be a reasonable requirement. In fact, many of the
+previous proposals for physical learning machines can be
+modeled as Hamiltonian systems, e.g. the optical neural
+networks using Kerr nonlinearity.
+Time-reversal symmetry– Second, we require that
+the self-learning device obeys time-reversal symmetry. It
+is worth noting that time-reversal symmetry is not a very
+restrictive property: all mechanical and optical systems
+with arbitrary nonlinear dynamics are time-reversal in-
+variant in the absence of magnetic ﬁelds and in the ab-
+sence of spontaneous time-reversal symmetry breaking
+(i.e. magnetization).
+For the purposes of our paper, we will deﬁne a Hamil-
+tonian self-learning machine to be a self-learning machine
+that is Hamiltonian and time-reversible.
+Time-reversal operation– Third, we need the abil-
+ity to physically implement a time-reversal operation. In
+the case of wave ﬁelds, that would be a phase-conjugation
+mirror, an operation which has been demonstrated in
+nonlinear optics. This can be implemented outside the
+core of the device.
+Decay step – Fourth, we need the ability to imple-
+ment another operation, the so-called decay step, to be
+explained below. Essentially, this is when the force im-
+parted on the learning variables gets converted into a
+shift of those variables. Again, this can be implemented
+outside the core of the device.
+These are the only general requirements needed for
+the implementation of self-learning machines based on
+the Hamiltonian Echo Backpropagation technique. Any
+
+===== PAGE 6 =====
+6
+other more detailed suggestions regarding physical imple-
+mentations made in the remainder of the manuscript only
+serve to highlight opportunities for optimizing the per-
+formance – similar to discussions in deep learning where
+one should distinguish the essential concepts, i.e. gra-
+dient descent and backpropagation, from suggestions for
+improved network architectures.
+B. Basic steps of Hamiltonian echo
+backpropagation
+WeexplainhereallthestepsneededtoimplementHEB
+in what is probably the most practical scenario, which
+is when wave ﬁelds are transmitted through a nonlinear
+setup. In this setup, wave ﬁelds represent both learning
+variables, to be updated during training, and evaluation
+variables, participating in the information processing re-
+quired to map input to output. Both types of wave ﬁelds
+enter a physical system (thenonlinear core), in which
+they interact to produce an output wave ﬁeld. The only
+requirement that we impose on the nonlinear core is that
+the evolution of the ﬁelds inside it is described by a time-
+reversible Hamiltonian.
+Apart from the nonlinear core, the self-learning de-
+vice requires a few well-deﬁned external operations that
+are applied on the wave ﬁelds that have been transmit-
+ted through the device. However, we need no control on
+the nonlinear core, which can be thought of as a black
+box. Since all the external operations depend only on the
+output ﬁelds and not on the internal degrees of freedom
+or the details of the dynamics inside the nonlinear core,
+we will call this a Hamiltonian-independent self-learning
+machine.
+Suppose that we consider the usual supervised learning
+scenario, with a dataset consisting of pairs of inputs and
+target outputs, and we want to train the device to ap-
+proximate the input-output relation given by these sam-
+ples. We proceed to enumerate the steps in a single train-
+ing iteration of HEB.
+1) The ﬁrst step is to draw a random sample from the
+input dataset and prepare the evaluation ﬁeld accord-
+ingly.
+2) Forward pass:send both the evaluation ﬁeld and
+the learning ﬁeld into the nonlinear core and let them
+interact there. This is where the essence of the nonlinear
+information processing (and, later, learning process) will
+take place.
+3) Both ﬁelds have again emerged from the system,
+propagating outwards as wave ﬁelds. We now inject a
+small error signal on top of the evaluation ﬁeld. This
+signal is proportional to the desired output of this train-
+ing sample. Note that this prescription covers the case of
+the most well-known cost function, the mean square loss,
+and it corresponds mathematically to injecting a signal
+proportional to the gradient of the cost function with re-
+spect to the output ﬁeld. Other cost functions can be
+implemented as well, as we will show.
+4) Time-reversal Operation: This is performed by
+phase-conjugating both wave ﬁelds, which at this point
+are outside the nonlinear core. More generally, it means
+reversingthemomentaofthephysicaldegreesoffreedom.
+5) Backward pass: As a result of the time-reversal
+operation, the ﬁelds will propagate back into the nonlin-
+ear core, where they will interact again (we will call this
+the backward pass).
+(6) Now the evaluation ﬁeld leaves the device near the
+input port (it will be substituted by the next input).
+However, the learning ﬁeld is retained, and asecond
+time-reversal operationis now enacted on this learn-
+ing ﬁeld, again outside the device. This will eventually
+re-inject the learning ﬁeld into the device, together with
+the next input sample.
+7) Decay step:In a Hamiltonian setting, the degrees
+of freedom of any ﬁeld can be decomposed into the ﬁeld
+amplitude and its canonically conjugate momentum; for
+the optical case, these correspond to the two ﬁeld quadra-
+tures. As we shall prove in our work, the canonical mo-
+mentum of the learning ﬁeld after the steps described
+above is proportional to the gradient of the cost function,
+i.e. exactly what is needed in a gradient-descent learn-
+ing algorithm! The purpose of this ﬁnal step is to con-
+vert the canonical momentum (i.e. the ﬁeld quadrature
+whose sign we have ﬂipped during the time-reversal op-
+eration) into a change of the ﬁeld amplitude and quench
+the momentum to zero in the process. We call this the
+decay step, since it is the only step in which dissipation
+is introduced. As this step takes place outside the non-
+linear physical system (just like the time-reversal opera-
+tion itself), it can be realized in an engineered way with-
+out destroying the Hamiltonian-independence advertised
+above. Furthermore, since it is realized outside the non-
+linear core one can control the learning rate in a simple
+manner.
+We will discuss all of these steps in the following and
+provide proofs for the claims made here. Nevertheless,
+we can already oﬀer an insight of why the full proce-
+dure works. Consider that we wanted to evaluate the
+gradient by the ﬁnite-diﬀerence method. In this case, we
+would have to slightly shift one of the learning ﬁelds and
+query the resulting response. Such a shift would result
+in a weak perturbation of the ﬁelds during the forward
+pass that would ultimately result in a small change of
+the value of the cost function with respect to the case
+of unperturbed ﬁelds. Now we would have to repeat this
+process for every learning degree of freedom to obtain the
+full learning gradient, which is one of the reasons why, as
+weexplainedabove, theﬁnite-diﬀerencemethodishugely
+ineﬃcient. But since we consider systems with time re-
+versal symmetry, we can instead inject an error signal
+in the output, followed by a time-reversal operation. In
+this case, the wave ﬁelds evolve to a time-reversed replica
+of the input that is perturbed by a weak error signal.
+Because of the reciprocity principle [37], the linear re-
+sponse of the (nonlinear!) system in the forward pass is
+in fact related to the linear response of the system in the
+
+===== PAGE 7 =====
+7
+backward pass. Therefore, we can obtain the required
+gradient by injecting a signal from the output, instead
+of perturbing the input. This is the essence of the idea
+underlying our approach.
+Our method shares with the approach of equilibrium
+propagation [6] the general idea of exploiting a diﬀerence
+between two contributions: in our case, this would be
+the diﬀerence of the force imposed on the learning ﬁeld
+between the forward pass and the backward pass. The
+diﬀerence is automatically produced by the physical dy-
+namics since we employ a time-reversal operation. In
+contrast to equilibrium propagation, we do not have to
+engineer further the dynamics inside the device to pro-
+duce an update according to such a diﬀerence. Another
+distinction is that we work with a system out of equilib-
+rium where we do not have to wait for it to relax to any
+steady state (nor would we want that, since our method
+relies on dissipation being absent or at least very small).
+Our method shares with the approach of Psaltis and
+Wagner [8] the idea of employing a time-reversal opera-
+tion. However, in our case, we apply time-reversal to the
+full nonlinear wave ﬁeld, as opposed to only an injected
+weak error signal. This diﬀerence ultimately means that
+they had to engineer the forward and backward transmis-
+sions inside the device components in a particular way,
+while our approach is completely general.
+We observe at this point that none of the exter-
+nal procedures that are employed during an HEB it-
+eration depends on the Hamiltonian of the nonlinear
+core. Therefore, we introduce the following deﬁnition.
+A Hamiltonian-independent self-learning machine is a
+Hamiltonian self-learning machine in which the train-
+ing procedure is independent of the Hamiltonian. By
+this statement, we mean that the training procedure can
+minimize the cost function for any Hamiltonian that is
+time-reversible. This is another important diﬀerence to
+equilibrium propagation as well as the approach of Wag-
+ner and Psaltis.
+To the best of our knowledge, our proposal consti-
+tutes the ﬁrst example of an approach to construct
+Hamiltonian-independent self-learning machines. Since
+the training procedure does not depend on the particular
+form of the Hamiltonian, the self-learning machine can be
+regarded as a black box. As opposed to other physical
+learning machines in the literature, its implementation
+in the laboratory does not even need a detailed knowl-
+edge of the internal dynamics of the device in order to
+make it work. There are only few mechanisms that could
+disrupt an experimental implementation: a mechanism
+that in some way breaks time-reversal symmetry of the
+Hamiltonian (including an unwanted dissipation or noise
+channel) , or signiﬁcant imperfections in the implemen-
+tation of the time-reversal operation or the decay step.
+IV. HAMILTONIAN ECHO
+BACKPROPAGATION
+A. Dynamical variables and Hamiltonian
+Our setup for a SL machine consists of two basic in-
+gredients: dynamical variables that are used to process
+the information (theevaluation variables), and dynami-
+cal variables that contain the learning parameters.
+The evaluation variables will be combined into a single
+dynamical vector, Ψ(t). In a similar way, the collection
+of all the learning parameters is denoted as a vectorΘ(t).
+Such vectors can represent any collection of physical de-
+grees of freedom in a Hamiltonian system, from inter-
+acting spins to optical ﬁelds. For the present discussion,
+we imagine discrete models with a countable number of
+degrees of freedom. However, the approach also covers
+the case of continuous ﬁelds (with straightforward slight
+changes in the notation).
+The input to the device is given by the initial conﬁg-
+uration of the evaluation variables,Ψ(−T ), whereas the
+output is given by its state at a later time,Ψ(0). We
+choose the initial time to be−T for reasons that will
+become clear later. The learning parameters,Θ(t), will
+interact with the evaluation variables and overall change
+slowly during training.
+For example, consider a self-learning machine whereΨ
+and Θ are nonlinear wave ﬁelds. These could be realized
+as a lattice of optical cavities or spins. We can imagine
+the operation of the SL machine as a nonlinear scattering
+experiment, where the inputΨ(−T ) is a wave packet. As
+the wave packet propagates inside the device, it evolves
+under the eﬀect of the nonlinear self-interaction and the
+interactionwiththelearningparameters. Finally, anout-
+put wave packet is obtained att = 0. The output state
+of Ψ is a nonlinear function of the input, and it has a
+parametric dependence on the initial conﬁguration of the
+learning parameters, Θ(−T ), much like an artiﬁcial neu-
+ral network (ANN).
+We can capture the dynamics of the SL machine during
+both the forward and backward pass in a single Hamil-
+tonian:
+HSL =Hψ +Hint +Hθ. (1)
+Let us inspect one by one what each term means. Some
+of the technical details will be more fully explained later.
+Hψ is the Hamiltonian that describes the evolution of
+Ψ alone, in the absence of interaction withΘ. In general,
+it will have self-interaction (non-quadratic) terms. The
+second term,Hint, contains the interaction ofΘ and Ψ.
+In general,Hψ +Hint must be a time-reversible Hamil-
+tonian, but there is no further constraint. In accordance
+with previous proposals for physical learning machines,
+we may assume that, for example,Ψ is an optical ﬁeld in-
+side a nonlinear medium. The nonlinear response of such
+a medium may correspond, among many other possible
+choices, to a Kerr-like nonlinearity.
+
+===== PAGE 8 =====
+8
+The third term, Hθ, describes the dynamics of Θ in
+the absence of interaction withΨ. For the sake of gen-
+erality, we consider thatΘ may have an arbitrary self-
+interaction. Therefore,HSL is completely arbitrary.
+B. Gradient descent as a goal
+Suppose that Θ is initialized in some random conﬁg-
+uration Θ(−T ). Now, we prepare Ψ in the input state,
+and we let it interact withΘ. After a time intervalT,
+we will obtain the output state. The error in the output
+is quantiﬁed by means of a cost function. In general, a
+cost functioncan be any function
+C(Ψ(0), Ψtarget) =C(Ψ(−T ), Ψtarget, Θ(−T )) (2)
+of the outputΨ(0) and its corresponding target conﬁgu-
+ration that is minimized when both are equal. The func-
+tion displayed here is the sample-speciﬁc cost function.
+The training procedure will try to minimize its sample-
+averaged version (averaging over all training input sam-
+ples Ψ(−T ) that are provided alongside their respective
+target Ψtarget). After averaging, the cost function still
+depends on the learning variablesΘ(−T ), since these de-
+termine the mapping from input to output.
+For reasons that will become apparent later, we take
+our cost function to have units of energy (and in fact
+it will represent a physical Hamiltonian later in this sec-
+tion). In order to improve the performance of the SL ma-
+chine, we have to minimize the cost function. In princi-
+ple, the problem of optimizing the cost function is a very
+hard nonlinear optimization problem, but in the context
+of ML it is usually suﬃcient to ﬁnd a local minimum.
+In the context of ANN’s, this is normally done by the
+stochastic gradient descent method. In this method, the
+gradient of the cost function is computed (for one or sev-
+eral randomly chosen training samples) and the learning
+parameters are subsequently updated, according to the
+rule
+θ(Tf) =θ(−T )−η ∂C
+∂θ(−T ). (3)
+C. Introducing Hamiltonian Echo Backpropagation
+Our goal is to realize the stochastic gradient update
+rule in a fully autonomous way, via physical dynamics.
+The sample-speciﬁc cost function depends on the output
+and the target state. For this reason, if one hopes to im-
+plement gradient descent without external intervention,
+some information about the output must be sentback-
+wards from the output to the input. This immediately
+suggests the use of a time reversal operation, which was
+already recognized in early proposals [8], although it was
+employed in a manner diﬀerent than what we will de-
+scribe now.
+To understand the qualitative idea of our approach, we
+start from a general observation that is well known from
+discussions of backpropagation in ANNs. The change of
+the cost function induced by a small change in a learning
+parameter θ is given by
+δC = 2δθRe
+{∂Ψ(0)
+∂θ
+∂C
+∂Ψ(0)
+}
+(4)
+In other words, we need to know both the perturbation
+in the output conﬁgurationδΨ(0) = ∂Ψ(0)
+∂θ produced by
+a small parameter change, as well as the "error signal"
+∂C
+∂Ψ(0) at the output.
+Since we consider weak perturbations,δΨ(0) can be
+understood in terms of the linear response of the sys-
+tem. In other words, δΨ(0) is in fact proportional to
+the Green’s function associated with the linearized equa-
+tions of motion. At this point we can introduce the most
+important idea of our approach: if we physically time-
+reverse the whole ﬁeldΨ, we can instead interpret the
+error signal, ∂C
+∂Ψ(0) as the source of a perturbation that is
+"riding on top of" the time-reversed nonlinear wave ﬁeld
+(see Fig. 3). This is at the heart of our new procedure
+to realize self-learning, "Hamiltonian Echo Backpropaga-
+tion" (HEB).
+As we will see later, the idea is related to the fact
+that in a linear system of diﬀerential equations there is a
+symmetry between the source of a ﬁeld att and its eﬀect
+at t′ (the so-called self-reciprocity principle) [37].
+Let us go through the individual steps of the HEB
+procedure. First, Ψ is prepared in the input state, at
+timet =−T. Note that we choose to start the process at
+timet =−T tomakeexplicitthetime-reversalsymmetry.
+Thus, the output is produced att = 0, and the echo of
+the input will form att = T. In order to simplify the
+calculations, let us also assume ﬁrst that the canonical
+momentum of θ is initially zero. After the interaction
+between Ψ and Θ, we obtain an output ﬁeldΨ(0).
+In the next instant, we need a way to inject the error
+signal required for the subsequent backward pass. This
+we achieve by imposing onΨ an interaction Hamiltonian
+proportional to the (sample-speciﬁc) cost function, given
+the desired target ﬁeld conﬁguration. We assume that
+the duration of this interaction,ϵ, is small enough. In
+practice, this implies that the ﬁeld is slightly changed
+according to Ψ(0)→ Ψ(0)−iϵ∂Ψ∗(0)C
+Before going further in the discussion of HEB, let us
+introduce a useful notation we will employ in the rest of
+the paper. In order to make our equations more com-
+pact, we condense each pair of canonical coordinates in a
+single complex variable. We will reserve the capital greek
+letters for the complex variables, as follows:Ψ =ψ+iπψ,
+Θ = θ +iπθ, where the canonical coordinates and mo-
+menta have been rescaled to obtain the same dimension
+(nominally, square root of an action). This will make the
+
+===== PAGE 9 =====
+9
+ab
+x
+t
+Ψ
+Ψ↦Ψ*
+δΨ
+δΨ
+δΘ
+δΘ
+time reversal
+input
+output
+-T
+0
+-T
+T
+0
+Figure 3. Physical backpropagation and physical gra-
+dient update.(a) Forward pass (nonlinear evolution) of the
+"evaluation" wave ﬁeldΨ in the presence of a background
+potential landscape provided by a "learning ﬁeld"Θ. Any
+small perturbation δΘ will aﬀect the output, as indicated
+here, which in turn changes the value of the cost function.
+(b) Instead of testing the cost function response for many
+potential updates of the learning ﬁeldΘ, Hamiltonian Echo
+Backpropagation automatically produces the required update
+in a single backward pass, via physical dynamics. After ap-
+plying a time-reversal operation (Ψ↦→ Ψ∗), the subsequent
+nonlinear wave ﬁeld evolution is a time-reversed version of
+the forward pass. A small variationδΨ injected on top can
+now be used to backpropagate the error signal (variation of
+the cost function at the output); see main text. This then
+leads to the required update of the learning ﬁeldθ, via the
+physical interaction between Ψ and θ, realizing a fully au-
+tonomous learning machine.
+notation for the time-reversal especially convenient, as
+it corresponds to a complex conjugation of the dynam-
+ical variables. Furthermore, one can easily check that
+Hamilton’s equations can now be written in a particu-
+larly convenient manner:
+˙Ψ =−i∂Ψ∗H,
+where one has to formally treat Ψ, Ψ∗ as independent
+variables (or more technically,∂Ψ∗ represents a Wirtinger
+partial derivative).
+As a concrete example, let us assume that our cost
+function is simply the overlap between the target state
+and the output state. Then, the prescription above tells
+us we just have to inject a weak perturbation propor-
+tional to the target state:δΨ(0)∝iϵΨtarget.
+After this step, we time-reverse , which in our com-
+plex notation means to phase conjugate the ﬁelds, e.g.
+Ψ→ Ψ∗. In the limit ϵ→ 0, Ψ will evolve backwards
+preciselytotheinputconﬁguration, becausetheHamilto-
+nian is time-reversal-invariant. However, whenϵ is small
+but ﬁnite, we obtain a small variation in the ﬁelds, both
+in Ψ and Θ. One can understand such variation as a per-
+turbation traveling on top of the time-reversed ﬁeld, from
+output to input. Once the back-propagation is complete,
+one obtains a slightly perturbed echo of bothΨ and Θ,
+att =T. Since we have perturbed the ﬁeld att = 0, the
+echo is not perfect: there is a small variation given by
+Θ(T ) = Θ∗(−T ) +δΘ(T ). In order to have the correct
+sign for the momentum of the learning ﬁeld required for
+ourapproach, wetimereverseagain, Θ(T )→ Θ∗(T ). Us-
+ing the self-reciprocity principle, one can then show that
+the ﬁnal conﬁguration ofΘ in the echo step is simply
+given by
+Θ(T ) =θ(−T )−iϵ ∂C
+∂Θ∗(−T ). (5)
+We will show below how to prove that result, which en-
+capsulates the central idea of our proposal, mathemati-
+cally (Sec.V).
+We note that the procedure introduced here diﬀers
+in an important way from previous approaches to self-
+learning dynamics [8], which never considered a full time-
+reversal of the nonlinear wave ﬁeld and instead treated
+a weak perturbation traveling against a strong forward-
+propagating ﬁeld. It is a consequence of this choice
+that these approaches work only for some speciﬁc care-
+fully chosen wave dynamics, and not in the general,
+Hamiltonian-independent way that we outline here.
+TheﬁnalstepofHEBwillbetheupdateofthelearning
+ﬁeld, to be discussed now.
+D. The decay step (physical learning ﬁeld update)
+At this step, the dynamics of the learning ﬁeldΘ al-
+most looks like gradient descent, but not completely: we
+have been able to impart a momentum kick toΘ that
+is proportional to the gradient of the cost function, but
+what we really want is to update the positionθ. We now
+need to convert the update in the canonical momentum
+into a shift in the position, and at the same time we need
+to let the momentum decay to zero. For this purpose,
+we need to realize some form of dissipation during this
+part of the training process, which we call thedecay step.
+This can be done by couplingΘ to a reservoir.
+While we need dissipation during the decay step, the
+dynamics during the forward and backward pass must be
+time-reversible. The conceptually simplest way to resolve
+this conﬂict is to have the ability to switch dissipation on
+and oﬀ. In principle, we can do so by controlling the cou-
+pling ofΘ to the reservoir, and many physical implemen-
+tations (e.g. all approaches related to laser cooling ideas)
+are possible. The fact that we need dissipation during the
+decay step is not surprising, because we have only used
+Hamiltonian evolution and time reversals so far, while
+the overall gradient descent procedure is contractive.
+In general, therefore, during the decay step we need to
+switch on a dissipative interaction
+HSL,decay =HSL +Hθ,decay (6)
+where Hθ,decay is a term that couplesθ to the dissi-
+pative bath. Additionally, Hθ,decay in general needs to
+
+===== PAGE 10 =====
+10
+contain other simple non-dissipative terms that control
+the evolution during the dissipative phase.
+We will now explain this step by means of a simpli-
+ﬁed example that contains all the key ingredients needed.
+Later on, in section VIC, we will provide a more detailed
+prescription how the desired eﬀect outlined here can be
+obtained in the concrete case of wave ﬁelds.
+Inourexample, weassumethatthedynamicsof Θdur-
+ing the decay step corresponds to a free-particle Hamil-
+tonian with damping:
+˙θ = Ωπθ
+˙πθ =−Γ(t)πθ
+(Note that in our conventionπ2
+θ has units of action, which
+implies that Ω has units of frequency). Furthermore, we
+assume that the eﬀect of dissipation may be modelled
+by a damping force of the form−Γ(t)πθ, where Γ(t) can
+be controlled in a time-dependent fashion. The stable
+manifold would be given by the particle at rest at any
+location, withπθ = 0.
+During this ﬁnal step of the HEB procedure, we switch
+on the dissipation, ˙πθ =−Γπθ, and apart from that we
+let Θ evolve freely. If we wait long enough, the ﬁnal con-
+ﬁguration ofΘ is given byθ(−T ) +ϵ ∂C
+∂πθ(−T)−ϵ Ω
+Γ
+∂C
+∂θ(−T)
+(to ﬁrst order inϵ), while the canonical momentum de-
+cays to zero. The update step ﬁnishes in the end of the
+decay step, at timeTf≫ Γ−1. In the limit of large de-
+cay times, i.e. Ω
+Γ≫ ∂C
+∂πθ(−T)
+(
+∂C
+∂θ(−T)
+)−1
+, we recover the
+usual gradient descent update rule
+θ(Tf) =θ(−T )−η ∂C
+∂θ(−T ), (7)
+with a learning rate given byη = ϵ Ω
+Γ. Repeating this
+procedure in a sequential way, for many injected training
+samples, will realize stochastic gradient descent (SGD).
+Apparently, the learning rate is proportional toϵ, which
+represents the duration during which the "cost function
+Hamiltonian" is active.
+We must remark that in the general case, when the dy-
+namics ofΘ is not necessarily equivalent to a free-particle
+with damping, the relation ofη to ϵ may be diﬀerent.
+However, we can always expect these two quantities to
+be proportional, due to the assumption of injecting only
+a weak perturbation.
+In practice, the way in which the decay step is per-
+formed would depend on the architecture of the self-
+learning machine. We can envisage two main possibil-
+ities, which are illustrated in ﬁgure 4.
+Before we discuss these possibilities, weemphasizethat
+it is important to have an overall dynamics where the de-
+generacy between diﬀerent values of the learning ﬁeld is
+only broken by the training samples, and not by the in-
+trinsic dynamics of the device. After all, the learning
+parameters Θ must be able to change continuously be-
+tween diﬀerent states during training.
+Ψ
+Θ
+t −T0T
+Ψ
+t −T0T
+a
+b  
+Θ
+Decay step
+Decay step
+Decay step
+Decay step
+Sample #1Sample #2
+Sample #1Sample #2
+Time  
+reversal
+Figure 4. Diﬀerent possible architectures of the self-
+learning machine. We illustrate the diﬀerent possible con-
+ﬁgurationsofthelearningandevaluationdynamicalvariables,
+for the case of a setup consisting of wave ﬁelds interacting in
+1D. We consider that the SL device is in the highlighted re-
+gion, which is where the nonlinear interaction given byHSL
+takes place. If both the input and output of both ﬁelds are
+injected from outside, all the time reversals and decay steps
+can be performed externally, and there is freedom to choose
+Hθ,bath. If not, the Hamiltonian of the SL device,HSL, has
+to be engineered to have a continuously degenerate ground
+state in Θ. (a) Both Ψ(−T ) and Θ(−T ) are wave packets
+injected from outside the SL device. (b) The inputΨ(−T )
+is a wave packet injected from outside the device, butΘ is
+conﬁned inside.
+Learning ﬁeld transmitted through the nonlin-
+ear core– The ﬁrst possibility, illustrated in ﬁgure 4(a),
+is that bothΘand Ψare wave ﬁelds that enter in the self-
+learning device from outside, evolve according toHSL,
+and then ﬁnally produce an output wave ﬁeld. In this
+case, the echo of bothΘ and Ψ is produced outside the
+device. Therefore, all the operations needed to realize of
+the decay step can be performed externally, and there is
+freedom to choose the most suitable form ofHθ,decay. In
+this situation, the procedure is completely Hamiltonian-
+independent, since the operations required to implement
+Hθ,decay are the same for any time-reversible Hamilto-
+nian self-learning device. In this case, even when the
+training is ﬁnished, one must keep time-reversingΘ and
+performing decay steps in order to keep it around the
+optimal conﬁguration. In the absence of an error signal
+injected at the output, the time-reversed evolution dur-
+ing the backward pass will exactly undo any evolution
+during the forward pass, regardless of the Hamiltonian
+of the nonlinear core. Therefore, the learning ﬁeld will
+keep stable once the training is ﬁnished. The only con-
+ditions to impose are on the Hamiltonian governing the
+dissipative dynamics outside the device,Hθ,decay, which
+
+===== PAGE 11 =====
+11
+must not break the degeneracy between diﬀerent values
+ofθ (unlike the HamiltonianHSL, which can be arbitrary
+in this case).
+For this architecture, since the decay step is performed
+outside the device, in principle there is no constraint on
+the values of the learning rate or the particular form of
+dissipation. In this case, the learning rate can be tuned
+to maximize the speed of training. Just like in the case
+of training of artiﬁcial neural networks, the learning rate
+cannot be too high: otherwise, a gradient descent step is
+not guaranteed to decrease the value of the cost function.
+Learning ﬁeld localized inside the nonlinear
+core – The second possibility, illustrated in ﬁgure 4(b),
+is that the evolution ofΘ happens entirely inside the de-
+vice. For example, this would be the case if the learning
+dynamical variables are given by optical ﬁelds conﬁned
+in cavities placed inside the self-learning device, or are
+stored inside some other persistent degrees of freedom.
+In that case, there is the danger that during the decay
+step the dynamics of prescribed by HSL would induce
+some unwanted drift of the learning ﬁeld. To avoid this,
+we need to require that the dynamics induced byHSL re-
+sults in a continuously degenerate ground state manifold
+for Θ. Therefore, when the learning dynamical variables
+are conﬁned inside the device, the form ofHθ is con-
+strained. In appendix G we outline some possibilities to
+engineer such a Hamiltonian with a few simple nonlinear
+interactions. Nevertheless, we can still have arbitrary
+Hamiltonians for Ψ and for the interaction between Ψ
+and Θ, as long as during the decay stepΨ = 0 inside
+the device. This will be true if we think ofΨ as some
+sort of excitation (wave packet) having left the device by
+this time. Although this restricts the form ofHSL, it has
+the advantage that it is no longer necessary to keep per-
+forming time-reversals once the training is ﬁnished and
+as long no evaluation passes are performed.
+Overall, what our training procedure (in either of the
+two cases) does is to impart an additional eﬀective force
+on Θ proportional to the gradient of the cost function,
+as we will explain in the next section. This breaks the
+degeneracy in such a way that the only surviving stable
+ﬁxed points are the minima of the cost function.
+Up to now we have always considered the evaluation
+ﬁeldΨ to adopt the shape of wave packets traveling
+through the device. However, even there, other possibili-
+ties exist: one could adopt a scenario where time-reversal
+of Ψ is implemented entirely inside the device. In that
+case, we do not need to think of propagation along a
+particular direction, nor an architecture reminiscent of
+the structure of layered neural networks. Rather, the
+dynamics ofΨ could resemble that of a wave-chaotic sys-
+tem inside a complex nonlinear cavity (see example in
+appendix D).
+a b
+input
+evolution 
+(forward pass)
+inject error signal
+evolution 
+(backward pass)
+learning ﬁeld 
+dissipation
+time reversal
+time
+time reversal
+ψ θ
+πθ
+c 
+d
+θ
+echo
+decayfw. 
+pass
+-T 0 T 2T -T 0 T 2T
+tt
+Figure 5. Ingredients of a self-learning machine based
+on Hamiltonian Echo Backpropagation. (a) Sequence
+of events. (b) Use of ’pseudo-dissipation via ancillary modes’.
+The learning ﬁeldΨ is here decomposed into a number of
+discrete modes. As time progresses, more and more modes
+do not participate any longer in the physical interaction (yel-
+low boxes), becoming ancillary modes. Both these ancillary
+modes and the learning ﬁeldθ also take part in time-reversal,
+however. (c) Time-evolution of the learning ﬁeld momentum
+(left) and the ﬁeld itself (right) during one forward-backward
+pass, including the eﬀects of time-reversal (we show a single
+value of the ﬁeld at one location). The momentum decays
+back to zero, but the ﬁeld has been updated suitably. (d)
+The intrinsic dynamics of the learning ﬁeld during the decay
+step has a continuously degenerate ground state (i.e. a mani-
+fold attractor). Right: The eﬀect of the training dynamics is
+to break this degeneracy and produce a minimum determined
+by the cost function.
+E. Summarizing the general scheme of
+Hamiltonian Echo Backpropagation
+We are now in a position to summarize the general
+approach (Fig. 5). The HEB procedure consists of a
+sequence of multiple events (Fig. 5a), but they can be
+subdivided into two big steps:
+1. Echo step. We randomly draw an input sample
+from the training data set, and we use it to in-
+ject Ψ(−T ). Following the nonlinear dynamics
+
+===== PAGE 12 =====
+12
+of the interacting system, the output is obtained
+at t = 0 . At that point, the evaluation ﬁeld is
+weakly perturbed according to Ψ(0) → Ψ(0)−
+iϵ∂Ψ∗(0)C, which can be brought about via the
+dynamics induced by an extra interaction Hamil-
+tonian (the "cost function Hamiltonian"), as ex-
+plained above. Immediately afterwards, both Ψ
+and also the learning ﬁeldΘ are time-reversed (i.e.
+phase-conjugated). At t = T, a perturbed echo of
+the initial conﬁguration will be obtained. We then
+time-reverse Θ again at t = T. The ﬁnal result
+of this whole process is equivalent to the following
+update of the learning ﬁeld:
+Θ(T ) = Θ(−T )−iϵ∂Θ∗(−T)C. (8)
+To be clear,C here always is the sample-speciﬁc
+cost function. We show in detail how to prove this
+result in general in the next section. It has a simple
+interpretation: to ﬁrst order inϵ, the evolution of
+Θ satisﬁes Hamilton’s equations, with an eﬀective
+Hamiltonian equal to the cost function.
+2. Decay step. The dissipation is switched on for a
+time intervalTD. The evolution ofΘ is determined
+by HSL,decay. This will ensure the suitable update
+of the Θ ﬁeld needed to implement SGD via the
+physical procedure explained above. Finally, pro-
+ceed with the next training sample.
+The evolution of the learning ﬁeld during the whole
+procedure is schematically depicted in Fig. 5c. Imag-
+ine that these two steps are alternated many times, with
+suitable small values forϵ andTD. Then the average dy-
+namics of Θ is approximately described by an eﬀective
+Hamiltonian given by
+Hθ,eﬀ = 1
+ϵ +TD
+(ϵC +TDH′
+θ) , (9)
+where C here represents the sample-averaged cost func-
+tion, andH′
+θ depends on the scenario we are considering.
+For case I (time-reversal of Θ outside the device), we
+simply have H′
+θ = Hθ,decay. For case II (time-reversal
+inside), we haveH′
+θ = Hθ +Hθ,decay. Remember that
+by our assumptions in both cases the phase space associ-
+ated toH′
+θ has a continuous degenerate stable manifold.
+Consider what happens in the low-temperature limit of
+the thermal dissipative reservoir that is used to act onΘ.
+When we setϵ >0, we break the degeneracy ofH′
+θ (see
+Fig. 5d). The dynamical process we described will tend
+to equilibrate the temperatures ofΘ and the reservoir,
+so that Θ will tend to minimize the cost function, con-
+strained to the manifold of ground states ofH′
+θ. Once
+the training has converged, we can stop perform train-
+ing steps (in terms of the eﬀective Hamiltonian, that is
+equivalent to settingϵ = 0). Since we have converged
+to one of the many stable states,Θ will remain near the
+learned conﬁguration for arbitrarily long times. That is
+of course important to ensure that, after training is com-
+pleted, the SL machine doesn’t quickly forget the result
+of the learning process. This line of reasoning does not
+depend on the particularities ofH′
+θ, as long as the phase
+space possesses some stable manifold.
+This concludes our overview. The steps of the ap-
+proach are illustrated in Fig. 6 in terms of a very simple
+mechanical Hamiltonian system, highlighting the gener-
+ality of the procedure.
+time reversal
+& inject error signal
+/uni03A8
+/uni0398
++
++
+completed 
+learning update
+forward pass
+backward pass &
+a b c
+Figure 6. Hamiltonian Echo Backpropagation in
+a simple mechanical model. (a) A charged ball Ψ is
+launched with a velocity representing the input to the ma-
+chine. Its trajectory is deﬂected depending on the position
+of another charged ballΘ, which can freely move along a rail
+and which experiences a momentum kick due to this interac-
+tion. (b) Eventually, the velocities of both balls are reversed,
+and the ballΨ is slightly adjusted according to its deviation
+from the desired outcome ("error signal"). (c) Afterwards, it
+retraces almost exactly its initial trajectory, delivering yet an-
+other momentum kick to theΘ particle. Finally, any remain-
+ing velocity ofΘ is dissipated and converted into a ﬁnite dis-
+placement, representing the training update. Of course, the
+expressive power of this machine, containing only these two
+degrees of freedom, is very limited (i.e. it can only produce
+very rough approximations to most input-output relations).
+Nevertheless, it illustrates the generality of the procedure –
+e.g. an arbitrary (even unknown) static force ﬁeld acting on
+the Ψ particle will not spoil the learning procedure.
+We now present a few additional considerations.
+Consider now what happens when the set of stable
+ground states of H′
+θ is in fact not continuous, but ac-
+tually discrete. This may be the case if, for example,
+Θ describes a collection of degenerate parametric oscilla-
+tors. In this situation, a gradient descent strategy would
+not succeed, as Θ cannot change continuously between
+ﬁxed points. Nevertheless, our procedure for training
+can still minimize the cost function. Indeed, consider
+that we start from a relatively high temperature in the
+thermal reservoir. The thermal ﬂuctuations in the reser-
+voir would result in random jumps between the stable
+points. As our training procedure advances, we decrease
+the temperature of the reservoir, inducing annealing. In
+the end, if the system converges to a thermal equilib-
+rium, the conﬁguration ofΘ would be found in one of
+the minima of the cost function.
+In practice, controllable dissipation may be a too strin-
+gent requirement. Actually, we do not need to have con-
+trol over the dissipation onΘ if the dissipation timescale
+is large enough. In order to see this, we require that
+
+===== PAGE 13 =====
+13
+the damping constant is weak enough that its eﬀect can
+be neglected during one single evaluation step: i.e. the
+damping time-scale Γ−1 is much longer than the dura-
+tion of the evaluation stepT. The core of our procedure
+is to enact an eﬀective force onθ that is proportional
+to the slope of the cost function. If the dynamics were
+purely conservative, that would not be suﬃcient, asΘ
+would oscillate around the stable manifold without ever
+converging anywhere. It is clear then that we need such a
+damping term. In consequence, we distinguish two time
+scales: the short time scaleT of an evaluation step, in
+which all dynamics is approximately Hamiltonian and
+time-reversible, and the long time scale of the total train-
+ing time, in which dissipation ensures that, in the end,
+Θ converges to the stable manifold.
+F. Invertible Dynamics vs. Contractive Maps
+Before going any further, it is useful to introduce the
+concept of pseudo-dissipation via ancillary modes. The
+goal of supervised learning (both for classiﬁcation and re-
+gression) is often to approximate a map from a set of high
+dimensional input vectors to a lower dimensional space.
+This is an inherently contractive process. Nevertheless,
+the fact that our theory of SL machines is based on re-
+versible dynamics during the evaluation (forward pass)
+does not imply that it cannot be used for this purpose.
+It is always possible to embed contractive maps inside
+a higher-dimensional reversible map. In physical terms,
+we can introduce pseudo-dissipation via ancillary modes:
+by introducing additional ancillary dynamical variables
+(which will also be considered part ofΨ in our formal-
+ism), we can simulate the eﬀect of dissipation (Fig. 5b).
+Wecallitpseudo-dissipationviaancillarymodesbecause,
+unlike for real dissipation, we can still time-reverse the
+whole system, including the ancillary modes.
+Aside from its use to learn contractive maps, there is a
+further reason to include pseudo-dissipation via ancillary
+modes in SL machines. In order to be expressive, a SL
+machine must have a very complex nonlinear dynamics.
+However, it seems advisable to avoid the strong sensi-
+tivity on the input that is implied by chaotic dynamics.
+When adding dissipation to a conservative chaotic sys-
+tem, it is known that this reduces the sensitivity to initial
+conditions. In the case of driven systems, where asymp-
+totic Lyapunov exponents can be deﬁned, increasing dis-
+sipation leads to an overall shift of Lyapunov exponents
+to smaller values, thus stabilizing the system [38]. In the
+case of undriven systems, stronger dissipation enhances
+the rate for leaving transient chaotic dynamics and set-
+tling into ﬁxed points [39]. In our numerical experiments
+(reported later in VII), we considered a photonic convo-
+lutional neural network with pseudo-dissipation. We ﬁnd
+that, consistent with these general observations, adding
+pseudo-dissipation helps to reduce the sensitivity to ini-
+tial conditions and improves the performance of the self-
+learning machine.
+Nevertheless, we shall remark that pseudo-contractive
+dynamics is not a requirement for HEB, as it can
+also train devices without such a property. Pseudo-
+contractive dynamics is only a desirable property in some
+interesting applications of a self-learning machine. How-
+ever, there are other applications in which it is actually
+beneﬁcial to have a reversible input-output relation for
+the relevant degrees of freedom, and hence no pseudo-
+contractive dynamics is required. For example, reversible
+residual networks have been recently found useful in im-
+age classiﬁcation tasks [40–42].
+To avoid confusion, we emphasize that this conceptual
+split ofΨ into the original evaluation ﬁeld and additional
+ancillary degrees of freedom is irrelevant with respect to
+the following analysis of the echo step. Therefore, to
+simplify the notation we just consider the full vectorΨ
+without specifying how or whether it is split.
+V. ANALYSIS OF THE ECHO STEP
+Wenowprovemoreformallythatthecrucialingredient
+of our scheme, the echo step, indeed works as advertised
+above, deriving equation (8) in the most general setting.
+Inordertosimplifythenotation, wedeﬁne Φ :=
+(
+Ψ
+Θ
+)
+as the joint conﬁguration of all dynamical variables of
+the system. The dynamics ofΦ is given by the following
+equation of motion
+i ˙Φ =∇Φ∗H, (10)
+where H[Φ] is the Hamiltonian. Crucially, we assumeH
+tobetime-reversal-invariant, whichmeans H[Φ] =H[Φ∗]
+in this notation. Let us remark here that time-reversal-
+invariance is the only assumption in this section (we do
+not need to assume a degenerate ground state for the
+expressions derived in this section). The operator∇Φ∗
+involves the derivatives∂/∂Φ∗
+i and is formally deﬁned
+as (∇Φ∗f)i = ∂f/∂ Φ∗
+i. We stress that we will, at the
+moment, study the dynamics purely in the absence of
+coupling to the dissipative reservoir. In the notation of
+Eq. (1),H[Φ] corresponds to the ﬁrst three terms of the
+SL Hamiltonian,H =Hψ +Hint +Hθ, without the bath.
+A. Expression for the gradient of the cost function
+in terms of an ’advanced’ backpropagating
+perturbation
+In a SL machine, the output of an evaluation step is a
+function of the inputΨ(−T )and the learning ﬁeld, whose
+conﬁguration at the initial time is given byΘ(−T ). In
+the following, we want to obtain a formal expression for
+the gradient ofC with respect toΘ(−T ), which will later
+form the basis for physical backpropagation. SinceΨ and
+Θ are treated on an equal footing in Eq. (10), we will set
+
+===== PAGE 14 =====
+14
+out to ﬁnd the gradient ofC with respect to the initial
+value of the joint stateΦ(−T ):
+(
+∇Φ∗(−T)C
+∇Φ(−T)C
+)
+=D
+(
+∇Φ∗(0)C
+∇Φ(0)C
+)
+, (11)
+where the matrixD is deﬁned as
+D :=
+(
+∇Φ∗(−T)⊗ Φ∗(0) ∇Φ∗(−T)⊗ Φ(0)
+∇Φ(−T)⊗ Φ∗(0) ∇Φ(−T)⊗ Φ(0)
+)
+(12)
+and [a⊗b]ij =aibj. Here the operatorD obviously maps
+back changes in the output to corresponding changes in
+the input, and we will now relate it to the Green’s func-
+tion of the problem.
+Suppose that Φ(t) is the solution of the nonlinear
+Hamiltonian equations when the initial conditions are
+given by Φ(−T ). Let us consider what happens if we
+perturb Φ(−T ) by some smallδΦ(−T ). This results in
+a weak perturbation δΦ(t) traveling forward on top of
+the zero-th order solution. One can writeδΦ(t) as the
+solution to the linearized equations of motion:
+LΦ(t)
+(
+δΦ(t)
+δΦ∗(t)
+)
+=δ(t +T )
+(
+−iδΦ(−T )
+iδΦ∗(−T )
+)
+. (13)
+Here we introduced the linear diﬀerential operator
+LΦ(t) =i
+(
++1
+−1
+) d
+dt−
+(
+∇Φ⊗∇ Φ∗ ∇Φ∗⊗∇ Φ∗
+∇Φ⊗∇ Φ ∇Φ∗⊗∇ Φ
+)
+H[Φ(t)]
+in compact notation, with [∇Φ⊗∇ Φ∗]ij = ∂2
+∂Φi∂Φ∗
+j
+and
+so on. If the vectorΦ has M components, the operator
+LΦ(t) acts on a space of dimension2M. The inhomoge-
+neous term on the right-hand side of the preceding equa-
+tion is there to enforce the initial conditions, assuming
+that δΦ = 0 for t→−∞ .
+The solution of Eq. (13) can be written in terms of the
+retarded Green’s function associated toLΦ[t]:
+(
+δΦ(t)
+δΦ∗(t)
+)
+=GΦ(t,−T )
+(
+iδΦ(−T )
+−iδΦ∗(−T )
+)
+. (14)
+The Green’s functionGΦ(t,−T ) is a linear operator such
+that
+LΦ(t′)GΦ(t′,t ) =δ (t′−t) I, (15)
+where I is the identity matrix of size2M. Note that both
+LΦ andGΦ(t,−T ) depend on the zero-th order solution
+Φ(t) of the nonlinear dynamical equations, around which
+we have linearized. We chose GΦ(t,−T ) to be the re-
+tarded Green’s function, meaning thatδΦ(t) originates
+at t =−T and propagates in the forward direction of
+time. Causality dictates thatGΦ(t′,t ) = 0 for t′ <t .
+We now connect the matrixD to the Green’s function.
+From the deﬁnition ofD in Eq. (12), we see it measures
+the change at timet = 0when introducing a small change
+at timet =−T. The same relation is expressed by the
+Green’s function, as deﬁned in Eq. (15), except for some
+constant factors. Merging both equations, we see that
+GΦ(0,−T ) =−D†iσz, (16)
+where σz is the Pauli matrix. Therefore, we haveD =
+−iσzGΦ(0,−T )†, and we can now express the change of
+the cost function in terms of the Green’s function. How-
+ever, we will see presently that it is helpful in terms of
+physicalinterpretationtointroducethe advancedGreen’s
+function for this purpose, which also obeys Eq. (15) but
+hasGadv(t′,t ) = 0 fort′ >t and represents a signal going
+backward in time. It is related to the retarded Green’s
+function via
+G†
+Φ(t′,t ) =Gadv
+Φ (t,t′). (17)
+Combining Eqs. (17), (16) and (11), we ﬁnally obtain a
+formula relating the gradient ofC that is required for the
+learningupdatetotheadvancedGreen’sfunctionandthe
+(easily obtained) gradient of C with respect to the output
+ﬁelds:
+(
+∇Φ∗(−T)C
+∇Φ(−T)C
+)
+=−iσzGadv
+Φ (−T, 0)
+(
+∇Φ∗(0)C
+∇Φ(0)C
+)
+. (18)
+This is still a formal expression at this point, but in the
+next section we will show how it can be implemented
+physically.
+B. Time reversal of the perturbation: physical
+backpropagation
+How can we produce the signal of Eq. (18) in practice,
+in order to allow the training update to take place? Ap-
+parently, we need to inject the source term∇Φ∗(0)C as a
+perturbation and follow its "backwards time evolution".
+Let us consider that, att = 0, we have obtained the
+output Φout. Suppose that we have a way to implement
+an interaction HamiltonianC[Φ] that is proportional to
+the cost function (written as a function of the output).
+Let us further suppose that we can control this inter-
+action Hamiltonian, so that we can switch it on during
+someshortperiodoftime, andlaterswitchitoﬀagain. In
+theory this is always possible, because a cost function is
+just a real function of the output. In practice, we will see
+that, depending on the cost function, this corresponds to
+driving the system, or applying phase shifts, or, for more
+complicated cost functions, to realizing some nonlinear
+interactions. In any case, this operation is a function
+only of the output, not requiring any knowledge of or
+feedback on the internal degrees of freedom of the au-
+tonomous self-learning machine. As we will discuss later,
+a practical implementation is possible for several stan-
+dard cost functions with relatively simple setups. For
+the moment, we consider the general case in whichC is
+
+===== PAGE 15 =====
+15
+an arbitrary cost function. When we realize such an in-
+teraction HamiltonianC, according to Hamilton’s equa-
+tions, the evolution will be given byi ˙Φ =∇Φ∗C. Let us
+suppose that we only realize such interactions during an
+inﬁnitesimally small time interval,ϵ. The result of such
+a brief Hamiltonian evolution is to update the ﬁelds as
+Φ(0)↦→ Φ(0)−iϵ∇Φ∗C.
+The advanced Green’s function evolves a perturbation
+oftheoutputbackwardsintimetoobtainthecorrespond-
+ing perturbation of the input. In order to realize this
+physically, we need to induce the time-reversed evolu-
+tion of the system. In a time-reversal invariant system
+(such as the one considered here), this is possible by im-
+plementing a time-reversal operation and then letting the
+naturaldynamicsproceedfromthereforwardsintime. In
+the present complex notation, we know that a time rever-
+sal is equivalent to phase conjugation,Φ↦→ Φ∗, ﬂipping
+the momenta. By means of phase conjugation, applied
+to the already perturbed ﬁeld, we produce a perturbed
+echo given byΦ∗(0) +iϵ∇ΦC≡ Φecho(0) +δΦecho(0).
+Importantly, the whole conﬁguration of the system is
+time-reversed, and, as a consequence, the evolution for
+t∈ [0,T ] is, to leading order, given by the fully time-
+reversed nonlinear evolution: Φecho(t) = Φ ∗(−t). The
+ﬁrst order correctionδΦecho(t) is the linear response of
+the system to the perturbationiϵ∇ΦC in the initial con-
+ditions, evolving on top ofΦ∗(−t).
+Now we come to the crucial step. In any time-reversal
+invariant system, the advanced and retarded Green’s
+functions of linear perturbations propagating on top of
+the original nonlinear dynamics and its time-reversed
+counterpart, respectively, are connected in the following
+way:
+Gadv
+Φ (t′,t ) =TG ret
+Φecho(−t′,−t)T , (19)
+whereT =σx is the time-reversal operation, interchang-
+ing δΦ and δΦ∗. Therefore:
+Gadv
+Φ (−T, 0)
+(
+∇Φ∗(0)C
+∇Φ(0)C
+)
+=TG ret
+Φecho(T, 0)
+(
+∇Φ(0)C
+∇Φ∗(0)C
+)
+(20)
+It is now obvious that the left-hand-side, which (as we
+have already found above) formally yields the update
+needed for the gradient descent, can bephysically im-
+plemented in terms of the right-hand-side version, with
+a suitable perturbation injected and propagatedforward
+in time on top of the echo. Finally, as we can see from
+Eq.(20), att =T wehavetoperformaﬁnaltime-reversal
+(phase-conjugation) again.
+Overall, after the whole process is completed, we ob-
+tain a replica of the initial conﬁguration att =−T, but
+importantly with a small correction that is proportional
+to ϵ. The result of the whole physical process can be
+summarized as(
+Φ(T )
+Φ∗(T )
+)
+=
+(
+Φ(−T )
+Φ∗(−T )
+)
+−TG ret
+Φecho(T, 0)
+(
+ϵ∇Φ(0)C
+ϵ∇Φ∗(0)C
+)
+.
+(21)
+Wecanconvinceourselvesthatthisisthelearningupdate
+that was needed, by reformulating the deviation (second
+term on the right-hand-side) with the help of Eq. (20)
+and subsequently Eq. (18)]. This produces:
+Φ(T )− Φ(−T ) =−iϵ∇Φ∗(−T)C (22)
+This is exactly the learning update that was needed, ac-
+cording to Eq. (8), for the learning parametersΘ. Inci-
+dentally, the evaluation degrees of freedomΨ have also
+changed, but they will be discarded when the next input
+is injected into the learning machine.
+VI. MAIN INGREDIENTS OF
+IMPLEMENTATIONS
+The most important feature of our new method is its
+generality. It can be used to train any time-reversible
+Hamiltonian physical system. It is not our intention here
+to give a full description of all possible implementations
+of the SL machine. On this general level, we cannot even
+decide which ones are optimal, as the most suitable archi-
+tecture is heavily dependent on the machine learning task
+of interest. Nevertheless, we can give some guidelines.
+The main ingredients of any SL machine of the type
+presented here are: a time-reversal-invariant Hamilto-
+nian system with two sets of dynamical variablesΨ and
+Θ; a device that can time-reverse Ψ and Θ, and a de-
+vice or method to transform the output according to the
+cost function Hamiltonian (injecting the error signal). In
+this section, we will discuss each of these ingredients on
+a general level, and we will provide a summary of some
+of the most promising possibilities for their realization.
+A. The nonlinear core
+As emphasized above, HEB can work with an arbi-
+trary, completely unrestricted Hamiltonian, as long as
+time-reversal invariance is maintained.
+Any actual implementation will typically be based on
+local interactions between the degrees of freedom. Since
+for practical applications it is desirable to have designs
+that are scalable, a SL device in practice should be con-
+structed by a combination of simple elements. We can
+think for example of integrated photonics or supercon-
+ducting circuits.
+The details of particular experimental platforms will
+be discussed later, in section VIII. Here, we brieﬂy list
+some general guidelines. In order to attain a nonlinear
+input-output relation that is expressive and useful for
+machine learning, we need that (1) many degrees of free-
+dom interact during the forward pass and (2) there are
+nonlinear interactions whose eﬀect is strong during such
+a pass. A common question in this regard would be the
+eﬀect of chaos. Chaotic dynamics is deﬁned as a prop-
+erty of the long-time limit, while here we are considering
+
+===== PAGE 16 =====
+16
+a ﬁnite evolution time for the forward pass. In practice,
+as we will see in the numerical examples, this is a matter
+of degree: it is useful to have suﬃciently strong nonlinear
+eﬀects, but not become too sensitive to small deviations
+in initial conditions.
+A device combining linear local couplings and local
+nonlinearities is enough to produce extremely rich dy-
+namics. For example, in optics one can use a combination
+of beam splitters and nonlinear layers to reproduce the
+architecture of a feedforward neural network [17]. How-
+ever, there is no reason a priori to restrict to such a lay-
+out: Nonlinear wave ﬁelds interacting with each other
+inside some extended medium do not possess any obvi-
+ous layered structure, but are still compatible with HEB,
+just like arbitrary lattices of coupled degrees of freedom.
+One important requirement for HEB, is, of course,
+a time-reversal-invariant Hamiltonian. Practically, this
+means that dissipation in the course of the forward pass
+must be as low as possible. That already rules out some
+physical devices where a strong attenuation is unavoid-
+able (e.g. when nonlinearities are based on absorption
+of waves). Nevertheless, even for promising platforms,
+such as coherent nonlinear optics, there is some remain-
+ing level of dissipation. In the limit of large scale net-
+works, even a small amount of attenuation could be prob-
+lematic, since its eﬀect increases linearly with the propa-
+gation length. However, since we are considering classical
+devices, there is in principle no obstacle to employ am-
+pliﬁcation in order to compensate for the loss present in
+the device (we discuss the aspect of dissipation further
+when assessing concrete experimental platforms).
+B. The time-reversal operation
+The second key ingredient of HEB is the ability to
+perform a time-reversal operation after the forward pass.
+Such an operation does not represent purely Hamiltonian
+evolution, i.e. it does not preserve the Poisson brackets
+of coordinates and momenta. In practice, this means the
+operation necessarily requires dissipation. As opposed
+to the case of quantum mechanics, in classical systems
+this requirement poses no fundamental obstacle. How-
+ever, a physical and fast implementation is not necessar-
+ily straightforward in all classical systems. Fortunately, a
+well-known solution in the case of nonlinear optics [43] is
+phase conjugation (for a review of this extended ﬁeld, see
+[44]). Itisbynowwellestablishedthatphaseconjugation
+is not particular to optics. In fact, it can be engineered
+in any wave ﬁeld where one can realize three- or four-
+wave mixing. For example, it has been demonstrated
+with acoustic waves [45], matter waves [46], microwaves
+[47], and spin waves [48].
+The fact that phase conjugation can be used to time-
+reverse wave pulses has long been understood (see e.g.
+[49] for the optical domain, and [50] for atomic matter
+waves). The reversal of time evolution has been demon-
+strated in several nonlinear systems, including nonlinear
+optics[51,52], electromagneticwave-chaoticsystems[53],
+and water waves [54].
+Moreover, in systems where phase conjugation is not
+straightforward to achieve physically, it is often pos-
+sible to measure the output and inject back a phase-
+conjugated replica. We note that this would replace one
+part of the HEB procedure by external processing and
+feedback, but the overall scheme could still be advanta-
+geous, since we still beneﬁt from physical backpropaga-
+tion and physical parameter update. This last possibil-
+ity is know as digital phase conjugation, and it has been
+demonstrated with remarkable success in optical setups
+[55], using electro-optic components.
+Although the concepts of implementations of phase
+conjugation are well-established, it may be helpful to re-
+call the principle here. From a mathematical point of
+view, for any time-reversible Hamiltonian, the evolution
+can be reversed by inverting the momenta: π → −π.
+In our complex notation, that means to perform a phase
+conjugation of the ﬁelds: Φ → Φ∗. As we remarked
+above, this step cannot be realized with purely Hamilto-
+nian evolution, not even by breaking time-reversal sym-
+metry momentarily. A time-reversal operation does not
+preserve the Poisson brackets, so it is not a canonical
+transformation. However, one can circumvent this prob-
+lem by using ancillary modes.
+For simplicity, we will now discuss a situation with
+discrete coupled modes of the wave ﬁeld, the extension
+to extended waves is straightforward. Let us assume that
+we have a dynamical variableΦ that we want to phase-
+conjugate. Additionally, we also have a second, ancillary
+dynamical variableΞ. An important assumption is that
+the initial value of the ancilla isΞin = 0. The phase
+conjugation can then be realized in three steps. First, we
+couple Φ and Ξ in such a way that, after a ﬁxed time,
+we have that Ξ = Φ∗
+in. This step can be realized with
+Hamiltonian dynamics. For example, a Hamiltonian of
+the "parametric interaction" formH = χ (ΦΞ + Φ∗Ξ∗)
+would result in the desired outcome after an interaction
+timet =χ−1 log
+(
+1 +
+√
+2
+)
+. Second, we swap both modes,
+so that Φ = Φ ∗
+in. This step can also be the result of
+Hamiltonian evolution, now choosing a "beam splitter
+Hamiltonian", H =χ (ΦΞ∗ + Φ∗Ξ). Third, we erase the
+state of the ancilla (this is where dissipation enters), so
+that Ξ = 0 again.
+C. Implementation of the decay step
+A third ingredient of our scheme is the ability to trans-
+form the physically backpropagated perturbation into an
+update of the learning degrees of freedom. More specif-
+ically, the goal of the decay step is to shift the learning
+degrees of freedom according to the momenta (which in
+turn are proportional to the gradient of the cost func-
+tion), andatthesametimedissipate(only)themomenta.
+Mathematically, we want to produce the following trans-
+
+===== PAGE 17 =====
+17
+formation
+θ′ =θ−η∇θC, (23)
+π′
+θ = 0, (24)
+where θ′ and π′
+θ are the learning ﬁeld quadratures after
+the decay step, andη is the learning rate.
+Importantly, this operation can be implemented by
+means of a sequence of three elementary transformations.
+Since all the most promising platforms we conceive are
+based on waveﬁelds, we provide here an outline of its im-
+plementationforawaveﬁeldmoderepresentingalearning
+degree of freedom.
+The transformation given by equation (23) can be ap-
+proximated by a succession of three elementary steps. In
+the ﬁrst step, we coupleθ and πθ by means of a phase
+shift. In the second step, Θ undergoes parametric am-
+pliﬁcation, a routine transformation in nonlinear optics
+and wave platforms in general. Finally, there is a step
+of attenuation. The overall transformation as a result of
+these three steps is given by
+θ′ =
+√
+AG (cos(ϕ)θ + sin(ϕ)πθ), (25)
+π′
+θ =
+√
+A
+G (cos(ϕ)πθ− sin(ϕ)θ), (26)
+whereϕ is the phase shift angle,G is the parametric gain
+and A is the attenuation.
+If we set
+√
+A/G ≪ 1, we have πθ ≈ 0. We need
+to compensate for the attenuation of θ by tuning the
+parametric ampliﬁcation. By choosingcos(ϕ)
+√
+AG = 1,
+we attain the desired transformation given by equation
+(23). Sinceπθ =−ϵ∇θC, the learning rate is then given
+by η = ϵ tan(ϕ). Note that the learning rate can be
+controlled by tuning the phase shiftϕ (and tuning the
+parametric gain accordingly). Importantly, the learning
+rate can be controlled independently of the sizeϵ of the
+injected error signal, since we always have the free pa-
+rameter ϕ available. This is useful, since the values ofϵ
+should be neither too large (breakdown of the lineariza-
+tion approximation for the backpropagated error signal)
+nor too small (negative impact of extra noise).
+This is not the only possible practical implementation
+of the decay step. Observe that the desired transfor-
+mation can also be written in complex form as Θ′ =
+(exp−iϕ Θ + expiϕ Θ∗)/2 cos(ϕ) (a straightforward calcu-
+lation shows that the learning rate is againη = tan(ϕ)ϵ).
+It follows immediately that the decay step can be real-
+ized by a combination of linear unitary operations (i.e.
+beam-splitters), phase conjugation and phase-insensitive
+ampliﬁcation.
+Alternatively, observe that the transformation given
+by equation (23) could be also obtained as the evolution
+of a mechanical degree of freedomθ with ballistic prop-
+agation under the inﬂuence of friction. In this case, the
+initial momentumπθ is translated to a shift inθ (propor-
+tional to the inverse of the mass), while the momentum
+is dissipated in the long-term limit as a result of the fric-
+tion. Therefore, the decay step is straightforward to im-
+plement in the case of mechanical degrees of freedom (the
+problem with mechanical implementations is that there
+is no straightforward method to realize the time-reversal
+operation, unless by measurement and feedback).
+D. The learning signal
+The cost function is the fourth essential ingredient in
+the design of a SL machine. In our prescription for HEB,
+onecrucialstepistoinjectthelearningsignalbyperturb-
+ing the output ﬁelds according toΨ(0)−iϵ∇Φ∗C, where
+C is a Hamiltonian that is proportional to the cost func-
+tion. For arbitrary cost functions, this could always be
+achieved via some external processing and feedback, but
+as a general rule of course we want to avoid such steps.
+For simple cost functions, it could be possible to engineer
+a physical system whose evolution is actually described
+by the cost function HamiltonianC.
+In the particularly important case of the Mean Square
+Error (MSE) cost function, a physical implementation
+is relatively easy. The MSE cost function is deﬁned as
+the squared diﬀerence between the actual output and the
+target output:
+C[Ψ(0)] =
+∫
+dxg (x)|Ψ(x, 0)− Ψtarget(x)|2. (27)
+Here g(x) is a position-dependent weighting factor and
+will be zero in the areas that correspond to the ancil-
+lary degrees of freedom (which will be time-reversed,
+but not compared against any target). Expanding the
+square, we can write the corresponding Hamiltonian as
+C[Ψ(0)] = g(x)|Ψ(0)|2− 2g(x)Re
+{
+Ψ(0)Ψ∗
+target
+}
+(where
+we have dropped|Ψtarget|2, which is just an irrelevant
+constant term). In terms of a physical wave ﬁeld, the
+ﬁrst term,g|Ψ(0)|2, is just a shift in the frequency of the
+ﬁeld. Its eﬀect onΨ(0) is to induce a phase shift given by
+e−iϵg(x). The only reason we do not completely neglect
+this phase shift is thatg(x) may be spatially inhomoge-
+neous. The second term,−2gRe
+{
+Ψ(0)Ψ∗
+target
+}
+, is noth-
+ingbutadriveproportionaltothetarget. Inotherwords,
+this term can be realized straightforwardly by injecting
+a weak copy of the target ﬁeld distribution, adding it to
+the wave ﬁeldΨ, and realizing the corresponding phase
+shift set byg(x).
+Alternatively, the MSE cost function can also be re-
+alized using the intensity of the ﬁeld. Now, instead
+of forcing Ψ(0) to match a target ﬁeld, we only try
+to match a target intensity distribution. In that case,
+the cost function Hamiltonian is given by C[Ψ(0)] =
+g|Ψ(0)|4−2g|Ψ(0)|2Itarget. In that case, the experimen-
+tal realization ofC[Ψ(0)] is reduced to a homogeneous
+Kerr nonlinearity combined with a phase mask propor-
+tional to the target intensity pattern.
+Other cost functions may be realized with diﬀerent in-
+teractions. Which one is optimal would depend on the
+problem at hand and how the output is encoded in the
+physical ﬁelds. In many cases, the choice of the cost
+function would not be a critical feature.
+
+===== PAGE 18 =====
+18
+With regard to the amplitudeϵ of the injected pertur-
+bation ("error signal"), on the one hand it has to be small
+enough so that the weak perturbation is approximately
+in the linear regime. On the other hand, in a noisy de-
+vice it is beneﬁcial to have a larger amplitude, in order
+to overcome the eﬀect of noise. Therefore, it is advisable
+to choose the amplitude of the perturbation as large as
+possible while remaining in the linearized regime. Once
+ϵ is chosen, the learning rate is not yet ﬁxed: It can be
+controlled by changing the free parameters in the decay
+step. When the decay step and the error signal injection
+are performed outside the nonlinear core, there is in prin-
+ciple no restriction placed on those free parameters, and
+hence the learning rate can be tuned at will.
+VII. ILLUSTRATION IN NUMERICAL
+EXPERIMENTS
+In this section we illustrate Hamiltonian Echo Back-
+propagation in two speciﬁc examples, by means of nu-
+merical simulations (our simulations were performed us-
+ing python and numpy). Both examples rely on nonlin-
+ear wave propagation, of the kind that might be imple-
+mented in photonic neural networks. In the ﬁrst case,
+we consider a self-learning machine with a very simple
+setup and we train to learn a logical function. In the
+second example, we consider a more elaborate architec-
+ture inspired by convolutional neural networks. We train
+the self-learning machine to perform classiﬁcation on the
+standard MNIST handwritten digits data set. We believe
+that a more sophisticated architecture or other choices
+of the activation function and the cost function, together
+with a careful tuning of the hypeparameters, could im-
+prove the results even further beyond the validation accu-
+racy of 97.5% observed here. However, our primary goal
+here is to illustrate the concept, rather than construct-
+ing the optimal setup. In both scenarios, we simulated
+the full Hamiltonian Echo Backpropagation procedure,
+involving both the forward and the backward pass.
+The setup considered in the ﬁrst example consists of
+a nonlinear wave ﬁeld. The dynamics of the evaluation
+ﬁeldΨ is given by the nonlinear Schrödinger equation
+coupled to the learning ﬁeld
+i ˙Ψ = β
+2∇2Ψ +
+(
+χθ +g|Ψ|2)
+Ψ. (28)
+The learning ﬁeldΘ permeates the nonlinear medium
+and it interacts with the evaluation ﬁeld through an in-
+teraction of theχ(2) type. This could be implemented
+in a nonlinear optical setup, or alternatively in a device
+based on matter waves. The evaluation ﬁeld is initially
+prepared in a superposition of wave-packets that encode
+the input (Fig. 7), with initial momentumkz > 0. Thus,
+they propagate from left to right, accumulating the eﬀect
+of the nonlinear self-interaction and the interaction with
+the learning ﬁeld. The output intensity is measured at
+two points,xout
+0 , xout
+1 . The output is considered a logical
+0 if|Ψ(xout
+0 , 0)|>|Ψ(xout
+1 , 0)|; otherwise, it is a logical1
+(for more details, see Appendix A). The goal is to learn
+the exclusive-or (XOR) function mapping from input to
+output. As can be seen in Fig. 7, this is achieved rapidly.
+The setup that we consider for the second example is
+inspired by the photonic neural network introduced the-
+oretically by Ong et al [56]. We train this device to learn
+MNIST handwritten digits classiﬁcation. It is composed
+of three convolutional layers followed by a dense fully-
+connected layer. The nonlinearity is provided by aχ(2)
+optical nonlinearity, as described in Eq. (32). The convo-
+lutional layers can be implemented by a combination of
+Discrete Fourier Transforms (DFTs) and learnable phase
+shifts. The proposal by Ong et al. did not address the
+problem of how to implement the dense layers; we intro-
+duce an implementation of the dense layers that is based
+on a sequence of DFTs, learnable phase shifts and a lin-
+ear interaction with ancillary degrees of freedom (see Ap-
+pendix B). As a cost function, we choose the mean square
+error on the intensity.
+In this setup, the learning parameters are all in the
+form of phase shifts. We assume that these phase shifts
+are produced by an interaction of the typeHint =θΨ∗Ψ
+inside some optical cavities through which the evaluation
+wave ﬁeld travels.
+In our simulations, the best results were obtained by
+choosing values of the nonlinear coupling strength that
+are diﬀerent in the convolutional and the dense layers.
+This can be explained by the fact that the intensity de-
+cays as the wave packets propagate, as a result of the in-
+teraction with the ancilla modes. Therefore, it is optimal
+to choose that the nonlinearity in the dense layer,χ2, is
+strongerthanthenonlinearityintheconvolutionallayers,
+χ1. The results in ﬁgure 7 show the training progress for
+several values ofχ1 andχ2. First we show the linear case,
+whenχ1 =χ2 = 0, and then we sweep across several val-
+ues ofχ2, with ﬁxedχ1. One can see a sharp transition
+in the achievable accuracy whenχ2 is increased. When
+the nonlinearity surpasses some threshold (χ2≈ 3), the
+accuracy jumps from around 90% to above 95% (Fig.7g).
+This result suggests that at this point the device gains a
+signiﬁcantly better expressivity. Our observations are in
+qualitative agreement with the ﬁndings by Marcucci et
+al. [57], where the expressive power of information pro-
+cessing using nonlinear wave ﬁelds was analyzed in terms
+of the strength of the nonlinearity.
+We will now turn to study the eﬀects of noise and non-
+linear eﬀects in the gradient estimation. We will do it for
+the case of the XOR scenario.
+First, we studied the consequence of nonlinear eﬀects
+in the gradient estimation - i.e. what happens for larger
+values ofϵ. The backpropagating signal is proportional
+to the gradient to ﬁrst order inϵ, but for large values of
+ϵ the second order terms could be relevant. In ﬁgure 8(a)
+we show the relative error in the update (with respect
+to the ideal gradient descent) as a function ofϵ. The
+relative error is deﬁned as|∆θj/η−∂θjC|/|∂θjC|, where
+∆θj is the update in one training step.
+
+===== PAGE 19 =====
+19
+1.0 1.0 1.0 1.0 1.0
+2.0 3.0 5.0 6.010.0
+a
+e
+Output
+Training error
+Iterations
+Forward pass
+Echo back- propagation
+Self-learning 
+Input
+Iterations
+Cost function
+d
+x
+z
+θ
+a1
+a2
+0.0 1.0
+Validation error1.00.0
+χ2
+χ1
+c
+1
+0
+0
+1{
+{
+t=−T
+t=−T/2
+t=0
+−T/3 2T/30 ϵ T/3 T−2T/3t=−T
+Ψ
+πθ
+b
+c
+g
+t=0 200T 400T 600T
+2e-1
+1e-1
+1e-2
+-1e-2
+-1e-1
+-2e-1
+0
+0 5e4 10e4 15e4
+1.0100
+10-1
+f
+0.8
+0.6
+0.4
+0.2
+HEB
+True gradient
+6e44e42e40 8e4 10e4
+Averaged cost 
+Iterations
+Figure 7. Training a self-learning machine (simulations).(a) Time-evolution of the "evaluation ﬁeld" intensity|Ψ|2
+during a forward pass for a machine that has learned to implement XOR (b = a1⊕a2). The region in which the interaction
+with the learning ﬁeld occurs is enclosed by yellow dashed lines. (b) Time evolution of the learning ﬁeld momentumπθ during
+a single training step. The pattern builds up from left to right as theΨ pulse propagates. It is time reversed and then partially
+deleted as theΨ pulse travels back. The ﬁnite remainder at timeT is due to the injected error signal and produces the desired
+learning update. (c) Evolution of the learning ﬁeldθ during many training steps. The training started with a smooth random
+conﬁguration, and there are 600 HEB steps (each for a diﬀerent randomly chosen training sample). (d) Cost function evolution
+during a particular training run for the model of (a)-(c). (e) Setup of a self-learning machine that learns to classify handwritten
+digits (MNIST). The outcome is a one-hot encoding of the detected digit, i.e. one of 10 patches "lights up". (f) Training error
+evolution of the MNIST setup for diﬀerent strengths of the wave ﬁeld nonlinearity. The line colors represent a diﬀerent value
+of the parametersχ1, χ2. χ1 and χ2 are the nonlinear strengths at the convolutional and dense layers, respectively. The color
+that represents each value ofχ1,χ 2 can be seen from (g). In the inset we display the cost function evolution when the SL
+machine is trained via HEB (blue line). We compare it with the gradient descent according to the true gradient (red line),
+with the same learning rate. The true gradient is obtained via autodiﬀerentiation. In order to better compare the results, we
+average the cost function evolution over 10 diﬀerent trajectories.
+(g) Final validation set classiﬁcation accuracy.
+From the previous paragraph it would seem that it is
+optimal to use the smallest possible value ofϵ. However,
+in a real self-learning device there may be noise (intro-
+duced during the time-reversal operation or other steps of
+the scheme). Ifϵ is too small, noise will introduce signif-
+icant errors into the gradient estimate provided by HEB.
+We analyze the situation in 8(b). The root mean square
+error is deﬁned as⟨|∆θj/η−∂θjC|2/|∂θjC|2⟩1/2, where
+the average is taken with respect to the noisy signal. On
+the other hand, for larger values ofϵ, the previously an-
+alyzed nonlinear eﬀects dominate. The orange and green
+dashed curves are a ﬁt to the expected behaviour of the
+root mean square error in the limits of dominant noise
+(1ϵ) and dominant nonlinear order eﬀects (ϵ).
+We now analyze how to suppress the eﬀects of noise.
+The operation of a SL machine is independent of the
+Hamiltonian, and therefore one does not even need to
+know the particularities of the device (including any pos-
+sible deviations from intended fabrication) to make it
+work. This is true because the time-reversal operation
+produces an exact inversion of the Hamiltonian evolu-
+tion, for any time-reversible Hamiltonian. One could
+then wonder how sensitive HEB becomes to the preci-
+sion of the time reversal. In fact, since the nonlinear
+processes used to phase-conjugate signals can also am-
+plify noise, there are practical limits to the performance
+of a time-reversal mirror. Nevertheless, we will show here
+that the eﬀects of noise in the time-reversal can be mit-
+igated, although at the price of a longer training time.
+In 8(c), we compare the results using a perfect time-
+
+===== PAGE 20 =====
+20
+a
+2nd order 
+terms  
+Noise
+ b
+/uni03BB=T
+/uni03B7=10T
+/uni03BB=e−n/500
+T
+/uni03BB=10T
+/uni03C3noise=0,
+Cost function
+ c
+Iterations
+η=T
+η=e−n/500
+T
+η=
+10
+T
+Figure 8. The eﬀects of noise and nonlinear eﬀects in the gradient estimation.(a) The relative error in the
+approximation of∂θjC, where θj is the value of the learning ﬁeld in the middle of the evolution domain. We compare the
+update ofθj obtained via HEB with an accurate estimation that was computed by means of the ﬁnite diﬀerence method. the
+result is presented as a function of the dimensionless quantityϵCmax, whereCmax is the maximum possible value of the cost
+function. (b) The root mean square error of the update obtained by means of HEB in the presence of noise. On the one
+hand, for small values ofϵ, the noise overwhelms the term proportional to the gradient. (c) Analyzing the inﬂuence of a noisy
+time-reversal operation on training. Here we consider a discretized version of the nonlinear Schrödinger equation, where the
+eﬀect of noise is more prominent. We display the cost function during training for diﬀerent values of the learning rate, at a
+ﬁxed ﬁnite noise level whose standard deviation is given byσ2
+noise = 0.05I (see Appendix A for details).
+reversal (red line) with the results obtained in the case
+of a noisy phase conjugation, for several values of the
+learning rate (orange and blue), as well as for a suit-
+ably chosen time-dependent learning rate ("learning rate
+schedule", an approach also known for ANNs, with n
+denoting the training step index). As it could be ex-
+pected, the performance of the SL machine deteriorates
+when the time-reversal is noisy. However, one can ob-
+serve that decreasing the learning rate improves the ﬁ-
+nal accuracy. This is because the overall update after
+several steps will approximately cancel out the random
+noise, if the learning rate is small enough. Indeed, the
+backpropagating perturbation is a linear function of the
+error signal, to ﬁrst order inϵ. Therefore, the update of
+Θ in each step will be the sum of the appropriate gradi-
+ent update plus a random signal that is proportional to
+the noise in the time-reversal. If each update step does
+not change the value ofΘ signiﬁcantly, the overall change
+after several steps will average out the unwanted noise.
+Note that this behaviour only applies to temporally ﬂuc-
+tuatingnoise. Incaseofstaticsystematicdeviationsfrom
+the correct time-reversal operation, an independent cal-
+ibration of that operation would be required. Impor-
+tantly, however, that would not rely on any knowledge of
+the internal dynamics of the SL machine.
+We note that in 8(c) we studied a discretized version
+of the nonlinear wave ﬁeld device considered above. The
+domain of theΨ and Θ ﬁelds is now a discrete lattice of
+size 20× 30 (we don’t require that the ﬁelds are approx-
+imately continuous). The reason for this choice is that
+the cost function converges much closer to the optimal
+value. In this way, we can appreciate the eﬀect of noise
+on convergence more clearly.
+VIII. IMPLEMENTATION CONSIDERATIONS
+AND POTENTIAL HARDWARE PLATFORMS
+The elements for a SL machine that we have presented
+so far can be realized in many platforms. In fact, many
+of the ingredients needed for implementations of our pro-
+posal have already been demonstrated experimentally. In
+some cases, the physical platforms that we consider be-
+low were even already studied in the speciﬁc context of
+building new ML hardware, but it was not known how to
+train them sucessfully with physical procedures, without
+the use of external computation and feedback. Hamilto-
+nian Echo Backpropagation can now provide a means to
+do this. Our only aim here is to give a brief overview of
+the possibilities. It is clear that for each platform sub-
+stantial further research will be required to come up with
+an optimized design respecting the particular hardware
+constraints, and to analyze the potential performance as
+well as to take steps towards ﬁrst experimental realiza-
+tions.
+A. General remarks on speed, energy eﬃciency,
+and scaling
+In general, neuromorphic devices are designed to oﬀer
+intrinsic parallelism, which means the time needed for
+one evaluation becomes independent of the size of the
+inputvector. HEBbuildsonthesameadvantage, withall
+thephysicaldegreesoffreedom(e.g. waveﬁelds)evolving
+in parallel.
+In many big-data applications, an important bottle-
+neck for the speed of training may be the RAM band-
+width. For large ANNs, storing or retrieving the updated
+weights at each step can be the most important contribu-
+
+===== PAGE 21 =====
+21
+tion to the training time. That points to a considerable
+potential advantage of training via HEB: the learning
+ﬁeld is updated at the same time that the evaluation
+ﬁeld propagates in the device, so there is no overhead
+associated to memory retrieval.
+Whether a self-learning machine can be more energy
+eﬃcient than existing systems would depend of course on
+the particular physical system used to implement it. It
+has been claimed by other authors that some physical
+neuromorphic platforms could be signiﬁcantly more eﬃ-
+cient than electronic devices. For example, in photonic
+integrated circuits the scaling of the power consumption
+can be more favorable [14]. What we argue is that, if
+one uses one of those promising physical platforms, which
+compare favourably with digital devices, then training by
+means of HEB is a particularly eﬃcient training method.
+For example, it is deﬁnitely more eﬃcient than using a
+method based on parameter shifts and feedback. Indeed,
+applying the parameter shift method in a device with N
+parameters requires O(N) forward passes, while we only
+require O(1).
+There is a further reason why we believe that self-
+learning machines trained via HEB may be more eﬃcient
+than electronic devices in the case of large networks. In
+many of the most successful deep learning architectures,
+the same parameters are reused in many parts of the
+network. This can also be done in a physical learning
+machine of the type we envisage here, when the learn-
+ing ﬁeld interacts repeatedly with the evaluation ﬁeld.
+This implies that the number of elementary operations
+scales faster than the number of parameters. For ex-
+ample, a convolutional ﬁlter of sizeM applied on anN
+dimensional vector requires O(MN ) elementary opera-
+tions. ForL layers, the number of elementary operations
+would thus scale asO(LMN ). While for an electronic
+device the energy consumption is roughly proportional
+to the number of elementary operations, the scaling of
+the energy consumption is diﬀerent for a time-reversible
+machine. During the forward pass, the energy is con-
+served (the dissipation is ideally nonexistent or at least
+very low). The main energy consumption comes only
+from the time-reversal operation, the decay step, as well
+as the preparation of the initial states and injection of the
+error signal. The overallunavoidableenergy consumption
+for a time-reversible machine thus scales likeO(N +M),
+where N and M are the dimension of the input vector
+and of the vector of learning parameters, respectively.
+Therefore, in general the scaling of the energy consump-
+tion as a function of the system size is more favorable in
+those cases where the number of elementary operations
+scales faster than the number of parameters.
+B. Nonlinear optical platforms
+Optical approaches to neuromorphic computing have
+recently attracted a lot of interest because they promise
+signiﬁcant advantages in terms of speed, energy eﬃciency
+or parallelism [17, 18, 36]. Importantly for us, those
+schemes involve a combination of coherent (linear and
+nonlinear) operations that are practically lossless, and
+hence they are amenable to our proposal. Optical SL
+machines would beneﬁt from high parallelism and fast
+all-optical nonlinearities.
+Inthenonlinear-opticsapproachtoneuromorphiccom-
+puting, on-chip photonic circuits are one of the most
+promising technologies for ML hardware. As discussed
+in section VI, a scalable implementation of a nonlinear
+core would be combination of linear local couplings and
+local nonlinearities. A straightforward implementation
+of a self-learning machine would be to have both the
+evaluation ﬁeldΨ and the learning ﬁeldΘ be sent as
+pulses into an arrangement of waveguides, beamsplitters
+and cavities (some of them nonlinear), and to implement
+time-reversal outside this ’nonlinear core’, as described in
+section VI. The most direct implementation of a feedfor-
+ward neural network would include layers of linear trans-
+formationsalternatedwithnonlinearlayersimplementing
+the nonlinear function. In this line, there are several ex-
+perimental demonstrations and theoretical proposals of
+deep neural networks based on programmable photonic
+circuits (e.g. [17]). The nonlinear activation functions
+could be provided, for example, by propagation inside a
+material with a strong Kerr eﬀect, possibly enhanced via
+the use of resonators [58].
+The time-reversal operation could be implemented in
+any of the approaches discussed for fast phase conjuga-
+tion in the nonlinear-optics literature; speciﬁcally by em-
+ployingnonlinearopticalinteractionsactingonthepulses
+propagating along waveguides or ﬁbres, or, alternatively,
+inside nonlinear cavities with multiple interacting modes.
+We have already discussed energy eﬃciency of HEB in
+general. Speciﬁcally for optical neural networks, it has
+been suggested [17] that they can be orders of magni-
+tude more eﬃcient in terms of power than their electronic
+counterparts. An estimate of the power consumption
+would depend on the details of the particular implemen-
+tation, but in any case the matrix multiplications and
+nonlinear activation functions are realized in the time-
+reversible, ideally lossless manner. The dissipative steps
+(phase conjugation, decay step, injection of input) re-
+quire to dissipate (and/or resupply) an energy amount
+on the order of the energy contained in the optical pulses
+of the learning ﬁeld and evaluation ﬁeld. This follows
+from the way these fundamentally dissipative operations
+have to be implemented, as described before. We may
+estimate a typical energy on the order of 1 fJ per wave
+packet, where we assumed the packet to be a 1 mW pulse
+of 1 ns duration, giving rise to suﬃcient nonlinearities in
+typical optical nonlinear resonators. The number of wave
+packets scales with the total number of learning parame-
+ters and size of the input vector, which gives an estimate
+for the total amount of energy dissipated per pass.
+With respect to the footprint of a photonic implemen-
+tation, the limiting factor would be the size of elementary
+building blocks, such as beam splitters and resonators.
+
+===== PAGE 22 =====
+22
+If nonlinear eﬀects are to take place during propagation
+along waveguides (instead of inside resonant cavities),
+then we also have to ask what is the minimum length
+to impart a strong nonlinear eﬀect (e.g. a Kerr phase
+shift ofπ on the wave ﬁelds), which is a function of the
+material, the waveguide design (mode localization), and
+the realistically feasible pulse energy.
+In nanophotonic circuits, ﬁrst neuromorphic devices
+with an area of about(100µm)2 per building block (tune-
+able beam splitter, in that case) have been demonstrated
+[17], but future engineering should be able to scale down
+to around (10µm)2, as suggested by previous develop-
+ments (e.g. [59]). 3D integration may make it possible to
+realize large networks that are even more compact [60].
+We can also provide an estimate of the minimum fea-
+sible size of the nonlinear elements, based on the size
+of current all-optical switches. For example, a nonlin-
+ear microring resonator with a diameter of 70µm was
+demonstrated to behave as an optical switch in the few
+mW level or less, with low dissipation [58]. With respect
+to the footprint of the components implementing decay
+step and time-reversal operation, we observe that their
+area scales only linearly with the number of degrees of
+freedom. Hence their footprint is not the dominant con-
+tribution in the large-scale (many-layer) limit. Addition-
+ally, as explained above, phase conjugating mirrors can
+be implemented by means of three- or four-wave mixing
+processes, for example inside a microring resonator [61].
+Therefore, the size of the phase-conjugating mirror could
+be on the same order as a layer of nonlinearities. A sim-
+ilar argument applies to the decay step, which requires
+similar physical components.
+With respect to the relevant time scales of a self-
+learning machine based on integrated photonics, we can
+also provide some rough estimates. The duration of a
+training step has four contributions: the forward pass,
+the time-reversal operation, the error injection, the back-
+ward pass, and the decay step. The time-scale of the for-
+ward pass (which has the same duration as the backward
+pass) will be proportional to the number of layers. Each
+layer would have a depth ofO(1) beamsplitters and non-
+linearresonators. Forbeamsplitterswithasizeof 100µm,
+the latency would be on the order of10ps. In the case of
+the nonlinear microresonators, the relevant time-scale is
+roughly given by the inverse of their maximum operating
+bandwidth. For example, nonlinear microring resonators
+can operate with100ps pulses [62].
+As we argued above for the footprint, the duration
+of the phase conjugation, decay step and error injection
+will not be the main contribution in the large-scale limit.
+Still, we can give some rough estimates. In the case of the
+time-reversal, as one example, optical phase conjugation
+has been demonstrated experimentally by means of a sili-
+con waveguide [63] having a latency of around1ns. How-
+ever, it is reasonable to expect much faster phase conju-
+gating elements, operating in the100ps range, based on
+nonlinear microring resonators [62]. With respect to the
+decay step, the limiting factor would probably be the
+step of parametric ampliﬁcation. Since parametric am-
+pliﬁcation can be achieved by an adequate pumping of
+a three- or four- wave mixing process, we believe that
+the decay-step duration could be engineered to be on the
+same order as that of the phase conjugating mirror. Fi-
+nally, the error injection corresponds to the injection of a
+signal and a phase shift element. Hence, the time-scale of
+the error injection will be comparable to that of a single
+linear layer, which was estimated to be on the order of
+10ps.
+Like for any platform suitable for HEB, dissipation
+needs to be kept low, i.e. one needs to limit the attenu-
+ation of the optical ﬁelds. Substantial progress has been
+made in the area of integrated photonics in this regard,
+by careful materials selection, fabrication processes, and
+surface treatment as well as geometrical design. This has
+led to record achievements like the recently reported [64]
+ultralow-loss cavity in SiN with an optical quality factor
+of 4·106, leading to a sub-MHz optical decay rate and rel-
+ative losses less than10−4 on the100ps time scale. More
+generally speaking, we point out that Hamiltonian Echo
+Backpropagation in optical devices will proﬁt from the
+current rapid push towards optical quantum computing,
+since this involves the development of components with
+extremely low loss and strong nonlinearities, which are
+exactly the ingredients needed for our approach as well.
+Moreover, besides these ongoing improvements, attenu-
+ation could be compensated with coherent ampliﬁcation
+(as we have mentioned before). In this way, one could
+place layers of ampliﬁers inside the integrated circuit, in
+such a way that the optical ﬁeld is retained. Alterna-
+tively, the photonic device components could themselves
+be built as an ampliﬁer (e.g. erbium-doped ﬁbers) with a
+properly calibrated gain to compensate the loss. Similar
+to all the other aspects discussed above, further research
+will be needed, but the toolbox of nonlinear optics and
+integrated photonics is by now advanced and versatile
+enough for this challenge.
+Another challenge in the case of optical implementa-
+tions is the long-term storage of the learning degrees of
+freedom. In our approach, during each pass the learning
+ﬁeld, besides undergoing time-reversals and the ’decay
+step’, will have to be slightly ampliﬁed to counteract the
+small unavoidable losses. In this way, it is continuously
+kept alive throughout both the training and inference
+phases. However, eventually one will want to store it
+somehow, in order to keep persistence for longer times
+(indeﬁnitely, instead of seconds or minutes). This could
+be done by performing a homodyne measurement on the
+learning ﬁeld pulses and storing amplitude and phase on
+a digital computer. A more physical approach would in-
+volve holography. There are setups that have been pro-
+posed in the past [8] that make use of holograms as a
+means to store the learning degrees of freedom of a pho-
+tonic learning machine. In this way, very high storage
+densities could be attained [65]. Photorefractive holo-
+grams, e.g. based on lithium niobate, can be persistent
+for very extended periods, up to years.
+
+===== PAGE 23 =====
+23
+Architectures beyond layered feedforward networks are
+also realizable in integrated-photonics platforms. The
+basic ingredients of a recurrent neural network, i.e. a
+network with memory, can be implemented. One possi-
+bility would be to inject the inputs corresponding to a
+discrete time sequence as a train of wave packets, propa-
+gating along a waveguide. Assume that the waveguide is
+coupled to a ring resonator. If the pulse duration is much
+shorter than the ring’s roundtrip travel time and the dis-
+tance between pulses matches this time, then the sub-
+sequent pulses will overlap in the ring. When nonlinear
+interactions are present inside the ring, this is a way to
+obtain recurrent dynamics, where the output depends on
+the whole input sequence. Multiple such building blocks
+can be combined sequentially or in parallel, although we
+do not attempt here to work out a full working device.
+Training via HEB is possible even in this scenario, by
+time-reversing the whole train of pulses emerging out of
+the device.
+Finally, besides integrated photonics, another interest-
+ing platform for optical HEB are possible. For example,
+the architecture proposed by Skinner et al. [11] combines
+free propagation inside a crystal and a spatially homo-
+geneous Kerr nonlinearity. Another alternative may be
+so-called optical Ising machines. Ising machines have
+received a lot of attention in recent years [66–68]. An
+Ising machine is an optical device that simulates the Ising
+Hamiltonian. One common implementation is based on a
+time-multiplexed train of pulses inside a ﬁber loop with
+a degenerate optical parametric oscillator (OPO). Due
+to the interaction with the OPO, the pulses have two
+degenerate stable states that can be treated as spin-like
+variables. A linear device in the ﬁber loop couples the
+pulses in a way that is reminiscent of an Ising Hamilto-
+nian. In this way, an artiﬁcial lattice can be implemented
+with just a single ﬁber loop, e.g. demonstrating networks
+with 2000 degrees of freedom [67]. Although more re-
+search would be needed to work out a self-learning Ising
+machine, we can already now see that such a setup has all
+theelementsneededforourproposal: ithasverycomplex
+nonlinear dynamics, it is possible to engineer a degener-
+ate ground state forΘ, and it can be time-reversed. As
+opposed to a standard photonic circuit, the number of
+nonlinear physical components can be strongly reduced,
+since they are re-used by the train of pulses.
+C. Superconducting circuits
+Beyond optical circuits, superconducting circuits are
+another possible platform. In a somewhat similar fash-
+ion to photonic circuits, a typical superconducting cir-
+cuit can be described as a 2D arrangement of coupled
+superconducting oscillators coupled by waveguides [69].
+In fact, we can understand such superconducting oscil-
+lators as cavities that operate in the microwave regime.
+However, unlike photonic circuits, these superconducting
+cavities are made by coupling superconducting inductors,
+capacitors and Josephson junctions.
+In this scenario, our learning and evaluation ﬁelds are
+now microwave ﬁelds in the superconducting cavities. By
+using Josephson junctions, it is possible to engineer such
+superconducting cavities to induce strong non-dissipative
+nonlinear interactions. We should remark that here we
+consider that the circuit operates in the classical limit.
+For the purpose of this paper, it suﬃces to understand
+that it is possible to make lattices of coupled nonlinear
+superconducting cavities. In the end, this platform is not
+conceptually very diﬀerent of the optical platforms de-
+scribed above, except for the fact that theΨ and Θ ﬁelds
+are now in the microwave spectrum, and the nonlinear
+elements are Josephson junctions. In appendix C, we de-
+scribe some of the design possibilities for constructing a
+self-learning machine based on this platform. Further-
+more, we show some numerical results on the simulation
+of a self-learning device based on an array of nonlinear
+cavities, which could be implemented by means of a su-
+perconducting circuit. This example also illustrates the
+case of a self-learning device in which the learning ﬁeld
+is always localized entirely inside the nonlinear core.
+The potential of superconducting circuits for fast and
+low-power classical computation has been recognized
+early on, which led to the development of so-called rapid
+single ﬂux quantum logic in the 1990s. Although the sig-
+niﬁcant advances in more conventional electronics have
+resigned this to the status of a niche application, it has
+more recently been considered as fast control electron-
+ics for quantum processors. In addition, classical super-
+conducting circuits are now being considered for realiz-
+ing forms of artiﬁcial spiking neuron hardware [22], e.g.
+based on superconducting nanowires [70], although these
+are designed to work in a dissipative regime. At the
+same time, the past 20 years have seen impressive ad-
+vances in superconducting circuits operating in the quan-
+tum regime for quantum computation and simulation,
+building especially on superconducting microwave cavi-
+ties that are made nonlinear by interaction with Joseph-
+son junction-based elements. Such applications have
+driven the signiﬁcant minimization of losses, which is im-
+portant for our purposes. Taken together, this means
+there now exists a very sophisticated toolbox for super-
+conducting circuits that can be exploited for Hamiltonian
+Echo Backpropagation.
+Regarding their footprint, microwave cavities range
+from cm-scale (for 3D cavities and transmission line res-
+onators) down to (100µm)2 in a lumped-element LC-
+circuitimplementation(theJosephsonelementsaremuch
+smaller and can be neglected here). Even though over-
+all we do not expect the same integration density as for
+optics, such circuits oﬀer the attractive possibility to be
+integrated on-chip with quantum information processing
+devices, making use of the same technology. This would
+provide online self-learning on real devices with negligi-
+ble latency and no signal distortion by propagation on
+cables to the outside.
+Coherence times in qubits now reach several 100µs,
+
+===== PAGE 24 =====
+24
+in cavities even up to10ms, while strong nonlinear ef-
+fects at the single-photon level can be obtained during
+times of around 500ns or less. We intend operation in
+the classical regime, at much higher photon numbersn,
+where nonlinearities are enhanced, e.g. reducing the time
+needed for acquiring a Kerr-eﬀect phase shift ofπ by a
+factor 1/n. Thus, in a conservative estimate, dissipation
+per nonlinear pi-phase-shift could be as low as10−2/n,
+with n easily reaching the order of106 or higher. This
+produces to an extremely good approximation the time-
+reversal-invariant Hamiltonian dynamics we are striving
+for, turning such systems into a very promising platform.
+D. Other approaches
+Approaches not based on optics or superconducting
+circuits are also possible, though we will only mention
+them brieﬂy, and their detailed design would be a chal-
+lenge for future research.
+Clouds of cold atoms or molecules, possibly trapped in
+optical lattices, oﬀer the possibility of storing informa-
+tion in the density distribution or the molecular orien-
+tation, making longer-term storage of the learning ﬁeld
+Θ in principle less challenging than in the case of opti-
+cal cavities. The interaction of an optical ﬁeldΨ with
+the atomic or molecular cloud would also provide strong
+optical nonlinear self-interactions, as has been demon-
+strated with Rydberg atom clouds. Alternatively, the
+ﬁelds themselves could be realized as macroscopically
+populated, classical matter waves. This directly leads
+to the nonlinear Schrödinger equation, which we showed
+to be useful for HEB in our numerical examples. Four-
+wave mixing and phase conjugation with matter waves
+have been demonstrated early on [46].
+Likewise, spin waves share all the required ingredients
+for a SL machine. We must remark that time-reversal
+symmetry must not be broken, which means that spin-
+spin interactions may be acceptable, but not (for exam-
+ple) light-magnon interactions via the Faraday eﬀect. In
+the case of spin waves, there are already experimental
+demonstrations of strong nonlinear interactions that give
+rise to sigmoid-like activation functions [71], and phase
+conjugation by nonlinear interactions has been demon-
+strated [48].
+IX. CONCLUSIONS
+In this work we have introduced a general method,
+Hamiltonian Echo Backpropagation, to train SL ma-
+chines based on Hamiltonian physical systems. For any
+physical device that meets some general assumptions, our
+method is guaranteed to realize gradient descent opti-
+mization of a cost function. The HEB procedure up-
+dates the learning parameters autonomously andin situ,
+leveraging all the advantages of a neuromorphic device.
+Whether the physical device could achieve a good per-
+formance on a particular task will depend on its size
+and its expressive power, but our method can always
+ﬁnd a local minimum of the cost function via physical
+dynamics. Our numerical simulations illustrate how it
+can be applied both to simple physical systems and also
+to other more sophisticated architectures. In fact, we
+showed an example of its application in the case of a pho-
+tonic convolutional neural network used for image recog-
+nition. Although there are many previous proposals and
+even experimental implementations of photonic learning
+machines, most of their potential advantages cannot be
+leveraged without a training method that is fully au-
+tonomous. We believe that when HEB is directly applied
+to such photonic devices, this will greatly enhance their
+capabilities.
+Going beyond the realm of photonics, there are many
+other promising physical platforms for machine learning
+hardware, as we have mentioned. We believe that our
+method would be especially helpful when there is no con-
+trol over the internal dynamics of the device. Indeed,
+since none of the steps in HEB depend on the underlying
+Hamiltonian, one can use the physical device as a black
+box. In this way, HEB is insensitive to device variability
+brought about by fabrication imperfections, and it can
+also cope well with noise (as we have shown in one of our
+numerical examples), which is particularly important in
+low-power applications with a suppressed signal-to-noise
+ratio. Our method not only allows to consider various
+physical platforms, it will also make easier to explore
+new architectures. As opposed to other previous pro-
+posals, HEB does not rely on a sequential multi-layered
+structure, which means that it can be used to train new
+architectures going beyond the structure of a standard
+ANN.
+The code used for the numerical examples is available
+on Github [72].
+Acknowledgments
+We thank Dirk Englund and Stefan Krastanov for in-
+sightful discussions on some aspects of experimental im-
+plementations in the domain of integrated photonics.
+Appendix A EXAMPLE: XOR FUNCTION
+The ﬁrst example of a SL machine that we show has
+a particularly simple architecture. The evaluation dy-
+namical variable is a nonlinear wave ﬁeld propagating in
+a 2D square lattice. We consider a tight-binding model
+with hard-wall boundary conditions in which every node
+of the lattice is coupled to its nearest neighbours. At
+each site of the lattice there is a nonlinear attractive
+Kerr self-interaction. The learning dynamical variable
+is given by another ﬁeld that does not propagate. We
+assume that the learning ﬁeld and the evaluation ﬁeld in-
+teract through a term in the Hamiltonian given byθΨ∗Ψ,
+
+===== PAGE 25 =====
+25
+which is the simplest term that can produce local phase
+shifts.
+During the time-reversible steps, the equations of mo-
+tion for both ﬁelds are given by
+i ˙Ψ = β
+2∇2Ψ +
+(
+χθ +g|Ψ|2)
+Ψ, (29)
+i ˙Θ =iΩπθ +χ|Ψ|2. (30)
+The hard-wall boundary conditions are given byΨ(x =
+0,z ) = Ψ(x =W,z ) = Ψ(x,z = 0) = Ψ(x,z =L) = 0.
+During the decay step, the evolution ofθ is given by
+˙θ = Ωπθ, ˙πθ =−Γπθ.
+The goal of this example is to learn a simple logical
+function. In particular, we choose the XOR function,
+b = a1⊕a2, since it is well known that it cannot be
+learned by a single-layer perceptron. For each logical
+input, (a0,a 1), we provide a physical input as a superpo-
+sition of wave packets,Ψ(x,−T ) =f0(x,a 0) +f1(x,a 1).
+Each wave packet,fs(x,as), is a gaussian wave packet
+centered around ((2s + 1)W/8 +asW/2,lin), s∈{ 0, 1}
+whose standard deviation is given by σ. In addition,
+each wave packet has an initial positive momentum in the
+propagation direction. In this way, each input boolean
+variableas is encoded in the position of the center of the
+corresponding wave packet.
+We train such a self-learning machine to learn the XOR
+function using Hamiltonian echo back-propagation. The
+cost function is given by
+C :=
+∫
+dxdzφ (x)|Ψ(x, 0)− Ψtar(x,b )|2, (31)
+where φ(x,b ) = 1
+2πσ 2
+φ
+.∑1
+j=0e−(x−xout
+j )2/(2σ2
+φ) is a sum of
+two Gaussian functions centered aroundxout
+0 = (w, 0.8L)
+and xout
+1 = (3w, 0.8L), respectively. The target ﬁeld,
+Ψtar(x,b ), is also a Gaussian function centered around
+xout
+b . Therefore, our cost function is a version of the MSE
+weighted byφ(x). In this way, the SL machine tries to ﬁt
+Ψ(x, 0) to Ψtar(x)inside the peaks ofphi(x), where the
+output is measured. We ﬁnally evaluate the accuracy by
+the following prescription: if|Ψ(xout
+0 , 0)| >|Ψ(xout
+1 , 0)|,
+the logical output is 0; otherwise it is 1.
+In order to solve numerically the equations of motion
+for the time-reversible steps, we used a split-step method.
+In particular, we used the symmetrized Fourier split step
+method, which takes half a time step using the linear op-
+erator in momentum space, then takes a full-time step
+with the nonlinear operator in position space, and then
+takes a second half time step again with the linear op-
+erator in momentum space. In order to satisfy hard
+wall boundary conditions, the discrete sine transform was
+used. We approximate the eﬀect of the cost function per-
+turbation by a single small Euler step att = 0 (this is a
+reasonable approximation whenϵ is small enough). For
+the decay step, we assumed that we are in the regime in
+which Eq.(7) applies. Therefore, for each HEB step we
+simulate a forward pass, a backward pass and then we
+update the parameters according to Eq.(7).
+We used a square lattice with 50× 150 sites. The
+nonlinear strength was chosen asg = 102I−1T−1, where
+I := (2σ)−2∫
+dxdz|Ψ|2 is a measure of the peak inten-
+sity of the input ﬁeld. In this way, the accumulated phase
+shift due to the nonlinear self-interaction is much larger
+than 2π. Thedispersioncoeﬃcienthastobelargeenough
+to prevent a self-focusing collapse. This implies that
+β
+2∇2Ψ should be at least on the same order asg|Ψ|2Ψ.
+In our numerical simulation, we setβ = 102 (2σ)2
+T . With
+this choice of parameters, one can check in the numer-
+ical simulations that the extent of the wave packets re-
+mains in the order of (2σ)2 during the whole forward
+pass. We choose the initial momentum of the wave pack-
+ets askz = 3
+4
+L
+Tβ , so that they propagate a distance3L/4
+during the forward pass.
+The parameter Ω determines the rate of change ofθ.
+In order to have results that can be more easily inter-
+preted, we work in the regime in whichθ remains al-
+most constant during a single forward pass. Hence, we
+choose Ω = 10 −2T. Next, we must choose Γ so that
+Ω
+Γ ≫ ∂C
+∂πθ(−T)
+(
+∂C
+∂θ(−T)
+)−1
+, if we want to work in the
+regime in which Eq.(7) applies. Since the cost func-
+tion depends onπθ only indirectly, through the evolution
+of θ, one can estimate that ∂C
+∂πθ(−T) is on the order of
+ΩT ∂C
+∂θ(−T). Hence, we must make sure that 1/Γ≫ T.
+In particular, we set Γ = 10 −2T. After one training
+step, the update in θ is of the order ofϵ Ω
+ΓχI. Hence,
+the change in the phase shift inΨ due to the interaction
+withθ is in the order ofϵ Ω
+Γχ2IT . On the one hand, this
+update must be small enough so that the stochastic gra-
+dient descent works. On the other hand, it should not
+be so small that the training progress is too slow. We
+choose χ = 102( Ω
+ΓϵIT
+)1/2
+. In our numerical simulations,
+we setI = 1, T = 1, L = 3, σ = 0.1.
+Appendix B EXAMPLE: IMAGE
+RECOGNITION
+As an illustrative example of a SL machine, we con-
+sidered a device based on a photonic neural network pro-
+posed by Ong et al [56], thereby showing how an existing
+device design can proﬁt from our self-learning procedure.
+It is composed of three convolutional layers followed by
+a dense fully-connected layer. The nonlinearity is pro-
+vided by aχ(2) optical nonlinearity, as described in Eq.
+(32). Both the convolutional layers and the fully con-
+nectedlayercanbeimplementedbyasequenceofdiscrete
+Fourier transforms (DFTs) and learnable phase shifts. In
+Ong et al., the activation function is a complex version
+of the ReLU function. Instead, we choose the activation
+function given by aχ(2) nonlinear interaction, which in
+principle can be implemented in a physical setup. As a
+cost function, we choose the mean square error on the
+
+===== PAGE 26 =====
+26
+intensity.
+The processing inside the photonic convolutional neu-
+ral network that we consider is composed of a sequence
+of operations acting on a 2D square grid ofN×N modes.
+In addition to the evaluation modes, there are learning
+and ancillary modes that take part in the sequential op-
+erations and also have to be time-reversed.
+Any convolution (with periodic boundary conditions)
+is diagonalized by the DFT. Therefore, the weight matrix
+in a convolutional layer can be performed by applying
+a DFT, then a diagonal matrix, and ﬁnally the inverse
+DFT. In the case of a unitary convolution, the diagonal
+matrix is of the formDjj =eiθj (i.e., a phase mask). All
+these three operations are unitary operations that can be
+implemented with a lossless photonic circuit. The DFT
+matrix is of course ﬁxed; all the learning parameters,θj,
+are contained in the phase mask.
+The last two layers of the network are fully connected,
+and they should be able to express any arbitrary complex
+matrix. The implementation of these fully connected lay-
+ers was not descibed in [56], so we provide a possible ver-
+sion here. We use a decomposition based on the singular
+value decomposition. In the singular value decomposi-
+tion, any complex matrix can be cast as a product of
+the formUSV , whereU, V are unitary matrices andS
+is a diagonal matrix. The unitary matrices can always
+be expressed as a product of the formU = D0
+∏FDi,
+where F are DFT matrices andDi are diagonal unitary
+matrices (phase masks) [73]. Finally, the singular value
+matrix,S, can be implemented by means of a linear inter-
+action with an ancilla, provided that the singular values
+are bounded bySii≤ 1. This is achieved by coupling
+every relevant mode to an ancilla mode by a means of a
+general SU(2) linear transformation, when the ancilla is
+initially zero. Any such transformation can be achieved
+by means of the product of a 50-50 beam-splitter, a phase
+shift, and another 50-50 beam-splitter. Since an overall
+scaling factor in the weight matrix is unimportant, it is
+suﬃcient that our implementation can produce any com-
+plex matrix with|Sii|≤ 1.
+All the trainable parameters are contained in the phase
+shifts, which in this example are realized by a local inter-
+action Hamiltonian given byθΨ∗Ψ. Just like in the ﬁrst
+example, we assume that the machine operates in the
+limit in which the dissipation time-scale is much longer
+than the duration of a forward pass.
+For the numerical implementation, we solved the evo-
+lution of the evaluation and learning ﬁelds in a sequential
+manner. There are ﬁve kinds of operations inside each
+forward pass: (1) DFT’s, (2) the interaction ofΨ and Θ,
+(3) the interaction ofΨand Ψanc (the ancilla in the dense
+layers), (4) the nonlinear activation function, and (5) the
+costfunctionperturbation. Eachofthesestepsrepresents
+adiﬀerentlayerinthephotonicdevice, andthereforethey
+can be solved separately. The 2D DFT was performed by
+meansofafastFouriertransformalgorithm. Thestep(2)
+corresponds to the interaction described by the Hamilto-
+nian H = χlθΨ∗Ψ. The equations of motion for this
+step can easily be solved analytically. Therefore, we can
+calculate the overall eﬀect of the step (2) by means of
+a simple formula. In the same way, the step (3) is de-
+scribed by the HamiltonianH = J(Ψ∗Ψanc + ΨΨ∗
+anc),
+which can also be solved analytically. The step (4) is
+integrable too, with the solution given by Eq.(32). The
+step (5) is a small perturbation that can be well approx-
+imated by a single Runge-Kutta step. For the backward
+pass, the same operations are performed, but starting
+with the phase conjugation of the output of the forward
+pass. Of course, one has to time-reverse not only the
+evaluation ﬁeld, but also all the ancillary and learning
+variables.
+The photonic convolutional neural network that we
+considered has three convolutional layers and two fully
+connected layers. The convolutional layers are some-
+what unconventional: they only have one ﬁlter, but it
+has the same size of the output. As we already de-
+scribed, this is accomplished by an alternation of a DFT,
+a phase mask and another DFT. The ﬁrst DFT acts on
+the full input image with N2 modes, while the phase
+mask and the second DFT act only on the innermost
+M2 modes. The rest of the modes are considered to
+be ancillary modes. In particular, the ﬁrst layer has
+(N,M ) = (31 , 31), the second has (N,M ) = (31 , 21),
+and the third has(N,M ) = (21, 17). The size of the in-
+put and output of the fully connected layers are(17, 9)
+and (9, 4), respectively. The input of the network is a
+rescaledversionofthecorrespondingimagefromMNIST.
+The intensity of the ﬁeld at each input mode goes from0
+toImax (which has units of the square root of an action).
+In the numerical simulation, we setImax = 1. Also, we
+set that all the elementary steps (activation functions,
+interaction withθ, etc.) have durationTs = 1. At the
+convolutional and dense layers we have two diﬀerent val-
+ues of the nonlinear strength, which are given byχ1 and
+χ2 respectively. From Eq.(32) one can deduce that both
+χ1 and χ2 have to be chosen so thatχi|Ψ|Ts ≈ 1 for
+the dynamics to be strongly nonlinear. The nonlinear
+strength was chosen as described in ﬁgure 7. The cou-
+pling to the ancilla is given byJ = 101T−1
+s , since we want
+to ensure that the mixing of the ancilla and the relevant
+modes is on the order of 1.
+With regard to the decay step, it is assumed that we
+are in the regime in which Eq.(7) applies. Therefore, for
+each HEB step we simulate a forward pass, a backward
+pass and then we update the parameters according to
+Eq.(7). The coeﬃcient of the cost function perturbation
+is taken to beϵ = 10−2, and we set Ω = 10−1T−1 so
+that the update of θ during a single forward pass can
+be neglected. We use a damping coeﬃcient given byΓ =
+10−1T−1 so that the learning rate is given byη = 10−2T.
+Finally, by a similar argument to the learning of the XOR
+function, we set χl = 10 1
+(
+Ω
+ΓϵImaxT
+)1/2
+(see Appendix
+A).
+
+===== PAGE 27 =====
+27
+Appendix C IMPLEMENTATION IN
+SUPERCONDUCTING MICROWAVE CIRCUITS
+For our purposes, the simplest implementation would
+consist of a Josephson junction array, which is essen-
+tially a lattice of connected capacitors, inductors, and
+Josephson junctions. There is considerable design free-
+dom, since one can choose the connectivity via the elec-
+tronic wiring topology and the properties of the individ-
+ual elements by parameters such as the junction area etc.
+Such an array implements a discrete nonlinear metama-
+terial. A classical Hamiltonian is obtained [74] by in-
+troducing node ﬂuxesφn via the time integrals of volt-
+ages across the circuit elements, and node chargesqn via
+the time integrals of currents. These form canonically
+conjugate variables, withqn taking the role of momenta,
+such that the equations of motion for the circuit follow as
+˙φn =∂H/∂qn and ˙qn =−∂H/∂φn. The node ﬂuxes are
+proportional to the superconducting condensate phase at
+each location in the circuit, and their diﬀerence across a
+Josephson junction indicates the phase diﬀerence that
+determines the energy. As an example, in a simple 1D
+array one can produce the Hamiltonian of a discrete sine-
+Gordon model,H =∑
+n(2C)−1q2
+n−EJ cos(ϕn+1−ϕn),
+withϕn = (2e/ℏ)φn. The capacitanceC and the Joseph-
+son energy EJ characterize the circuit elements. De-
+spite the appearance of Planck’s quantumℏ in this for-
+mula, one can operate in the classical regime by ensuring
+EJ ≫ e2/C. More elaborate setups employ arrays of
+coupled microwave modes (produced using transmission
+line resonators, 3D cavities, or lumped-element LC cir-
+cuits) which are modeled as LC oscillators in the Hamil-
+tonian and which can be made nonlinear by the inser-
+tion of Josephson junctions. Expanding thecos term in
+the ﬁeld amplitude yields a description of coupled modes
+analogous to nonlinear quantum optics (with Kerr terms
+etc.). Since the Hamiltonian is time-reversal invariant
+in the absence of external magnetic ﬁelds, this platform
+fulﬁlls all the requirements for HEB, provided a suitable
+mechanism for the echo and decay steps is implemented,
+following our prescriptions in the main text VI.
+Inasimplecircuitofthistype, themainconceptualdif-
+ference in contrast to nonlinear optical platforms is the
+absence of a natural propagation direction, which makes
+the circuit a fully recurrent device in the language of
+neural networks (no layers, no feedforward processing).
+This could be circumvented by employing transmission
+lines as waveguides, coupled to nonlinear microwave cav-
+ities, resulting in a setup whose mathematical descrip-
+tion is completely equivalent to that presented earlier for
+the nonlinear integrated photonics platform, only oper-
+ating in a diﬀerent frequency regime (and with diﬀerent
+physical mechanisms for tunability, as well as consider-
+ably stronger nonlinearities). Nonlinear wave dynamics,
+and applications like ampliﬁers, have been experimen-
+tally demonstrated in that type of setup.
+However, it would also be interesting to explore phys-
+ical learning machines beyond the standard feedforward
+architecture. In fact, the idea of using nonlinear physi-
+cal dynamics as an analog implementation of a recurrent
+neural network was already considered by T. W. Hughes
+et al. [75]. Moreover, Tureci et al. [76] already stud-
+ied the use of a superconducting circuit as an analog
+implementation of a reservoir computer with recurrent
+architecture. We take this opportunity to demonstrate
+the generality of our approach and consider deliberately
+a recurrent circuit. (see next appendix).
+We argue that there are promising applications for a
+learningdevicesuchliketheonewedescribeinthefollow-
+ing appendix. For example, a similar learning device was
+proposed in a recent paper as a tool for eﬃcient quantum
+state measurement [76]. In their proposal, which is based
+on the ideas of reservoir computing, the physical degrees
+of freedom are not trained. Instead, they require exter-
+nal post-processing that has to be trained. Our scheme
+could potentially allow to perform trainingin situ in a
+more eﬃcient way.
+Appendix D NUMERICAL EXAMPLE: CAVITY
+ARRAY
+In the main text, we have described two numerical ex-
+amples, involving propagation of nonlinear wave ﬁelds
+that could be obtained either in a bulk medium or in in-
+tegrated photonic circuits. Here, we will present numer-
+ical simulations for a third platform, namely cavity ar-
+rays. This is inspired by the superconducting microwave
+circuits (see previous appendix and discussion in main
+text), where it could be implemented.
+In contrast to the examples considered in the main
+text, we note that this will require a mechanism to time-
+revert the ﬁelds inside all the cavities, and thus denies
+the treatement of the self-learning machine as an arbi-
+trary’blackbox’, whichhadbeenpossibleiftime-reversal
+and decay took place outside the device, as in the opti-
+cal case. Nevertheless, given the great amount of en-
+gineering control available nowadays in these platforms,
+that is not a major constraint. Imagine a setup of cou-
+pled microwave cavities which have been made nonlinear
+by insertion of Josephson junctions and which can be
+driven parametrically by externally applied microwave
+drives (a standard scheme in manipulating such cavities,
+employed routinely for quantum information processing).
+This makes it possible to implement the crucial steps of
+our protocol: time-reversal, decay of the learning ﬁeld,
+and injection of the error signal (as well as refreshing the
+input after one learning sample has been processed).
+Consider the simplest kind of scenario, where an array
+of such nonlinear superconducting microwave cavities is
+arranged in a square lattice, with each cavity identical in
+thesimplestcase(thoughstaticdisorderisnotaproblem,
+unless it aﬀects the time-reversal or the decay step). In
+a coupled-mode description, we have the Hamiltonian
+
+===== PAGE 28 =====
+28
+H =−
+∑
+m,n
+Jmna∗
+man +g
+∑
+n
+(a∗
+nan)2
+We distinguish betweenΨ-cavities andΘ-cavities, but
+their the only diﬀerence consists in the operations we ap-
+ply to them: At the beginning, the ﬁeld amplitude inside
+the Ψ-cavities is quenched to zero and then the training
+input is stored inside them. Afterwards, the evolution ac-
+cording toH takes place. After a time-intervalT, time
+reversal is applied to all cavities, using the kind of para-
+metric setup discussed elsewhere in this manuscript. The
+error signal is injected, and after a further timeT, the
+ﬁnal decay step takes place.
+We have numerically investigated this example, and
+again we trained it for the XOR training case, where
+only two input modes and two output modes are needed.
+The setup is explained in ﬁgure 9(a).
+The setup consists ofN2 cavities that encode Θ and
+4 additional cavities that encode Ψ (two input modes,
+two output modes). The cavities corresponding toΘ are
+placed in aN×N square array. The cavities correspond-
+ing to Ψ are placed in the corners. We setN = 4. The
+Hamiltonian is given by a linear term that couples the
+neighbouring modes and a homogeneous local Kerr non-
+linearity. To be precise, the linear term corresponds to
+a square tight-binding lattice. We work in a regime in
+which the ratio between the coupling strength of the tight
+binding Hamiltonian andgI is very large:J/(gI)≈ 10,
+whereI is the average intensity of theΦ ﬁeld. We empiri-
+cally observe that in this regime the self-learning machine
+can train successfully. On the other hand, much larger
+nonlinearities often seem to lead to convergence issues.
+We would not want to have that the output value is
+very sensitive to the speciﬁc timing of the readout of the
+output. For this reason, we also set thatK/J≈ 10. In
+this way, the fast oscillations of the modes of the lattice
+are averaged out in the output.
+Due to the Kerr nonlinearity, the modes of the lat-
+tice will interact with each other via four-wave mixing
+processes. We ensure that the interaction time is long
+enough that diﬀerent modes of the lattice can completely
+mix with each other. In other words, we make sure that
+gIT ≫ 2π.
+We simulate the dynamics by means of the Fourier
+split-step method. In ﬁgure 9(b) we can observe that
+there is a ﬁnite range in the values of the input intensity
+for which the training is optimal (notice the logarithmic
+scale). In ﬁgure 9(c) we study the eﬀect of fabrication im-
+perfections. In particular, we consider that the Hamilto-
+nian of the device deviates from the ideal Hamiltonian by
+a random term that describes the fabrication imperfec-
+tions. The random term in the Hamiltonian corresponds
+to random frequency shifts of each cavity mode in the
+lattice. The frequency shifts are drawn from a Gaus-
+sian distribution centered around 0 and with deviation
+given byσ∆. Crucially, HEB does not need knowledge of
+these random imperfections in order to realize backprop-
+agation. We observe that the self-learning machine can
+minimize the cost function even for relatively large values
+ofσ∆, in the order of0.3πT. For very large values ofσ∆,
+even though it still performs gradient descent, the device
+seems to converge to poor local minima. Figures 9(d-f)
+show the evolution of the output values during training,
+the evolution of the output during a single forward pass,
+and the eﬀect of noise in the input.
+Appendix E INGREDIENTS OF THE
+HAMILTONIAN: LINEAR AND NONLINEAR
+PARTS
+The dynamics ofΨ and Θ is given by the Hamiltonian
+HSL. If one wants to use a SL machine for any useful
+task, the dynamics ofΨ must be complex and nonlinear.
+The expressive power of ANN’s can only be matched if
+theequationsofmotionfor Ψincorporatenonlinearinter-
+actions, as well as interactions with the learning param-
+eters encoded in Θ. However, the input-output relation
+must be deterministic and robust to small amounts of
+noise. These considerations should guide the choice of
+the Hamiltonians.
+As we discuss later in this section, there is a consider-
+able amount of theoretical and experimental work about
+the time reversal of wave ﬁelds, especially in nonlinear
+optics. For this reason, here and henceforth we will con-
+centrate on approaches based on nonlinear wave ﬁelds.
+Here, Ψ(x) and Θ(x) are complex ﬁelds deﬁned on a con-
+tinuous space, or in a discrete lattice. Although we make
+extensive use of a notation that is reminiscent of optical
+ﬁelds, we must remember that, actually, the setting is
+completely general (the real and imaginary parts of the
+ﬁeld are the two conjugate coordinates of a completely
+general Hamiltonian degree of freedom). However, the
+fact that we have now assumed Ψ(x) and Θ(x) to be
+ﬁelds allows us to make use of the notion of locality.
+In a SL machine based on wave ﬁelds,HΨ would be
+composed of two parts: afree-ﬁeldHamiltonianH0, and
+a second termHNL containing local self-interactions. We
+can deﬁne a free-ﬁeld Hamiltonian as any quadratic func-
+tion of Ψ, Ψ∗ and its time- and space-derivatives. More
+restrictively, we can ask that H0 is invariant with re-
+spect to a global phase shift ofΨ, so that the total inten-
+sity,
+∫
+dDx|Ψ|2, is a conserved charge. In that case,H0
+can only contain second-order terms that are bilinear in
+Ψ, Ψ∗.
+To produce non-linear dynamics, we introduce the self-
+interacting term,HNL. Often, this will be a local term.
+Typical examples of self-interaction Hamiltonians would
+be the familiar Kerr nonlinearity,g|Ψ|4, or a Josephson
+nonlinearity,χ cosψ, that can become relevant for super-
+conducting circuit quantum electrodynamics.
+The free-ﬁeld Hamiltonian together with a self-
+interaction is enough to obtain very complicated dynam-
+ics. But if we want to train the SL machine, we still need
+tointroducesomedependenceonthelearningparameters
+
+===== PAGE 29 =====
+29
+a
+d
+ b  c
+ e  f
+[0 0], [1 1]
+[1 0], [0 1]
+[1 0]
+[0 1]
+[1 1]
+[0 0]
+K
+J
+Ψ0 Ψ1
+Ψ2 Ψ3
+Θij
+Iin σΔ
+Figure 9. Self-learning machine based on an array of nonlinear cavities (simulations)(a) Schematics of the setup:
+the cavities that encode the learning degrees of freedom are placed on a 2D square lattice. Each nonlinearΘij cavity is coupled
+to its nearest neighbours, with a coupling strength given byJ. The cavities that represent the evaluation degrees of freedom,
+Ψi, are coupled to theΘij cavities in the corners of the lattice, and the coupling strength is given byK. All cavities have
+an identical Kerr nonlinearity whose strength is given byg. The input is encoded in the initial values of(ψ0(−T ),ψ 1(−T )),
+while the output is given byψ3(0). (b) Training error evolution for diﬀerent values of the intensity of the input. We choose
+a reference level of intensityI0 that fulﬁllsgI0T = 3. (c) In this plot we consider the robustness of the SL machine to
+fabrication imperfections. In particular we consider that each cavity has a random frequency shift whose distribution is given
+byN (0,σ ∆). Note that, since the random shifts are on the order of0.1π/T− 1π/T, their eﬀect on the output value is very
+signiﬁcant. The HEB method can successfully implement gradient descent in the imperfect machine (since it is Hamiltonian
+independent). However, for larger values ofσ∆, the training process seems to converge to worse performance. Nevertheless,
+this result shows robustness to signiﬁcant fabrication imperfections. (d) Evolution of the output as the training progresses
+(with an input intensity given byIin = 1.6I0). Each curve represents each diﬀerent input. (e) Time evolution of the ﬁeld
+amplitude in the output cavity during a single forward pass, once the SL machine has been trained. (f) Outputs obtained when
+the input is noisy. We generated noisy inputs by adding Gaussian noise to the ideal input. After feeding each input to the SL
+machine, a noisy output is obtained. Here we plot the resulting outputs vs the standard deviation of the Gaussian noise. We
+can observe that the output remains highly concentrated around the target value whenσnoise is in the range of0− 3% of the
+input amplitude.
+through the interaction Hamiltonian,Hint. In analogy
+with ANN’s, we may ask that the interaction produces
+dynamics linear inΨ, although this is not a requirement.
+Moreover, Hint will also be local in most realistic set-
+tings. Therefore, the most reasonable choices for Hint
+are gΘ∗ΘΨ∗Ψ (in nonlinear optics, this is calledcross-
+phase modulation), org(Θ + Θ∗)Ψ∗Ψ (the standardχ(2)
+interaction in optics, or equivalently an optomechanical
+interaction), or in general some interaction of the form
+f(Θ, Θ∗)Ψ∗Ψ. Alternatively, parametric interactions of
+the typef(Θ, Θ∗)Ψ∗Ψ∗ + c.c. could also be considered,
+leading to a diﬀerent kind of dynamics, although we will
+not discuss them here.
+With respect to the strength of the nonlinear interac-
+tions, it should be large enough to attain a complex and
+highlyexpressivedynamics. However, somestronglynon-
+linear physical systems may exhibit chaotic behaviour.
+A system with strong sensitivity to the initial condi-
+tions is undesirable because any small perturbation can
+be strongly ampliﬁed, making impossible in practice to
+realize the time-reversed replica during the echo step.
+Ideally, in order to avoid strong sensitivity to the initial
+conditions while maximizing the expressivity of the de-
+vice, the Lyapunov exponents should scale in such a way
+that the device is operated near the onset of chaos, but
+below it. Connected to this, a recent paper showed nu-
+merical evidence that some neuromorphic devices achieve
+optimal performance in the edge of chaos [77]. Other re-
+cent related works have studied how transient chaos can
+improve the expressive power of neural networks [78–80].
+The Hamiltonian terms we described could be homo-
+geneous across space, like in the case of an optical ﬁeld
+
+===== PAGE 30 =====
+30
+propagating inside a nonlinear crystal, or they could be
+implemented using discrete building blocks, as it would
+be the case for a photonic or microwave circuit with non-
+linear elements. It can be argued that the evolution ofΨ
+under the joint action ofH0 +Hint +HNL is very similar
+to the evaluation of an ANN (as argued in other works
+before, see e.g. [8, 11, 75]). On the one hand, the eﬀect
+of HNL is to induce a nonlinear activation function. On
+the other hand, the partH0 +Hint is quadratic inΨ and
+can be thought of as implementing the trainable matrix
+of weights.
+It is known that local controllable shifts together with
+ﬁxed unitary operations are enough to realize any uni-
+tary transformation [81]. Of course, it needs to be noted
+that standard ANNs can have arbitrary weight matrices
+between layers, which seem to go beyond the unitary ma-
+trices available in the present setting. However, any arbi-
+trary matrix can be embedded in a larger unitary matrix
+(with proper rescaling). For this reason, the structure of
+the linear part of the ANN can always be replicated in a
+SL machine. Alternatively, we may view an SL machine
+with unitary evolution as realizing a particular case of an
+invertible neural network.
+Appendix F PSEUDO-DISSIPATION VIA
+ANCILLARY MODES
+As we said in an earlier section, pseudo-dissipation via
+ancillary modes can be a useful feature in a SL machine.
+We can imagine that in our SL machine there are dy-
+namical variables that are coupled toΨ until some par-
+ticular time, after which they evolve separately. Instead
+of explicitly switching oﬀ the couplings as a function of
+time, we might also just have wave ﬁelds propagating
+out of the region where interactions are present. This
+can easily be arranged, e.g. in photonic circuits. The
+ancillary dynamical variables carry away part of the in-
+formation, reconciling the contractive mapping with the
+overall time-reversal symmetry of the SL machine. We
+start with a high dimensional input, but as time passes,
+the dimension of the interacting part of the system is
+increasingly reduced. In the end, the dimension of the
+output may be much smaller than the original input di-
+mension. Importantly, in the echo step of HEB, the out-
+put and the ancilla must be both time-reversed.
+Pseudo-dissipation via ancillary modes via ancillary
+modes can play an important role for the activation
+functions implemented via nonlinearities. As we already
+mentioned, the nonlinear evolution induced by the self-
+interaction Hamiltonian can be understood as an activa-
+tion function. It is desirable to chooseHNL in such a way
+thattheinduced activationfunctionis notoscillatoryand
+has a bounded derivative. Ideally, a monotonic function
+would be the best option, reproducing standard ANN ac-
+tivation functions. In most previous approaches to physi-
+cal learning with nonlinear optical devices, the nonlinear-
+ity is provided by a homogeneous Kerr self-interaction.
+The eﬀect of a Kerr nonlinearity is to induce a phase
+shift proportional to the intensity of the ﬁeld. Qualita-
+tively, we can think of a Kerr medium as a deep neu-
+ral network where the activation function is of the form
+f(Ψ) = eig|Ψ|2
+Ψ. This is an oscillatory function, which
+is an undesirable property for an activation function in
+an ANN. What is worse, the derivative of the Kerr phase
+shift grows without bounds for increasing intensity. If we
+want to mimick the behaviour of a sigmoid or ReLU ac-
+tivation function, we must incorporate ancillary degrees
+of freedom, because all such standard activation func-
+tions are contractive. One possible choice is to use aχ(2)
+nonlinearity, and to couple an ancillary mode to the eval-
+uation ﬁeld:HSI =χ(2)(
+Ψ∗
+ancΨ2 + ΨancΨ∗2)
+. When the
+ancillary ﬁeld is initiallyΨanc = 0, the absolute value of
+Ψ(t) as a function of the absolute value of the input is
+qualitatively similar to a sigmoid function (although it is
+not a monotonic function):
+Ψ(t) = Ψ(0)sech
+(
+2−1/2χt|Ψ(0)|
+)
+. (32)
+Aside from χ(2) nonlinearities, it is certainly also pos-
+sible to produce an adequate activation function by a
+judicious combination of ancillary modes and a Kerr
+self-interaction Hamiltonian, or other kinds of self-
+interaction. Sigmoid-like thresholders based on optical
+Kerr eﬀect have been previously described[82], as well as
+bistable optical switches [83]. It is known that the Kerr
+interaction in combination with linear operations can be
+used to construct the Fredkin gate, and therefore it is
+universal for classical reversible computation [84].
+Nevertheless, we should emphasize that non-oscillatory
+activation functions are not a requirement for HEB, but
+a way to improve the expressivity of the device for those
+architectures that are more closely inspired on standard
+artiﬁcial neural networks. Just like some nonlinearities
+like ReLU work better in standard ANNs, in a SL device
+some nonlinear interactions have better results for some
+tasks. However, in general a SL device does not nec-
+essarily require non-oscillatory activation function, and
+in fact for many architectures of a SL device the con-
+cept of activation function does not apply (for example,
+consider a nonlinear core where the nonlinearity is homo-
+geneously spread across all the device). Finding the best
+architecture for each task will involve some future experi-
+mentation, but in this section we oﬀered in advance some
+insights about how to choose the best nonlinear systems.
+Appendix G STABILIZATION OF THE
+LEARNING FIELD
+The primary method we envisage for HEB concerns
+wave ﬁelds being transmitted through a nonlinear core,
+and subsequent time-reversal operation and decay step
+outside this core. In that case, as explained in the main
+text, we are insensitive to the details of the Hamiltonian
+of the nonlinear core.
+
+===== PAGE 31 =====
+31
+However, one can also envisage situations where the
+learning ﬁeld is not constantly being time-reversed (dur-
+ing evaluation or training). When that is the case, one
+needs to make sure the learning ﬁeld lives in a degenerate
+manifold, such that it is only the learning dynamics that
+will shift this learning ﬁeld.
+Once training via HEB has been completed and the
+cost function has been minimized, the learning parame-
+ters should remain stable for long times. The problem
+then is how to choose a physical system with degrees of
+freedom that can remain stable in a continuum of states.
+Mechanical degrees of freedom would be a priori a good
+selection. The position of freely moving nanoparticles
+or the orientation of a (possibly levitated) rotor (e.g. a
+molecule or nanorod) are examples of systems that could
+store a degree of freedom for indeﬁnitely long times. The
+problem is that the time-reversal of mechanical systems
+has no straightforward solution. The possible exception
+to this statement are optomechanical systems, where the
+couplingtothelightﬁeldcanbeemployedtotime-reverse
+mechanical motion, but then the mechanical degree of
+freedom oscillates around a single equilibrium position,
+making it unsuitable for our purposes absent any addi-
+tional ingredients. By contrast, in the case of wave ﬁelds,
+the experimental techniques for phase conjugation are
+better known, but storing information for longer times is
+more problematic.
+The solution is to engineer a suitable physical system
+that has the desired characteristics. Modern systems in
+integrated nonlinear optics and in superconducting mi-
+crowave circuits allow for the design of a wide range of
+nonlinear interactions between localized modes of the ra-
+diation ﬁeld. In the following, we provide two examples
+of how this ﬂexibility might be exploited to design a de-
+generate ground state manifold for a learning ﬁeld.
+In the ﬁrst example, we consider a cavity that has
+two modes α1,α2 with the same frequency (like coun-
+terpropagating modes in a microresonator). Inside the
+cavity there is a nonlinear material that induces a re-
+pulsive Kerr-type interaction. Both modes have the
+same lifetime. In order to have stable states with non-
+zero amplitude, we couple both modes to a parametric
+drive. Let us deﬁne the quadratures of the ﬁeld modes as
+q1,2 = Re{α1,2}/
+√
+2, p1,2 = Im{α1,2}/
+√
+2 and introduce
+the abbreviationsQ2 :=q2
+1 +q2
+2,P 2 :=p2
+1 +p2
+2. In terms
+of the quadratures, the full Hamiltonian reads
+H =−χβQ2 +gQ4 +
+(
+χβ + 2gQ2)
+P 2 +gP 4. (33)
+This Hamiltonian is written in the frame rotating at the
+mode frequency, and we assumed the parametric drive
+amplitude β is purely real-valued. It is not hard to see
+that this Hamiltonian is qualitatively similar to that of
+a point particle moving inside a ’Mexican hat’ potential.
+Using this analogy, it is clear that any state withP = 0
+and Q2 =χβ/(2g) is a ground state. We could consider
+the angle in the(q1,q 2)-plane as our learning parameter
+θ. In order to couple to this parameter, the simplest
+option we found is to suppose thatΨ interacts diﬀerently
+with α1 and α2. For example, let us consider that there
+is a nonlinear element that couplesΨ only toα1, through
+a cross-phase modulation. The interaction Hamiltonian
+then can be written in terms of the learning parameter
+as Hint =g cos2θΨ∗Ψ.
+Of course, storing a learning parameter in the ampli-
+tudes of parametrically driven Kerr oscillators is not the
+only possibility. As a further example, we brieﬂy present
+anothersetupinwhich θ istherelativephasebetweentwo
+modes. Consider two modes α1, α2 that are also para-
+metrically driven. The two modesα1, α2 have diﬀerent
+frequencies given by ω1, ω2, respectively. This physi-
+cal system can be modelled by a Hamiltonian given by
+χ(2) (βα∗
+1α2 +β∗α1α∗
+2) +∑2
+j=1ωjα∗
+jαj. It is clear that
+this Hamiltonian is invariant with respect to any global
+phase shiftαj→ eiϕαj, j = 1, 2. Let us introduce the
+notation αj ≡| αj|eiϕj, where ϕ1,ϕ 2 are the phases of
+α1, α2, respectively. We deﬁne the learning parameter
+as θ :=ϕ1 +ϕ2. Because of the symmetry of the Hamil-
+tonian, θ is a free parameter in the ground state. The
+challenge is now to ﬁnd a way to coupleΨ to the learn-
+ing parameters. One possible way is to consider that
+Ψ has two components (ﬁeld modes)Ψ1, Ψ2. Choosing
+adequately the frequency of the modesΨ1, Ψ2, the prod-
+uct gα1α2Ψ∗
+1Ψ2 +c.c. can be made resonant. Then, θ
+parametrizes a linear interaction between the two com-
+ponents ofΨ. This requires frequency stabilization of the
+diﬀerence frequency ofΨ1 and Ψ2 vs. the sum frequency
+of α1 and α2. The advantage, though, is that now the
+symmetry of the Hamiltonian is more robust.
+As we illustrated above, in order to engineer a physical
+system that can store a continuous learning parameter,
+we need to realize a Hamiltonian with some continuous
+symmetry. The problem is that in any real implementa-
+tion we may expect that any continuous symmetry will
+be broken at some energy scale. If that is the case, most
+conﬁgurations of the learning ﬁeld after training will have
+a ﬁnite lifetime. Remember that we assume that, after
+training, the learning ﬁeld ends in one of the degenerate
+ground states ofH′
+θ, which is an ideal, exactly degenerate
+Hamiltonian. If the true Hamiltonian of the system is in-
+stead given byH′
+θ+δH′, the learning ﬁeld will slide down
+in the energy landscape ofδH′. Eventually, it will end up
+very far from the conﬁguration that had been obtained
+as a result of training, unless the training is periodically
+repeated to stabilize the "memory" of the system.
+Thatpotentialproblemcouldbeavoidedifthelearning
+parameters were stored in a discrete set of states. Con-
+sider that nowH′
+θ possesses a discrete set of degenerate
+ground states. In such a case, a small perturbation inH′
+θ
+does not aﬀect the long term stability ofθ, as long as it
+is much smaller than the energy barrier between the de-
+generate states. Stochastic gradient descent (SGD) is a
+strategy used to optimize continuous degrees of freedom.
+Although HEB is originally motivated by the search of
+a physical realization of SGD, we already argued that it
+can still be useful for training discrete parameters. In
+that case, HEB works in an analogous fashion to thermal
+
+===== PAGE 32 =====
+32
+annealing. In this picture, one can think ofθ as a spin
+system that can be approximately described by a thermal
+distribution. The probability of each state is then given
+by e−βHeﬀ[Θ], whereHeﬀ[Θ] is the eﬀective Hamiltonian
+of Eq. (9). If the temperature is slowly reduced, the sys-
+tem will undergo annealing, andΘ would end in one of
+the local minima ofHeﬀ[Θ]. Spin-like degrees of freedom
+can be realized, for example, with Optical Parametric
+Oscillators [66].
+[1] I. J. Goodfellow, Y. Bengio, and A. Courville, Deep
+Learning (MIT Press, Cambridge, MA, USA, 2016)
+http://www.deeplearningbook.org.
+[2] C. D. Schuman, T. E. Potok, R. M. Patton, J. D. Bird-
+well, M.E.Dean, G.S.Rose,andJ.S.Plank,ASurveyof
+Neuromorphic Computing and Neural Networks in Hard-
+ware, arXiv:1705.06963 [cs] (2017), arXiv: 1705.06963.
+[3] D. Marković, A. Mizrahi, D. Querlioz, and J. Grollier,
+Physics for neuromorphic computing, Nature Reviews
+Physics 2, 499 (2020).
+[4] B. J. Shastri, A. N. Tait, T. Ferreira de Lima, W. H. P.
+Pernice, H. Bhaskaran, C. D. Wright, and P. R. Pruc-
+nal,Photonicsforartiﬁcialintelligenceandneuromorphic
+computing, Nature Photonics15, 102 (2021).
+[5] L. G. Wright, T. Onodera, M. M. Stein, T. Wang, D. T.
+Schachter, Z. Hu, and P. L. McMahon, Deep physical
+neural networks trained with backpropagation, Nature
+601, 549 (2022).
+[6] B. Scellier and Y. Bengio, Equilibrium propagation:
+Bridging the gap between energy-based models and back-
+propagation, Frontiers in computational neuroscience11,
+24 (2017).
+[7] E. Martin, M. Ernoult, J. Laydevant, S. Li, D. Querlioz,
+T. Petrisor, and J. Grollier, Eqspike: spike-driven equi-
+librium propagation for neuromorphic implementations,
+Iscience 24, 102222 (2021).
+[8] K. Wagner and D. Psaltis, Multilayer optical learning
+networks, Applied Optics26, 5061 (1987).
+[9] H.-Y. S. Li, Y. Qiao, and D. Psaltis, Optical network
+for real-time face recognition, Applied Optics32, 5026
+(1993).
+[10] K. Wagner and T. M. Slagle, Optical competitive learn-
+ing with VLSI/liquid-crystal winner-take-all modulators,
+Applied Optics32, 1408 (1993).
+[11] S. R. Skinner, E. C. Behrman, A. A. Cruz-Cabrera, and
+J. E. Steck, Neural network implementation using self-
+lensing media, Applied Optics34, 4129 (1995).
+[12] D. E. Rumelhart, G. E. Hinton, and R. J. Williams,
+Learningrepresentationsbyback-propagatingerrors,Na-
+ture 323, 533 (1986).
+[13] D. Psaltis, D. Brady, and K. Wagner, Adaptive optical
+networks using photorefractive crystals, Applied Optics
+27, 1752 (1988).
+[14] G. Wetzstein, A. Ozcan, S. Gigan, S. Fan, D. Englund,
+M. Soljacic, C. Denz, D. A. B. Miller, and D. Psaltis,
+Inference in artiﬁcial intelligence with deep optics and
+photonics, Nature588, 39 (2020).
+[15] J. Feldmann, N. Youngblood, C. D. Wright,
+H. Bhaskaran, and W. H. P. Pernice, All-optical
+spiking neurosynaptic networks with self-learning
+capabilities, Nature569, 208 (2019).
+[16] M. Stern, D. Hexner, J. W. Rocks, and A. J. Liu, Super-
+vised learning in physical networks: From machine learn-
+ing to learning machines, Physical Review X11, 021045
+(2021).
+[17] Y. Shen, N. C. Harris, S. Skirlo, M. Prabhu, T. Baehr-
+Jones, M. Hochberg, X. Sun, S. Zhao, H. Larochelle,
+D. Englund, and M. Soljacic, Deep Learning with Co-
+herent Nanophotonic Circuits, Nature Photonics11, 441
+(2017), arXiv: 1610.02365.
+[18] X. Guo, T. D. Barrett, Z. M. Wang, and A. I. Lvovsky,
+Backpropagation through nonlinear units for all-optical
+training of neural networks, arXiv:1912.12256 [physics]
+(2020), arXiv: 1912.12256.
+[19] S. Hu, Y. Liu, Z. Liu, T. Chen, J. Wang, Q. Yu, L. Deng,
+Y. Yin, and S. Hosaka, Associative memory realized by a
+reconﬁgurable memristive Hopﬁeld neural network, Na-
+ture Communications6, 10.1038/ncomms8522 (2015).
+[20] D. Soudry, D. Di Castro, A. Gal, A. Kolodny, and
+S. Kvatinsky, Memristor-based multilayer neural net-
+works with online gradient descent training, IEEE trans-
+actions on neural networks and learning systems26, 2408
+(2015).
+[21] Q. Xia and J. J. Yang, Memristive crossbar arrays
+for brain-inspired computing, Nature materials18, 309
+(2019).
+[22] M. Schneider, E. Toomey, G. Rowlands, J. Shainline,
+P. Tschirhart, and K. Segall, Supermind: a survey of
+the potential of superconducting electronics for neuro-
+morphic computing, Superconductor Science and Tech-
+nology 35, 053001 (2022).
+[23] A. Sengupta and K. Roy, Spin-Transfer Torque Mag-
+netic neuron for low power neuromorphic computing, in
+2015 International Joint Conference on Neural Networks
+(IJCNN) (IEEE, Killarney, Ireland, 2015) pp. 1–7.
+[24] J. Torrejon, M. Riou, F. A. Araujo, S. Tsunegi,
+G. Khalsa, D. Querlioz, P. Bortolotti, V. Cros,
+K. Yakushiji, A. Fukushima,et al., Neuromorphic com-
+puting with nanoscale spintronic oscillators, Nature547,
+428 (2017).
+[25] J. Grollier, D. Querlioz, K. Camsari, K. Everschor-Sitte,
+S. Fukami, and M. D. Stiles, Neuromorphic spintronics,
+Nature electronics3, 360 (2020).
+[26] A. F. Vincent, J. Larroque, N. Locatelli, N. B. Romd-
+hane, O. Bichler, C. Gamrat, W. S. Zhao, J.-O. Klein,
+S. Galdin-Retailleau, and D. Querlioz, Spin-transfer
+torque magnetic memory as a stochastic memristive
+synapse for neuromorphic systems, IEEE transactions on
+biomedical circuits and systems9, 166 (2015).
+[27] S. H. Jo, T. Chang, I. Ebong, B. B. Bhadviya,
+P. Mazumder, and W. Lu, Nanoscale memristor device
+as synapse in neuromorphic systems, Nano letters 10,
+1297 (2010).
+[28] J. M. Shainline, S. M. Buckley, R. P. Mirin, and S. W.
+Nam, Superconducting optoelectronic circuits for neuro-
+morphic computing, Physical Review Applied7, 034013
+(2017).
+
+===== PAGE 33 =====
+33
+[29] K. Friston, The free-energy principle: a uniﬁed brain the-
+ory?, Nature Reviews Neuroscience11, 127 (2010).
+[30] G. Bellec, F. Scherr, A. Subramoney, E. Hajek, D. Salaj,
+R. Legenstein, and W. Maass, A solution to the learn-
+ing dilemma for recurrent networks of spiking neurons,
+Nature Communications11, 3625 (2020).
+[31] J. Sacramento, R. Ponte Costa, Y. Bengio, and W. Senn,
+Dendritic cortical microcircuits approximate the back-
+propagation algorithm, Advances in neural information
+processing systems31 (2018).
+[32] T. P. Lillicrap, A. Santoro, L. Marris, C. J. Akerman,
+and G. Hinton, Backpropagation and the brain, Nature
+Reviews Neuroscience21, 335 (2020).
+[33] G. E. Hinton and J. McClelland, Learning representa-
+tions by recirculation, inNeural information processing
+systems (1987).
+[34] M. Hermans, M. Burm, T. V. Vaerenbergh, J. Dambre,
+and P. Bienstman, Trainable hardware for dynamical
+computing using error backpropagation through physical
+media, Nature Communications6, 10.1038/ncomms7729
+(2015).
+[35] M. Hermans, M. Soriano, J. Dambre, P. Bienstman, and
+I. Fischer, Photonic Delay Systems as Machine Learning
+Implementations (2015), arXiv:1501.02592 [cs].
+[36] T. W. Hughes, M. Minkov, Y. Shi, and S. Fan, Training
+of photonic neural networks through in situ backpropa-
+gation and gradient measurement, Optica5, 864 (2018).
+[37] I. Stakgold and M. Holst, eds., Green’s Functions and
+Boundary Value Problems: Stakgold/Green’s Functions
+(John Wiley & Sons, Inc., Hoboken, NJ, USA, 2011).
+[38] L. Hand and J. Finch,Analytical Mechanics(Cambridge
+University Press, 1998) pp. 458–459.
+[39] A. E. Motter, M. Gruiz, G. Károlyi, and T. Tél, Doubly
+transient chaos: Generic form of chaos in autonomous
+dissipative systems, Phys. Rev. Lett.111, 194101 (2013).
+[40] A. N. Gomez, M. Ren, R. Urtasun, and R. B. Grosse,
+The reversible residual network: Backpropagation with-
+out storing activations (2017), arXiv:1707.04585 [cs.CV].
+[41] B. Chang, L. Meng, E. Haber, L. Ruthotto, D. Begert,
+and E. Holtham, Reversible architectures for arbitrarily
+deep residual neural networks (2017), arXiv:1709.03698
+[cs.CV].
+[42] J. Behrmann, W. Grathwohl, R. T. Q. Chen, D. Duve-
+naud, and J.-H. Jacobsen, Invertible residual networks
+(2019), arXiv:1811.00995 [cs.LG].
+[43] R. Boyd, Contemporary nonlinear optics (Academic
+Press, 2012).
+[44] G. He, Optical phase conjugation: principles, techniques,
+and applications, Progress in Quantum Electronics26,
+131 (2002).
+[45] A. P. Brysev, L. Krutyanskii, and V. L. Preobrazhenskii,
+Wave phase conjugation of ultrasonic beams, Physics-
+Uspekhi 41, 793 (1998).
+[46] L. Deng, E. W. Hagley, J. Wen, M. Trippenbach,
+Y. Band, P. S. Julienne, J. Simsarian, K. Helmerson,
+S. Rolston, and W. D. Phillips, Four-wave mixing with
+matter waves, Nature398, 218 (1999).
+[47] Y. Chang, H. R. Fetterman, I. L. Newberg, and S. K.
+Panaretos, Microwave phase conjugation using antenna
+arrays, IEEE Transactions on Microwave Theory and
+Techniques46, 1910 (1998).
+[48] A. Serga, B. Hillebrands, S. Demokritov, A. Slavin,
+P. Wierzbicki, V. Vasyuchka, O. Dzyapko, and A. Chu-
+mak, Parametric generation of forward and phase-
+conjugated spin-wave bullets in magnetic ﬁlms, Physical
+review letters94, 167202 (2005).
+[49] D. A. B. Miller, Time reversal of optical pulses by four-
+wave mixing, Optics Letters5, 300 (1980).
+[50] J. Martin, B. Georgeot, and D. L. Shepelyansky, Time
+Reversal of Bose-Einstein Condensates, Physical Review
+Letters 101 (2008).
+[51] Y. Zheng, H. Ren, W. Wan, and X. Chen, Time-reversed
+wave mixing in nonlinear optics, Scientiﬁc Reports3,
+3245 (2013).
+[52] I. Sackey, F. Da Ros, M. Jazayerifar, T. Richter,
+C. Meuer, M. Nölle, L. Molle, C. Peucheret, K. Peter-
+mann, and C. Schubert, Kerr nonlinearity mitigation in
+5 Å 28-GBd PDM 16-QAM signal transmission over a
+dispersion-uncompensated link with backward-pumped
+distributed Raman ampliﬁcation, Optics Express 22,
+27381 (2014).
+[53] M. Frazier, B. Taddese, T. Antonsen, and S. M. An-
+lage, Nonlinear Time Reversal in a Wave Chaotic
+System, Physical Review Letters 110, 10.1103/Phys-
+RevLett.110.063902 (2013).
+[54] A. Przadka, S. Feat, P. Petitjeans, V. Pagneux, A. Mau-
+rel,andM.Fink,TimeReversalofWaterWaves,Physical
+Review Letters 109, 10.1103/PhysRevLett.109.064501
+(2012).
+[55] I. N. Papadopoulos, S. Farahi, C. Moser, and D. Psaltis,
+Focusing and scanning light through a multimode optical
+ﬁber using digital phase conjugation, Optics express20,
+10583 (2012).
+[56] J. R. Ong, C. C. Ooi, T. Y. L. Ang, S. T. Lim, and
+C. E. Png, Photonic Convolutional Neural Networks Us-
+ing Integrated Diﬀractive Optics, IEEE Journal of Se-
+lected Topics in Quantum Electronics26, 1 (2020).
+[57] G. Marcucci, D. Pierangeli, and C. Conti, Theory of Neu-
+romorphic Computing by Waves: Machine Learning by
+Rogue Waves, Dispersive Shocks, and Solitons, Physical
+Review Letters 125, 10.1103/PhysRevLett.125.093901
+(2020).
+[58] W. Yoshiki and T. Tanabe, All-optical switching using
+kerr eﬀect in a silica toroid microcavity, Opt. Express
+22, 24332 (2014).
+[59] J. Sun, E. Timurdogan, A. Yaacobi, E. S. Hosseini, and
+M.R.Watts,Large-scalenanophotonicphasedarray,Na-
+ture 493, 195 (2013).
+[60] M. C. Rechtsman, J. M. Zeuner, Y. Plotnik, Y. Lumer,
+D. Podolsky, F. Dreisow, S. Nolte, M. Segev, and A. Sza-
+meit, Photonic Floquet topological insulators, Nature
+496, 196 (2013).
+[61] N. Sarapat, T. Frank, and P. Yupapin, Conjugate mir-
+ror design and simulation using a nonlinear coupling mi-
+croring circuit, Journal of Nonlinear Optical Physics &
+Materials 22, 1350024 (2013).
+[62] A. C. Turner, M. A. Foster, A. L. Gaeta, and M. Lipson,
+Ultra-low power parametric frequency conversion in a sil-
+icon microring resonator, Optics express16, 4881 (2008).
+[63] S. Ayotte, H. Rong, S. Xu, O. Cohen, and M. J. Panic-
+cia, Multichannel dispersion compensation using a silicon
+waveguide-based optical phase conjugator, Optics letters
+32, 2393 (2007).
+[64] M. W. Puckett, K. Liu, N. Chauhan, Q. Zhao, N. Jin,
+H.Cheng, J. Wu, R. O.Behunin, P.T. Rakich, K. D.Nel-
+son, et al., 422 million intrinsic quality factor planar inte-
+grated all-waveguide resonator with sub-mhz linewidth,
+Nature communications12, 1 (2021).
+
+===== PAGE 34 =====
+34
+[65] D. Psaltis, D. Brady, X.-G. Gu, and S. Lin, Holography
+in artiﬁcial neural networks, Nature343, 325 (1990).
+[66] T. Inagaki, Y. Haribara, K. Igarashi, T. Sonobe, S. Ta-
+mate, T. Honjo, A. Marandi, P. L. McMahon, T. Umeki,
+K. Enbutsu, O. Tadanaga, H. Takenouchi, K. Aihara, K.-
+i. Kawarabayashi, K. Inoue, S. Utsunomiya, and H. Take-
+sue, A coherent Ising machine for 2000-node optimization
+problems, Science354, 603 (2016).
+[67] Y. Yamamoto, K. Aihara, T. Leleu, K.-i. Kawarabayashi,
+S. Kako, M. Fejer, K. Inoue, and H. Takesue, Coher-
+ent Ising machines - optical neural networks operat-
+ing at the quantum limit, npj Quantum Information3,
+10.1038/s41534-017-0048-9 (2017).
+[68] D. Pierangeli, G. Marcucci, and C. Conti, Large-
+Scale Photonic Ising Machine by Spatial Light Mod-
+ulation, Physical Review Letters 122, 10.1103/Phys-
+RevLett.122.213902 (2019).
+[69] M. H. Devoret, Quantum ﬂuctuations in electrical cir-
+cuits (1997).
+[70] E. Toomey, K. Segall, M. Castellani, M. Colan-
+gelo, N. Lynch, and K. K. Berggren, Superconducting
+nanowire spiking element for neural networks, Nano Let-
+ters 20, 8059 (2020).
+[71] Q. Wang, A. Hamadeh, R. Verba, V. Lomakin,
+M. Mohseni, B. Hillebrands, A. V. Chumak, and
+P. Pirro, A nonlinear magnonic nano-ring resonator,
+arXiv:2007.09205 [physics] (2020), arXiv: 2007.09205.
+[72] https://github.com/victorlopezpastor/self_
+learning_machines (2022).
+[73] V. L. Pastor, J. Lundeen, and F. Marquardt, Arbitrary
+optical wave evolution with fourier transforms and phase
+masks, Optics Express29, 38441 (2021).
+[74] M.Devoret, QuantumFluctuationsinElectricalCircuits,
+inLesHouchesLectureNotesofthe1995schoolonQuan-
+tum Fluctuations, eds. S. Reynaud, E. Giacobino, and J.
+Zinn-Justin, Elsevier 1997.
+[75] T. W. Hughes, I. A. D. Williamson, M. Minkov, and
+S. Fan, Wave physics as an analog recurrent neural net-
+work, Science Advances5, eaay6946 (2019).
+[76] G. Angelatos, S. A. Khan, and H. E. Türeci, Reser-
+voir computing approach to quantum state measurement,
+Phys. Rev. X11, 041062 (2021).
+[77] J. Hochstetter, R. Zhu, A. Loeﬄer, A. Diaz-Alvarez,
+T. Nakayama, and Z. Kuncic, Avalanches and edge-
+of-chaos learning in neuromorphic nanowire networks,
+Nature Communications12, 10.1038/s41467-021-24260-z
+(2021).
+[78] C. Keup, T. Kühn, D. Dahmen, and M. Helias, Transient
+chaotic dimensionality expansion by recurrent networks,
+Phys. Rev. X11, 021064 (2021).
+[79] B. Poole, S. Lahiri, M. Raghu, J. Sohl-Dickstein, and
+S. Ganguli, Exponential expressivity in deep neural net-
+works through transient chaos (2016).
+[80] M. Farrell, S. Recanatesi, T. Moore, G. Lajoie, and
+E. Shea-Brown, Gradient-based learning drives robust
+representationsinrecurrentneuralnetworksbybalancing
+compression and expansion, Nature Machine Intelligence
+4, 564 (2022).
+[81] M. Reck, A. Zeilinger, H. J. Bernstein, and P. Bertani,
+Experimental realization of any discrete unitary opera-
+tor, Physical Review Letters73, 58 (1994).
+[82] N. J. Doran and D. Wood, Nonlinear-optical loop mirror,
+Optics Letters13, 56 (1988).
+[83] M. Soljacic, M. Ibanescu, S. G. Johnson, Y. Fink,
+and J. D. Joannopoulos, Optimal bistable switching
+in nonlinear photonic crystals, Physical Review E 66,
+10.1103/PhysRevE.66.055601 (2002).
+[84] M.-S. Kang, J. Heo, S.-G. Choi, S. Moon, and S.-W. Han,
+Optical Fredkin gate assisted by quantum dot within op-
+tical cavity under vacuum noise and sideband leakage,
+Scientiﬁc Reports10, 5123 (2020).

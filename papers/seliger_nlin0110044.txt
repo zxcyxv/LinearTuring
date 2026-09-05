@@ -1,0 +1,495 @@
+arXiv:nlin/0110044v1  [nlin.AO]  23 Oct 2001
+Plasticity and learning in a network of coupled phase oscill ators
+Philip Seliger, Stephen C. Young, and Lev S. Tsimring
+Institute for Nonlinear Science, University of California , San Diego, La Jolla, CA 92093-0402
+(March 8, 2021)
+A generalized Kuramoto model of coupled phase oscillators w ith slowly varying coupling matrix
+is studied. The dynamics of the coupling coeﬃcients is drive n by the phase diﬀerence of pairs of
+oscillators in such a way that the coupling strengthens for s ynchronized oscillators and weakens
+for non-synchronized pairs. The system possesses a family o f stable solutions corresponding to
+synchronized clusters of diﬀerent sizes. A particular clus ter can be formed by applying external
+driving at a given frequency to a group of oscillators. Once e stablished, the synchronized state
+is robust against noise and small variations in natural freq uencies. The phase diﬀerences between
+oscillators within the synchronized cluster can be used for information storage and retrieval.
+PACS: 05.45.Xt, 07.05.Mh, 87.18.Sn, 87.19.La
+I. INTRODUCTION
+The mechanisms of adaptation and learning in natural and artiﬁcial s ystems are the subject of paramount interest
+in neuroscience. Most of the experimental evidence point to the sy naptic modiﬁcation as the physiological basis of
+the long-term memory [1,2]. Hebb [3] was the ﬁrst who suggested tha t the synaptic coupling between two neurons is
+enhanced if both neurons are simultaneously active. Recent exper imental data suggest that the synaptic connections
+are strengthened (long-term potentiation) or weakened (long-t erm depression) depending on the precise relative timing
+between pre-synaptic and post-synaptic spikes [2,4,5].
+Many current theoretical studies of learning in neural systems ar e based on the quasi-static Hopﬁeld model [6]
+utilizing McCulloch-Pitts neuronal units or simple “integrate-and-ﬁr e” models of neurons coupled via synapses which
+accumulate the pre-synaptic activity (spikes from other neurons ) into a growing membrane potential of a neuron [7].
+The latter generates its own spike (“ﬁres”) once the membrane po tential exceeds a certain threshold. The synaptic
+strength is in fact not ﬁxed, but changes in response to external stimuli and/or inter-neural dynamics. Various models
+based on this general picture [8,9], have been shown to yield diﬀerent ial Hebbian learning rules.
+A complimentary approach to modeling the neuronal activity involves replacing neurons by periodic oscillators.
+Indeed, rhythmic activity plays important role in many neuronal sys tems and functions, including central pattern
+generators, visual and olfactory systems, etc. [10]. Neural net works can often be described as networks of coupled
+oscillators, so the role of relative spike timing is played by the phases o f individual oscillators (see, for example,
+[11–14]). Close to the Hopf bifurcation, the dynamics of the array o f coupled oscillators can be described by the
+Landau-Stewart equations for complex amplitudes of the oscillator s. Furthermore, one can reduce the dynamics of
+the oscillators to the pure phase dynamics by assuming that the cou pling is weak, and the amplitude of oscillations
+is slaved to the phase variations. In fact, the phase dynamics desc ription may still be valid even away from the
+Hopf bifurcation point, where the Landau-Stewart description is n ot applicable. This idea was ﬁrst put forth by
+Winfree [15] and later developed by Kuramoto [16] and others [17]. Th e original Kuramoto model, in which the
+coupling coeﬃcients were chosen ﬁxed and equal, allowed for the eleg ant analytical treatment within the mean ﬁeld
+approximation. It was shown that the system of globally coupled osc illators with non-identical frequencies exhibits a
+second-order phase transition as the coupling strength is increas ed above some critical value.
+In subsequent work, more complex coupling functions were conside red [14,18,19]. It was shown that depending on
+the choice of the connectivity matrix, synchronized states with no n-trivial phase relationship among the oscillators
+can emerge. Networks of coupled phase oscillators with appropriat ely tuned coupling matrix were shown to have neu-
+rocomputing properties similar to those of classical Hopﬁeld networ ks, with an important distinction that memorized
+patterns are stored in the form of relative phases of synchronize d oscillators rather than in static equilibria.
+In those studies, the connectivity matrix, however complicated, w as imposed externally to achieve the desired
+network dynamics. In fact, in order to achieve certain behavior (f or example, to memorize an image), in a system
+of N neurons, N 2 coupling coeﬃcients have to be speciﬁed. This would present signiﬁca nt diﬃculties in operating
+such a system at large N . In biological neural networks this task is not assigned to any cent ral control unit, but is
+performed in a distributed manner via the mechanism of synaptic plas ticity, i.e. long term potentiation or depression
+of synapses in response to the dynamics of pre-synaptic and post -synaptic neurons [2,8]. External stimuli directly
+aﬀect only the dynamics of individual neurons and not their connect ions, while the synaptic plasticity is a result
+1
+of the inter-neuronal interactions. This evolution of connectivity matrix have been introduced in Ref. [13] for the
+Landau-Stewart model of coupled oscillators, however no analysis of the joint dynamics of the network of oscillators
+and the connectivity matrix has been presented. In this paper, we stu dy the simplest possible model of this process,
+based on the generalization of the Kuramoto model. In particular, w e assume that the coupling coeﬃcient for a link
+between two oscillators is a slow function of the phase diﬀerence bet ween the two oscillators.
+The paper is organized as follows. In Section II we introduce the gen eralized Kuramoto model with additional
+equations describing the slow evolution of the coupling matrix. In Sec tion III, a simple case of two coupled oscillators
+is investigated. We show that for large enough separation of time sc ales of fast and slow motions, the system is
+bistable: depending on initial conditions, oscillators can be either syn chronized or non-synchronized. In Sections
+IV,V, we study the existence and stability of the family of synchroniz ed cluster solutions in the continuum limit
+N → ∞. In Section VI, we show that the generalized Kuramoto system can serve as a very simple model of learning
+and memory. Information is stored within the synchronized cluster in the form of phase diﬀerences between oscillators.
+Section VII summarizes our conclusions.
+II. MODEL
+Let us consider the dynamics of an ensemble of N coupled phase oscillators
+˙φi =ωi − 1
+N
+N∑
+j=1
+KijF (φi −φj ). (1)
+Here ωi are natural frequencies and φi are phases of individual oscillators, F (φ) is a 2 π-periodic coupling function,
+and Kij is the N ×N matrix of coupling coeﬃcients.
+In order to include the mechanism of adaptation into model (1), we a ssume that an element of the coupling matrix
+describing interaction between two oscillators, i and j, is controlled by the following equation,
+˙Kij =ǫ(G(φi −φj) −Kij), (2)
+whereG(φ) is a 2π-periodic function of its argument. The particular form of the coup ling functionF (φ) and adaptation
+function G(φ) can be derived from the underlying equations describing the dynam ics of oscillators through the
+reduction to the phase description. Following Kuramoto [16], we choo se the simplest possible periodic function
+F (φ) = sin φ. Furthermore, we choose the adaptation function G(φ) = α cosφ. This choice implies that the coupling
+coeﬃcient grows fastest for two oscillators which are in-phase and decays fastest for out-of-phase oscillators. There
+are certain indication in the biological literature (see Ref. [2]) that th e maximal LTP and LTD correspond to small
+positive and negative phase shifts between pre-synaptic and post -synaptic neuronal oscillations, but we are going to
+ignore this complication in this model for the sake of simplicity. With the chosen functions, our model becomes
+˙φi =ωi − 1
+N
+N∑
+j=1
+Kij sin(φi −φj), (3)
+˙Kij =ǫ(α cos(φi −φj) −Kij). (4)
+For small ǫ, the dynamics of the coupling coeﬃcients is slow, and one can expect that for two oscillators which are
+non-synchronized, the driving term α cos(φi −φj ) is oscillating around zero, and the resultant coupling coeﬃcient
+is also oscillating around zero and is small O(ǫ). On the other hand, a pair of synchronized oscillators produces a
+constant non-zero driving for the corresponding coupling coeﬃcie nt, and therefore for large enough α, the connection
+between the two will be strengthened. Thus, we anticipate a multi-s table behavior, when a group of oscillators can
+either be stably synchronized or non-synchronized depending on t he initial conditions for their coupling coeﬃcient.
+To illustrate this point, we ﬁrst consider a simple case of two oscillator s symmetrically coupled through a single link.
+III. TWO COUPLED OSCILLATORS
+In this case model (3),(4) reduces to a set of two coupled equation s,
+˙φ = ∆ω −K sinφ,
+˙K =ǫ(α cosφ −K). (5)
+2
+Here φ = φ1 −φ2, K = K12 = K21, and ∆ ω = ω1 −ω2. By introducing new variables ˜t = ∆ωt, ˜K = K/∆ω, ˜α =
+α/∆ω, ˜ǫ =ǫ/∆ω, system (5) is simpliﬁed to
+˙φ = 1 − ˜K sinφ,
+˙˜K = ˜ǫ(˜α cosφ − ˜K). (6)
+The nullclines of this system ˜K = ˜α cosφ and ˜K = 1/ sinφ intersect at large enough ˜α > ˜αc = 2. In this case,
+within each period of the relative phase φ, there are four intersections corresponding to two stable and tw o unstable
+ﬁxed points (see Figures 2,b,c. For small ˜ ǫ, the dynamics of the system can be separated into fast and slow mo tions.
+If initial value ˜K0 > 1, the phase variable φ rapidly approaches the quasi-static value arcsin ˜K − 1
+0 corresponding to
+the nullcline, without any signiﬁcant change of K. Then, depending on whether ˜K0 is greater or smaller than the
+value ˜Ku corresponding to the unstable ﬁxed point, the solution either slowly approaches the stable ﬁxed point ˜Ks
+(synchronized regime), or it reaches the minimum of the nullcline and t hen branches oﬀ to inﬁnity along the fast
+trajectory. The same occurs if ˜K0 < 1. This corresponds to the regime of non-synchronized oscillations . For larger
+values of ˜ǫ, the dynamics can no longer be reduced to fast and slow motions. Mo reover, for any ﬁxed ˜ α > ˜αc,
+there exists some critical value of ˜ ǫc such that at ˜ǫ > ˜ǫc there are no unbounded solutions corresponding to the
+non-synchronized motion. On the other hand, if ˜ α< ˜αc, there are no ﬁxed points corresponding to the synchronized
+solutions, and the oscillators are desynchronized for any values of ǫ. Figure 2b,c shows the structure of the phase
+plane for system (6) for ˜ ǫ >˜ǫc and ˜ǫ <˜ǫc, respectively. Figure 1 shows the dependence of ˜ ǫc vs. ˜α. As expected,
+˜ǫc diverges as ˜α → ˜αc+. This line together with vertical line ˜ α = ˜αc divides the parameter plane into three regions.
+For ˜α < ˜αc, there can only be non-synchronized solutions (Fig.2,a), for ˜ α > ˜αc, ˜ǫ >˜ǫc there are only synchronized
+solutions (Fig.2,b), and for ˜ α > ˜αc, ˜ǫ < ˜ǫc, there is a bistable state when both desynchronized and synchron ized
+regimes are stable (Fig.2,c).
+The results of this section can be applied to a more generic case of ma ny coupled oscillators. Indeed, as ǫ and/or
+α is increased, the spontaneous clustering usually begins from synch ronization of pairs of neighboring oscillators. For
+this process, the coupling between these oscillators and other osc illators can be neglected. Symbols in Fig. 1 show
+the results of numerical experiments with a population of 50 oscillato rs uniformly distributed within a range ∆Ω = 1
+starting from small randomized initial coupling Kij. The bifurcation to random parings of oscillators which precedes
+the cluster formation, occurs close to the theoretical line predict ed for a simple case of two coupled oscillators.
+0 2.5 5 7.5 10 12.5 15
+0
+0.1
+0.2
+0.3
+0.4
+ 
+α~
+εc~
+unstable
+stable
+bistable
+αc
+~
+FIG. 1. Phase diagram ˜ ǫc( ˜α for the model of two coupled oscillators (6). Symbols show th e results of numerical simulations
+with 50 uniformly distributed oscillators. Circles corres pond to the non-synchronized regime, and stars indicate an o nset of
+synchronization of pairs of oscillators, which usually pre cedes spontaneous cluster formation.
+3
+0 p 2 p 3 p 4 p
+-3
+-2
+-1
+0
+1
+2
+3K
+0                 π                  2π               3π                4πα
+~
+a
+0 p 2 p 3 p 4 p
+-3
+-2
+-1
+0
+1
+2
+3
+0                 π                  2π                3π               4π
+K
+φ
+~
+b
+0 p 2 p 3 p 4 p
+-3
+-2
+-1
+0
+1
+2
+3K
+0                 π                  2π                3π               4π
+φ
+~
+c
+FIG. 2. Phase plane of Eqs.(6): a - for ˜α < ˜αc there are no ﬁxed points corresponding to synchronized regi me; b - for ˜α = 2.7
+and ˜ǫ = .33 all initial conditions lead to stable ﬁxed points; c - for ˜α = 2 .7 and ˜ǫ = .1 unbounded solutions coexist with ﬁxed
+points.
+4
+IV. MANY COUPLED OSCILLATORS - STATIONAR Y STATES
+In this section we return to the dynamics of the original model (3),( 4). As was pointed out in Section II, for small
+ǫ, in the asymptotic regime the coupling coeﬃcients are either non-st ationary but small (for two oscillators operating
+at diﬀerent frequencies) or ﬁxed for two oscillators which are sync hronized. So, in the limit ǫ → 0, we can neglect all
+Kij for non-synchronized oscillators, and deﬁne Kij = α cos(φi −φj) for synchronized oscillators. Substituting this
+into Eq.(3), we obtain for oscillators within a cluster,
+˙φi =ωi − α
+2N
+Nc∑
+j=1
+sin[2(φi −φj)]. (7)
+where unlike Ref. [16] summation only applies to oscillators within the sa me cluster, and ˙φi =ωi for oscillators outside
+synchronized cluster. It is easy to see that Eq.(7) is formally equiva lent to the Kuramoto model for the double phases
+2φi.
+One can investigate this model in the mean-ﬁeld limit N → ∞ using the order parameter method [16]. In this case,
+the complex order parameter reads
+τe 2iθ = lim
+N →∞
+N − 1
+Nc∑
+i=1
+e2iψi =
+∫ π
+− π
+n(ψ)e2iψdψ. (8)
+where ψ =φ − Ωt, Ω is the frequency of the synchronized cluster, n(ψ) is the phase distribution of the oscillators in
+the population which belong to the cluster. The phases of the oscillat ors inside the cluster are given by
+ψi =θ + 1
+2 arcsin
+( 2(ωi − Ω)
+ατ
+)
+, (9)
+and the phase distribution n(ψ) can be easily expressed via the frequency distribution of the sync hronized oscillators
+g(ω),
+n(ψ) =
+{
+ατg
+( ατ
+2 sin 2(ψ −θ) + Ω
+)
+cos(2(ψ −θ)) for B <2(ψ −θ)<A
+0, outside (10)
+where A,B determine size and position of the synchronized cluster, ( −π/2<B < A < π/2). Substituting (10) into
+Eq.(8), we obtain the equation for the magnitude of the order para meterτ
+α
+2
+∫ A
+B
+g
+(ατ
+2 sinx + Ω
+)
+cosx eixdx = 1. (11)
+The frequency spread inside the synchronized cluster is determine d by formula
+∆Ωc = ατ
+2 (sinA − sinB), (12)
+which follows directly from Eqs.(9). Thus, this system exhibit degene racy so that a variety of synchronized states
+can be formed depending on initial conditions. It is particularly eviden t for the uniform distribution of oscillator
+frequencies within frequency interval ∆Ω, g(ω) = ∆Ω − 1. In this case, the cluster size drops out, the limits of
+integration are symmetric, B = −A, and we arrive at
+α
+2∆Ω
+∫ A
+− A
+cosx eixdx = 1, (13)
+which reduces to an algebraic equation for phase width of the cluste r A,
+A + 1
+2 sin(2A) = 2∆Ω
+α . (14)
+The phase width of the cluster A depends only on α/∆Ω and does not depend on the cluster size τ . This dependence
+is shown in Fig.3. For large α, A ≈ ∆Ω/α. At α → α0 = 4π− 1∆Ω, A → π/2. The frequency spread inside the
+synchronized cluster is equal to ∆Ω c = ατ sinA (cf. (12)). At α < α0, there can be no stationary synchronized
+5
+clusters. These ﬁndings are conﬁrmed by direct numerical simulatio ns of Eqs.(3),(4). In Fig.3 the phase width of the
+cluster is shown for several values of α/∆Ω, and in Fig.4 the evolution of an unstable cluster at α = 1.25 < α0 is
+shown. The parameters of simulations were N = 50, ∆Ω = 1 , ǫ = 0.002, and the initial cluster width was chosen
+∆Ωc = 0.5.
+0.5 1 1.5 2 2.5
+0
+0.5
+1
+1.5
+2
+2.5
+3
+3.5A
+  α/∆Ω
+π/2
+FIG. 3. Phase spread of the cluster A as a function of α/∆Ω from Eq.(14). Dots indicate the results of numerical simu lations
+of Eqs.(3),(4) with 50 uniformly distributed oscillators w ith ∆Ω = 1 , ǫ = 0.002.
+5 10 15 20 25 30 35 40 45 50
+10
+20
+30
+40
+50
+60
+70
+80
+90
+Oscillator index
+90
+80
+70
+60
+10
+20
+30
+40
+50t
+5       10       15      20      25      30      35     40     45     50
+FIG. 4. Gray-scale plot of the evolution of instantaneous os cillator frequencies ˙φi for an unstable cluster at α = 1 .25
+Parameters of the simulation are N = 50, ǫ = 0.002, ∆Ω = 1.
+V. STABILITY OF THE CLUSTERED STATE
+As we have seen in the previous Section, the order parameter τ which characterizes the cluster size, can take any
+value from 0 to τmax (for the uniform frequency distribution the latter corresponds t o the whole population being
+synchronized,τmax = ∆Ω/α sinA). However, this is true only for small enough ǫ. Just as in the case of two coupled
+oscillators (Sec.III), at suﬃciently large ǫ > ǫc, the multistability disappears, and the only stable state at α > αc is
+the one involving the whole population of oscillators, ∆Ω c = ∆Ω. In order to determine ǫc, we analyze the following
+6
+problem. Suppose we have a synchronized cluster oscillating at freq uency Ω and characterized by the order parameter
+τ . Let us consider a single oscillator with frequency ω0 adjacent to the cluster ( ω0 = Ω + ∆Ω c/2), and study its
+dynamics neglecting its interaction with all other oscillators and the t he feedback inﬂuence of the oscillator on the
+cluster. Clearly, since the frequency diﬀerence between this oscilla tor and the cluster is smaller than that for any
+other non-synchronized oscillator, the adjacent oscillator will be t he ﬁrst to get entrained at ǫc. The equation for the
+relative phase ψ0 =φ0 − Ωt of this oscillator reads
+˙ψ0 = ∆Ωc
+2 + 1
+N
+Nc∑
+i=1
+Ki sin(ψi −ψ0), (15)
+and the equation for the coupling coeﬃcient between the oscillator a nd the i-th member of the cluster,
+˙Ki =ǫ(α cos(ψi −ψ0) −Ki). (16)
+The summation in Eq.(15) is carried only over synchronized oscillators . The phases ψi of the synchronized oscillators
+are determined by Eq.(9).
+In the continuum limit for the uniform frequency distribution, these equations become
+˙ψ0 = ∆Ωc
+2 + ατ
+∆Ω
+∫ A/2
+− A/2
+K(ψ) cos(2ψ) sin(ψ −ψ0)dψ, (17)
+˙K(ψ) = ǫ(α cos(ψ −ψ0) −K(ψ)). (18)
+Eq.(17) can be rewritten in the form
+˙ψ0 = ∆Ωc
+2 + ατ
+∆Ω (P cosψ0 −Q sinψ0), (19)
+where
+P =
+∫ A/2
+− A/2
+K(ψ) sinψ cos 2ψdψ, (20)
+Q =
+∫ A/2
+− A/2
+K(ψ) cosψ cos 2ψdψ. (21)
+Equations for P,Q can be obtained using Eq.(18),
+˙P =ǫ (αF− sinψ0 −P ), (22)
+˙Q =ǫ (αF+ cosψ0 −Q), (23)
+whereF± = 1
+2 sinA ± ( 1
+4A + 1
+8 sin 2A). The set of equations (19),(22),(23) exhibits the dynamics similar t o Eqs.(6) for
+two coupled oscillators. At α <α0 = 4π− 1∆Ω, the only attractor of the system is the solution with periodic P and
+Q and unbounded phase φ which corresponds to “non-entrainment” of the oscillator by the c luster. For the phase
+variable taken modulo 2π, this solution corresponds to a limit cycle encircling the phase cylinder . At larger α >α0,
+two ﬁxed points appear, one of which (stable) corresponds to the entrainment of the oscillator by the cluster. At
+ǫ>ǫ 0(α), the limit cycle disappears, and the entrained state is the only stab le state of the system. Thus, the critical
+line ǫ0(α) separates the region of cluster stability with respect to entrainin g additional oscillators. This line is shown
+in Figure 5. This line should be compared with the critical line for pairing o f two neighboring oscillators (Fig.1).
+Note that we have to re-scale ˜ ǫ and ˜α back into original ǫ and α using ˜ǫ = ǫN , ˜α = 2α/∆Ω. For large N , this line
+lies below ǫ0(α), which indicates that the random pairing outside the cluster occur s before the main cluster loses its
+stability. This conclusion agrees with our numerical simulations.
+7
+0 2 4 6 8
+α
+0
+0.02
+0.04
+0.06
+0.08
+0.1
+ε
+ε0
+εc
+α 0 α c
+FIG. 5. Parameter plane ( α, ǫ). A cluster is stable at α > α 0 and ǫ < ǫ 0. For α < α 0, clusters do not exist, for α < α 0
+and ǫ > ǫ 0, cluster size increases spontaneously. Dashed line shows t he stability limit for synchronization of two neighboring
+oscillators, for α > α c and ǫ > ǫ c, random pairing of oscillators outside the main cluster occ urs.
+VI. LEARNING AND MEMOR Y
+Information can be stored within the cluster in the form of relative p hases of the oscillators in the synchronized state.
+Initial learning can be accomplished via driving a group of oscillators by external signals with identical frequency ω0
+and magnitude K0, but with diﬀerent phases φ0
+i ,
+˙φi =ωi − 1
+N
+N∑
+j=1
+Kij sin(φi −φj) +K0 sin(φi −ω0t −φ0
+i ), (24)
+˙Kij =ǫ(α cos(φi −φj ) −Kij). (25)
+IfK0 ≫ 1, every oscillator in the group will be entrained to the external fre quencyω0. So, the external driving signals
+force the oscillators to oscillate in synchrony and, via slow synaptic d ynamics Eq.(25), form a tightly coupled cluster.
+If the phases φ0
+i are taken to be 0 or π, the relative phases φi −φj within the cluster will be also close to 0 or π, and
+so the coupling coeﬃcients Kij will approach ±α. After the learning is completed after t ≈O(ǫ− 1) time, the external
+signal is disconnected ( K0 → 0). If the external frequency ω0 = Ω, the mean frequency of oscillators within the
+cluster, the cluster remains synchronized at the same frequency , moreover, the phase relations among the oscillators
+are eﬀectively preserved. Even signiﬁcant random ﬂuctuations aﬀ ecting the dynamics of individual oscillators, do not
+change the robust structure of the synchronized cluster, see F ig.6.
+For smallǫ, after a cluster is formed, it becomes very stable with respect to e xternal noise. Furthermore, it remains
+stable with respect to random variations of their natural frequen cies. We let the cluster form similarly to described
+above, and then at some time t1, we perturbed the natural frequencies of all oscillators, ¯ ωi = ωi + ∆ωξi, where ξi
+are i.i.d. Gaussian random variable with variance 1. We can quantify the robustness of the cluster by measuring the
+correlation between the synchronized cluster structure before and after the random ﬂuctuations of natural frequencies
+have been applied. The correlation was calculated using the formula
+C =
+∑N
+i=1pi ∧qi
+∑N
+i=1pi ∨qi
+, (26)
+wherepi(qi) is the binary variable describing the state of the oscillator before( after) perturbing the natural frequencies:
+pi(qi) = 1 if the oscillator is entrained in the main cluster and pi(qi) = 0 otherwise. Symbols ∨ and ∧ denote Boolean
+addition and multiplication, respectively. It is easy to see that C = 1 when cluster remains unchanged, and C = 0 if
+all oscillators leave the cluster.
+8
+5 10 15 20 25 30 35 40 45 50
+20
+40
+60
+80
+100
+120
+140
+1
+time
+120
+140
+100
+80
+40
+5     10      15       20      25     30     35      40     45     50
+Oscillator index
+t
+t 0
+FIG. 6. Relative phase distribution of oscillators within t he cluster with respect to the “middle” oscillator i = 25. The
+cluster is initialized by external forcing of oscillators 1 5-37 at frequency ω0 = Ω = 10 .0 for 0 < t < t 0 = 20. At t > t 0, the
+external forcing was turned oﬀ, but the phase distribution w ithin the cluster survived. At t > t 1 = 75, oscillators were driven
+by random external ﬂuctuation of magnitude 0.01. Despite of this forcing, the phase pattern “memorized” by the cluster, was
+preserved.
+Figure 7 shows correlation C as a function of the perturbation magnitude ∆ ω for several values of α. As can be
+seen in the Figure, the cluster becomes more robust with increase o fα.
+0 0.1 0.2 0.3 0.4 0.5
+pertubation magnitude
+0.2
+0.4
+0.6
+0.8
+1
+Correlation  
+   Alpha = 1.3
+   Alpha = 1.7
+   Alpha = 2.5
+FIG. 7. Stability of cluster measured with the correlation o f the cluster before and after perturbation of natural frequ encies.
+The diﬀerent curves are for several values of α, ǫ increases the stability of the cluster only slightly and fal ls of parallel to the
+curves for similar α.
+VII. CONCLUSION
+In summary, we have demonstrated that a generalized Kuramoto m odel with additional equations describing slow
+dynamics of the coupling matrix can be used to elucidate the underlyin g mechanism of synaptic plasticity. The slow
+dynamics leads to the multi-stability: synchronized clusters of diﬀer ent sizes and with diﬀerent phase relationships
+among oscillators can be stabilized. The phase diﬀerences among the oscillators can be used as a way of storing and
+9
+retrieving the information in this system. One natural limitation of th e reduced phase description of the oscillators is
+that all oscillators are assumed to be in the excited (“ﬁring”) state . However, in natural systems (such as biological
+neural networks), some of the neurons may be in quiescent (“non -ﬁring”) regime. A more general description of this
+system should incorporate equations for complex amplitudes of osc illators similar to Ref. [12].
+Our results may have important biological implications. In particular, they suggest that there are fundamental
+reasons for the wide separation of time scales of fast neuronal dy namics ( e.g. membrane potential oscillations) and
+slow synaptic variability. They also present a very simple (possibly, th e simplest) model of the synaptic reentry
+reinforcement which is believed to be the foundation of the long-term memory stabilit y [1].
+We are indebted to M.I.Rabinovich and R. Huerta for fruitful discuss ions. This work was supported by the U.S.
+Department of Energy grant DE-FG03-96ER14592 and by UC-MEX US/CONACYT.
+[1] E. Shimizu, Y.-P. Tang, C. Rampon, and J. Z. Tsien, Scienc e, 290, 1170-1174 (2000).
+[2] L.F.Abbott and S.B.Nelson, Nature Neuroscience Suppl. , 3m 1178 (2000).
+[3] D.O. Hebb, The organization of behavior, Wiley, New York , 1949.
+[4] H. Markram, J. L¨ ubke, M. Frotscher, B. Sakmann, Science , 275, 213-215 (1997).
+[5] L.I.Zhang, H.W.Tao, C.E.Holt, W.A.Harris, M.Poo, Natu re, 395, 37 (1998).
+[6] J.J.Hopﬁeld, Proc. Natl. Acad. Sci., 79, 2554 (1982).
+[7] H. Tuckwell, Introduction to Theoretical Neurobiology. Cambridge, 1988.
+[8] P.D. Roberts, Phys. Rev. E, 62, 4077 (2000).
+[9] H.D.I.Abarbanel, R. Huerta, M.I.Rabinovich, in prepar ation.
+[10] C.M.Gray, J.Comput. Neurosci., 1, 11 (1994).
+[11] H.Sompolinsky, D.Golomb, and D.Kleinfeld, Phys. rev. A, 43, 6990 (1991).
+[12] T.Aoyagi, Phys. Rev. Lett., 74, 4075 (1995).
+[13] F.C. Hoppensteadt and E.M.Izhikevich, Biol. Cybern., 75, 129 (1996).
+[14] F.C. Hoppensteadt and E.M.Izhikevich, IEEE Trans. Neu ral Networks, 11, 734 (2000).
+[15] A.T.Winfree, J. Theor. Biol. 16, 15 (1967).
+[16] Y.Kuramoto, Chemical Oscillations, Waves, and Turbulence (Springer, New York, 1984).
+[17] See review by S.H.Strogatz, Physica D 143, 1 (2000).
+[18] M.K.Yueng and S.H. Strogatz, Phys. Rev. Lett., 82, 648. (1999)
+[19] F.C. Hoppensteadt and E.M.Izhikevich, Phys. Rev. Lett ., 82, 2983 (1999).
+10

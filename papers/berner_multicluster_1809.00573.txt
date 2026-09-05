@@ -1,0 +1,2489 @@
+MULTI-CLUSTERS IN NETWORKS OF ADAPTIVELY COUPLED
+PHASE OSCILLATORS∗
+RICO BERNER†‡, ECKEHARD SCHÖLL†, AND SERHIY YANCHUK‡
+Abstract. Dynamical systems on networks with adaptive couplings appear naturally in real-
+world systems such as power grid networks, social networks as well as neuronal networks. We
+investigate a paradigmatic system of adaptively coupled phase oscillators inspired by neuronal net-
+works with synaptic plasticity. One important behaviour of such systems reveals splitting of the
+network into clusters of oscillators with the same frequencies, where diﬀerent clusters correspond
+to diﬀerent frequencies. Starting from one-cluster solutions we provide existence criteria for multi-
+cluster solutions and present their explicit form. The phases of the oscillators within one cluster
+can be organized in diﬀerent patterns: antipodal, double antipodal, and splay type. Interestingly,
+multi-clusters are shown to exist where diﬀerent clusters exhibit diﬀerent patterns. For instance, an
+antipodal cluster can coexist with a splay cluster. We also provide stability conditions for one- and
+multi-cluster solutions. These conditions, in particular, reveal a high level of multistability.
+Key words. phase oscillators, adaptive networks, synaptic plasticity
+AMS subject classiﬁcations.34D06, 37F99, 41A60
+1. Introduction. Collective behavior in networks of coupled oscillatory systems
+has attracted a lot of attention in the last decades. Depending on the network and the
+speciﬁc dynamical system, various synchronization patterns of increasing complexity
+were explored. Even in simple models of coupled oscillators, patterns such as complete
+synchronization [28, 41], cluster synchronization where the network splits into groups
+of synchronous elements [17], or special types of spatial coexistence of coherent (syn-
+chronized) and incoherent (desynchronized) states have been found [36, 3, 29]. Apart
+from the theoretical importance, these complex solutions are found in a wide range
+of experimental systems including optoelectronic networks [48], chemical networks
+[51, 20, 52], neural networks [21], ecological and climate systems [12].
+The real-world systems are often described by the networks that change their
+structure over time. For instance, the synaptic connections between neurons change
+depending on relative timings of neuronal spiking [1, 31, 34, 15]. Thus the network
+structure reorganize adaptively in response to the dynamics. Similarly, chemical sys-
+tems have been reported [24], where the reaction rates adapt dynamically depending
+on the variables of the system. Activity-dependent plasticity is also common in bio-
+logical or social systems [18]. Alternatively, adapting the network topology has also
+successfully been used in order to control cluster synchronization in delay-coupled
+networks [30].
+In this article, we consider a network ofN coupled phase oscillators with adaptive
+∗Submitted to the editors August 31, 2018.
+Funding: This work was supported by the German Research Foundation (DFG) within SCHO
+307/15-1 and YA 225/3-1 "DFG-RSF: Complex dynamical networks: eﬀects of heterogeneity, adap-
+tivity, and delays".
+†Institute of Theoretical Physics, Technische Universität Berlin, Hardenbergstr. 36, D-10623
+Berlin, Germany, (rico.berner@physik.tu-berlin.de).
+‡Institute of Mathematics, Technische Universität Berlin, Strasse des 17. Juni 136, D-10623
+Berlin, Germany.
+1
+arXiv:1809.00573v3  [nlin.AO]  6 Aug 2019
+2 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+Hebbian-like Causal Anti-Hebbian-like
+∆φ ∆φ∆φ
+Π(∆
+φ)
+(a) (b) (c)
+Figure 1.1 . The plasticity function− sin(∆φ +β) and corresponding plasticity rules. (a)
+β =−π
+2, (b)β = 0, (c)β = π
+2.
+coupling
+dφi
+dt =ω− 1
+N
+N∑
+j=1
+κij sin(φi−φj +α),(1.1)
+dκij
+dt =−ϵ (sin(φi−φj +β) +κij),(1.2)
+where φi represents the phase of theith oscillator (i = 1,...,N ) andω the natural
+frequency. The interaction between the phase oscillators is described by the coupling
+matrixκ(t) := (κij(t))i,j∈1,...,N,κij(t)∈ [−1, 1]. Thus, the phase space of the system
+(φ(t),κ (t))∈ TN× [−1, 1]N 2
+is (N +N2)-dimensional with TN denoting theN-torus.
+The parameter α can be considered as a phase-lag of the interaction [46]. System
+(1.1)–(1.2) has attracted a lot of attention recently [26, 6, 7, 25, 35, 19, 39, 50, 45, 10],
+since it is a ﬁrst choice paradigmatic model for the modeling of the dynamics of adap-
+tive networks. In particular, it generalizes the Kuramoto (or Kuramoto-Sakaguchi)
+model with ﬁxedκ [4, 28, 37, 49, 40].
+The matrix κ(t) characterizes the coupling topology of the network at timet.
+Assume thatϵ is a small but not vanishing parameter. Then, the dynamical equation
+(1.2) describes the adaptation of the network topology depending on the dynamics of
+the network nodes. Using the terminology from neuroscience, such an adaptation can
+bealsocalledplasticity [7]. Thechosenadaptationfunctionintheform sin(φi−φj+β)
+with control parameterβ can take into account diﬀerent plasticity rules that can occur
+in neuronal networks, see Fig. 1.1. For instance, forβ =−π/2, the Hebbian rule is
+obtained where the couplingκij is increasing between any two systems with close
+phases, i.e., φi−φj close to zero [22, 23, 47, 5]. If β = 0 the link κij will be
+strengthened if thej-th oscillator is advancing thei-th. Such a relationship is typical
+for spike-timing-dependent plasticity in neuroscience [15, 33, 31, 42].
+Let us mention important properties of the model. Firstly, the parameterϵ≪ 1
+separates the time scales of the slow dynamical behaviour of the coupling strengths
+and the fast dynamics of the oscillatory system. Due to the invariance of system
+(1.1)–(1.2) with respect to the phase-shiftφi ↦→ φi +ψ for all i = 1,...,N and
+ψ ∈ T1, the frequency ω can be set to zero in the co-rotating coordinate frame
+φ↦→ φ +ωt. Moreover, one can restrict the consideration of the coupling weights
+to the interval−1≤ κij ≤ 1 due to the existence of the attracting regionG :={
+(φi,κij) :φi∈ T1,|κij|≤ 1, i,j = 1,...,N
+}
+[26].
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 3
+Finally, let us mention the symmetries of the model
+(α,β,φ i,κij)↦→ (−α,π−β,−φi,κij),
+(α,β,φ i,κij)↦→ (α +π,β +π,φi,−κij).
+As a result of these symmetries one can restrict the analysis to the parameter region
+α∈ [0,π/ 2) and β∈ [−π,π ).
+System (1.1)–(1.2) has been studied numerically in [6, 7, 35, 25, 26]. In partic-
+ular, it is shown that starting from uniformly distributed random initial condition
+(φi ∈ [0, 2π), κij ∈ [−1, 1] for all i,j ∈ 1,...,N ) the system can reach diﬀerent
+multi-cluster solutions with hierarchical structure depending on the parametersα and
+β. The individual cluster of the multi-clusters consists of either splay or anti-phase
+synchronous solutions. In addition, multi-cluster solutions are reported in an adap-
+tive network of Morris-Lecar bursting neurons with spike timing-dependent plasticity
+rule [43].
+The goal of this paper is to provide an analytic description of the one-cluster
+and multi-cluster solutions. Additionally, we report a new, mixed multi-cluster solu-
+tion. These new multi-clusters consist simultaneously of splay and (in-) anti-phase
+synchronous solutions. Thus, all one-cluster solutions can serve as building blocks for
+a multi-cluster solution. We show that multi-clusters corresponding to certain ﬁxed
+frequency ratio appear in continuous families, and, moreover, multi-clusters with dif-
+ferent frequency ratios can coexist for the same parameter values. We derive explicit
+algebraic equations for the frequencies of coexisting multi-cluster solutions. In a par-
+ticular case of two clusters, these equations can be explicitly solved.
+The structure of the paper is as follows. Sections 2 and 3 present our main
+results on the existence of one- and multi-cluster solutions, respectively. The multi-
+cluster solutions are illustrated using numerical integration of (1.1)–(1.2). Section 4
+investigates stability of these solutions. Finally, section 5 summarizes our main results
+and puts them into the context of general adaptive networks. The proofs of the
+propositions in sections 2 and 3 are presented in Appendix A.
+2. One-cluster solutions. We start with the collective dynamics, where all
+oscillators are synchronous up to phase shifts, i.e.φi = s(t) +ai. It is easy to see
+from (1.1), thatds/dt = const in this case, and, hence,s(t) = Ωt with some constant
+frequency Ω. Moreover, due to the symmetry of system (1.1)–(1.2) with respect to the
+phase-shiftφi↦→φi−a1 one can considera1 = 0 without loss of generality. Therefore,
+we deﬁne the following solutions.
+Definition 2.1. Phase oscillatorsφi(t), i = 1,...,N are said to be
+(i) in-phase synchronous if φi(t) =s(t) for alli;
+(ii) anti-phase synchronous ifφi(t) =s(t)+ai withai∈{ 0,π} and there arei⁄=j
+such thatai⁄=aj;
+(iii) rotating-wavesifφi(t) =s(t)+(i−1)2πk/N, wherek∈{ 1,...,N } is the wave
+number;
+(iv) phase-lockedif φi =s(t) +ai with arbitraryai∈ T1.
+Note that the following implications hold: rotating-waves withk = 0 and k = N/2
+are in-phase and anti-phase synchronous, respectively. Rotating-waves, in-phase, and
+anti-phasesolutionsarephase-locked. Theterm”rotating-wave” relatestotherotating
+symmetry of the solutions with respect to the spatial coordinate given by the index
+i. These solutions are also known as twisted states [54].
+The following quantity is used for measuring the synchronization.
+4 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+State nth order parameter
+in-phase
+φi = Ωt Rn = 1
+anti-phase
+φi = Ωt +ai, ai∈{ 0,π}
+R2n = 1,R2n+1 =
+⏐⏐2N1
+N − 1
+⏐⏐, whereN1
+is the number ofai = 0
+rotating-wave
+φi = Ωt +i 2π
+Nk, k⁄= 0, N
+2
+Rn = 1 if n·k
+N ∈ N0 and Rn = 0
+otherwise
+phase-locked
+φi = Ωt +ai, ai∈ T1 Rn = 1
+N
+⏐⏐⏐∑N
+j=1einaj
+⏐⏐⏐
+Table 2.1
+nth order parameter for the phase-locked solutions introduced in Deﬁnition 2.1.
+Definition 2.2. The nth order parameter for the stateφ∈ TN is deﬁned as
+Zn(φ) =Rn(φ)eiθn(φ) := 1
+N
+N∑
+j=1
+einφi,(2.1)
+wheren∈ N. The symbolsRn > 0 and θn∈ T1 denote the modulus and the phase of
+the order parameter, respectively.
+Note, the symbol i denotes the imaginary unit to distinguish it from the indexi.
+It is straightforward to check the values of thenth order parameter for the special
+solutions deﬁned above. For instance, for an in-phase synchronous solution it holds
+Zn(φ(t)) =einΩt and, henceRn = 1 for alln∈ N and t∈ R. For the other solutions
+theresultsaresummarizedinTable2.1. If φ(t)isaphase-lockedsolution, themodulus
+of thenth order parameter does not depend onΩt, and, hence, it will be often referred
+to asRn(a), where a = (a1,...,a N)T is the phase shift vector. With the help of the
+order parameter we can introduce the following three types of phase-locked states.
+Definition 2.3. Phase oscillatorsφi(t), i = 1,...,N are said to form a
+(i) (Splay cluster) if R2(φ) = 0;
+(ii) (Antipodal cluster) if R2(φ) = 1, i.e.,φi∈{ 0,π} for alli = 1,...,N ;
+(iii) (Double antipodal cluster) if φi∈{ 0,π,ψ,ψ +π} for all i = 1,...,N with
+ψ∈ (0,π ).
+Note that ifφ is in-phase or anti-phase synchronous,φ forms an antipodal cluster as
+well. Rotating waves from Deﬁnition 2.1 are also known as splay states or incoherent
+clusters [16]. For all theses rotating waves, it holds R1(φ) = R2(φ) = 0 . As it
+will be shown in Proposition 2.4, system (1.1)–(1.2) generically possesses solutions
+with R2(φ) = 0 rather thanR1(φ) = 0. Both uniformity criteria are clearly related
+since R2(φ) = R1(2φ). We use the notion splay cluster in order to stress that the
+phases are uniformly distributed around the unit circle with respect to the second
+moment of the order parameter. The following result describes all possible phase-
+locked solutions in the system of adaptively coupled oscillators (1.1)–(1.2). We call
+these solutions one-cluster solutions, since all oscillators possess the same frequency.
+Proposition 2.4. System (1.1)–(1.2) possesses the following phase-locked solu-
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 5
+tions
+φi = Ωt +ai,(2.2)
+κij =− sin(ai−aj +β), i,j = 1,...,N(2.3)
+if and only if one of the following three conditions is fulﬁlled:
+(i) the phasesai form a splay cluster, i.e.,R2(a) = 0;
+(ii) the phasesai form an antipodal cluster, i.e.,R2(a) = 1;
+(iii) the phases ai form a double antipodal cluster withm∈ {1,...,N − 1}, ai ∈
+{0,π,ψ m,ψm +π}, i = 1,...,N and ψm being the unique modulo2π solution to the
+following equation
+N−m
+m sin(ψ−α−β) = sin(ψ +α +β),
+and the number of phase shiftsai such thatai∈{ 0,π} equals tom.
+The corresponding frequencies are given by
+(2.4) Ω =
+
+
+
+cos(α−β)/2 if R2(a) = 0,
+sinα sinβ if R2(a) = 1,
+cos(α−β)/2− 1
+2R2(a) cos(ψ) in case (iii).
+The proof of this and other propositions are given in App. A. Note that for the special
+casesα = 0 orα =π andβ =α +π/2 orβ =α + 3π/2 solutions withR2(a) /∈{ 0, 1}
+were discussed in [19]. Moreover, similar solutions were found in experimental settings
+with delay-coupled chemical oscillators [11].
+Note that conditions (i)–(iii) of Proposition 2.4 imply that there are three pos-
+sible types of one-cluster solutions: splay, antipodal, and double antipodal. We
+illustrate these solutions in Figs. 2.1(a–c). Without loss of generality, we neglect
+self-coupling for all numerical simulations. Hence, the entries of the coupling ma-
+trix κ are zero on the diagonal. Indeed, in the new co-rotating coordinate frame
+φ↦→φ− (1/N) sin(α) sin(β)t, the system (1.1)–(1.2) with self-coupling is equivalent
+to the same system without self-coupling.
+In the following, we will focus our study on the splay and antipodal clusters
+with R2(a)∈ {0, 1}, i.e. the phase-locked solutions given by cases (i) and (ii) of
+Proposition 2.4. We further remark that the phase-locked solutions (2.2)–(2.3) are
+relative equilibria with respect to the phase-shift deﬁned in section 1,i.e., they are
+equilibria in the co-rotating frameφ↦→φ + Ωt.
+If R2(a) = 1, Proposition 2.4 implies thatai are either 0 or π. Therefore, there
+are 2N−1 isolated solutions of this kind. Note that the in-phase synchronous solution
+is an antipodal one-cluster solution.
+The situation is diﬀerent for the splay cluster. The relationR2(a) = 0 gives the
+N− 2 parametric (N >2) family
+(2.5) S :=
+{
+(φi,κij) :φi = Ωt +ai, κij =− sin(ai−aj +β),
+N∑
+j=1
+sin(2aj) =
+N∑
+j=1
+cos(2aj) = 0
+}
+,
+where Ω = cos(α−β)/2. Moreover, analogously to [9], one can show thatS is the
+union ofN− 2 dimensional manifolds.
+6 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+index
+i
+φ
+j
+index j
+(a)
+π
+index j
+(b)
+π
+π
+ψ
+index j
+(c)
+κij
+Splay Antipodal Double antipodal
+Figure 2.1 . Illustration of the three types of one-cluster solutions given by (2.2)–(2.3) for
+an ensemble of 50 oscillators. One-cluster solutions (a) of splay type (R2(a) = 0) for α = 0.3π,
+β = 0.1π, (b) of antipodal type (R2(a) = 1), forα = 0.2π, β =−0.95π and (c) of double antipodal
+type satisfying condition (iii) of Proposition 2.4 withm = 30 for α = 0.3π, β =−0.15π.
+eia4
+(a) (b) (c) eia2
+eia1
+eia3 eia2
+eia1 eia1
+eia2
+eia3
+Figure 2.2. Illustration of the family of solutionsS (a) N = 2, (b)N = 3, (c)N = 4.
+The structure of the solution family (2.5) is illustrated in Figs. 2.2(a–c) forN =
+2, 3, 4. Figure 2.2(a) shows one of the two disjoint one-dimensional subsets ofS for
+the case of two adaptively coupled oscillators modulo common rotation of the phases
+on the circle. In fact, the oscillators have to have a phase shift ofπ/2 in order to meet
+the conditionR2(a) = 0, i.e. a = (γ,γ +π/2), γ∈ [0, 2π). The dimension ofS for
+N = 2 is one. For a system consisting of three or four phase oscillators the dimension
+of S is either 1 or 2, respectively. For N = 3, one has a = (γ,γ +π/3,γ + 2π/3),
+see Fig. 2.2(b). For the caseN = 4, we havea = (γ,γ +ξ,γ +π/2,γ +ξ +π/2),
+γ,ξ ∈ [0, 2π), see Fig. 2.2(c).
+Note that the set of phases satisfying the conditionR1(a) = 0 was described
+in [9, 14, 8]. Our case of splay clusters can be related to this set using the equality
+R2(a) =R1(2a) = 0.
+Rotating-waves are a particular case of the splay cluster, namely, the following
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 7
+corollary holds.
+Corollary 2.5. For anyk∈{ 1,...,N − 1}, k⁄=N/2 the rotating-wave
+φi = Ωt + (i− 1)2πk
+N ,
+κij =− sin
+(
+(i−j)2πk
+N +β
+)
+,
+with Ω = cos(α−β)/2 is a solution of system (1.1)–(1.2).
+Let us make a short remark, which allows for a better understanding and interpre-
+tation of the phase-locked solutions given in Proposition 2.4. Assume that the phase
+variables are in a phase-locked solutionφi = Ωt +ai. Then, the coupling weightsκij
+have to satisfy the linear system
+˙κij =−ϵκij−ϵ sin(ai−aj +β).(2.6)
+This system has the unique solution κij = − sin(ai−aj +β) which is constant,
+bounded on R, and asymptotically stable ast→∞ . Therefore, the speciﬁc network
+connectivityκij =− sin(ai−aj +β) is associated with a given phase-shifta.
+3. Multi-cluster solutions. As previous numerical studies [26] found out, the
+phase-locked solutions described in section 2 can act as building blocks for (hierarchi-
+cal) multi-cluster solutions.
+Definition 3.1. Phase oscillatorsφi(t) form amulti-cluster if they can be sep-
+arated intoM groups of phase-locked oscillators (clusters), i.e., for allµ∈{ 1,...,M }
+the phase oscillators φi,µ, i ∈ {1,...,N µ}, from each group µ satisfy φi,µ(t) =
+sµ(t) +ai,µ.
+The appearance of multi-clusters is interesting and nontrivial, since such solutions, in
+contrast to one-clusters, are no more relative equilibria of (1.1)–(1.2), but are periodic
+or quasi-periodic solutions, which appear due to the special structure of the equation
+and adaptive nature of the coupling. The oscillators within one cluster posses a
+synchronized temporal dynamics with possible phase lags. In a multi-cluster, the
+coupling matrixκ can be divided into diﬀerent blocks according to the division by
+clusters: kij,µν will refer to the coupling weight between thei-th oscillator of cluster
+µ to thej-th oscillator of clusterν.
+Depending on the type of the constituting individual clusters, diﬀerent multi-
+clusters may be observed: splay, antipodal and mixed type. The following sections
+describe each particular multi-cluster solution.
+3.1. Multi-cluster solutions of splay type. The multi-cluster solutions of
+splay type are composed by the clusters from the continuous family S of phase-
+locked solutions withR2(a) = 0 and diﬀerent frequencies. The following proposition
+describes them.
+Proposition 3.2. System (1.1)–(1.2) possesses the multi-cluster solution
+φi,µ(t) = Ωµt +ai,µ, i = 1,...,N µ
+µ = 1,...,M(3.1)
+κij,µν(t) =−ρµν sin(∆Ωµνt +ai,µ−aj,ν +β−ψµν), j = 1,...,N ν
+ν = 1,...,M(3.2)
+8 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+with pairwise diﬀerent frequenciesΩµ, ∆Ωµν := Ωµ−Ων,ρµν :=
+(
+1 + (∆Ωµν/ϵ)2
+)− 1
+2
+and ψµν := arctan(∆Ωµν/ϵ) if and only if
+R2(aµ) = 0 for all µ = 1,...,M and the frequencies (Ω1,..., ΩM) solve the
+following system of equations
+Ωµ = 1
+2N
+M∑
+ν=1
+ρµνNν cos(α−β +ψµν), µ = 1,...,M.(3.3)
+Note thatρµν and ψµν are functions ofΩµ− Ων.
+Similarly to the one-cluster case, multi-cluster solutions of splay type give rise to a
+(N− 2M− 1)-dimensional manifold of solutions
+SM :=
+{
+(φi,µ,κij,µν) : (φi,µ,κij,µν) as in (3.1)-(3.2),
+R2(aµ) = 0 for allµ = 1,...,M
+}
+.
+Let us remark that the collective frequencies (3.3) are only deﬁned up to a con-
+stant due to the phase-shift symmetry of system (1.1)–(1.2) while the frequency dif-
+ference is unaﬀected. An example of a 3-cluster solution of splay type is shown in
+Figure 3.1. The solution was obtained by integrating system (1.1)–(1.2) numerically
+starting from random initial conditions. After suﬃciently long transient time, the
+order of the oscillators is given by ﬁrst sorting the oscillators with respect to their
+average frequencies. After that the oscillators with the same frequency are sorted by
+their phases. It can be seen from the pictures that the sizes of the three clustersNµ
+(µ = 1, 2, 3) possesses a hierarchical structure,i.e., N3 < N2 < N1. The coupling
+strengths between oscillators of the same cluster vary in a larger range than between
+those of diﬀerent clusters. The coupling between diﬀerent clusters scales withϵ since
+ρµν =ϵ/∆Ωµν +O
+(
+(ϵ/∆Ωµν)3
+)
+and is thus close to zero (uncoupled). The oscillators
+of the same cluster evolve in time with the same frequencies˙φi,µ = Ωµ,i = 1,...,N µ.
+Let us consider the case of two-clusters in more details. Letφi,µ (µ = 1, 2) with
+N1 and N2 being the numbers of oscillators in cluster 1 and 2, respectively. The
+following result follows from the Proposition 3.2.
+Corollary 3.3. SupposeR2(aµ) = 0 for µ = 1, 2, then
+φi,1 = Ω1t +ai,1, i = 1,...,N 1
+φi,2 = Ω2t +ai,2, i = 1,...,N 2
+κij,µµ =− sin(ai,µ−aj,µ +β), µ = 1, 2
+κij,µν =−ρµν sin(∆Ωµνt +ai,µ−aj,ν +β−ψµν), µ,ν = 1, 2;µ⁄=ν
+is a two-cluster solution of system (1.1)–(1.2) with
+(3.4) (∆Ω12)1,2 = 1
+2
+(
+n1− 1
+2
+)
+cos(α−β)
+± 1
+2
+√(
+n1− 1
+2
+)2
+cos2(α−β)− 2ϵ(2ϵ + sin(α−β)),
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 9
+(c)
+φ
+j
+index j
+index
+i
+time
+index j
+index j
+κij φi(a) (b)
+(d)
+Ω
+j
+Figure 3.1 . Three-cluster of splay type. (a) Coupling weights att = 10000 showing three
+clusters; (b) Distribution of the phases within each cluster; space-time raster plot; (c) Average
+frequency of oscillators; each plateau corresponds to one cluster; (d) Oscillator phasesφi(t) at ﬁxed
+time t = 10000. Parameter values:ϵ = 0.01, α = 0.3π, β = 0.23π, andN = 100.
+(3.5) Ωµ = 1
+2 (nµ cos(α−β) +ρµνnν cos(α−β +ψµν)), (µ,ν = 1, 2;µ⁄=ν),
+wherenµ =Nµ/N and ψµν, ρµν as in Proposition 3.2.
+The explicit expressions for the frequencies∆Ω12, Ω1,2 and other parameters of the
+solutions follow from the system of equations (3.3), which can be solved explicitly
+leading to (3.4)–(3.5) forM = 2. For any given relative cluster sizenµ, equations (3.4)
+and (3.5) provide either two, one, or no solutions corresponding to the two-cluster
+solution. Hence, for each ﬁxed set of parameters, there may be up to2(N− 4) such
+solutions.
+Figure 3.2 shows the frequency diﬀerences∆Ω12 of these solutions as functions
+of parameterβ for diﬀerent number of oscillationsN and adaptation parametersϵ.
+Interestingly, the frequencies of the solutions depend only on the diﬀerenceα−β, see
+(3.4)–(3.5). By increasing the number of oscillatorsN in the system, the number of
+solutions increases accordingly. This can be seen from Fig. 3.2(a–b) where we increase
+10 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+∆Ω
+12
+∆Ω
+12
+β/π β/π
+(a) (b)
+(c) (d)
+Figure 3.2 . The ﬁgures show all one- and two-cluster solutions of splay type for the sys-
+tem (1.1)–(1.2). For this, the frequency diﬀerences∆Ω12 are displayed corresponding to the equa-
+tions (2.4) and (3.4). The dotted lines (black) indicate unstable solutions while the solid lines (blue)
+indicate stable solutions. Here, every second solution is plotted for the sake of visibility. Parameter
+values: (a) N = 20, ϵ = 0.01; (b)N = 50, ϵ = 0.01; (c)N = 50, ϵ = 0.001; (d)N = 50, ϵ = 0.1;
+α = 0.3π is ﬁxed for all panels.
+the number of oscillators fromN = 20 to N = 50 with all other parameters ﬁxed.
+The set of 2-cluster solutions is represented by all∆Ω12(β) for a given parameterβ.
+In accordance with (3.4) the number of solutions increases with increasingN. The
+region of non-existence of the multi-cluster solutions corresponds to the cases where
+the argument beneath the root in (3.4) becomes negative. The size of the existence
+gap depends furthermore on the choice of the time separation parameterϵ. This can
+be seen by comparing Fig. 3.2(b–d) where we vary the value forϵ.
+3.2. Multi-cluster solutions of antipodal type. In the case when the os-
+cillators are phase synchronized or in an anti-phase relation within each cluster, the
+situation is diﬀerent to what was described before. Particularly, the linear growth of
+the oscillator phases within each cluster is modulated by periodic or quasi-periodic
+terms of orderϵ. That is, the clusters possess the formφi,µ(t) = Ωµt+ai,µ +ϵpµ(t,ϵ ).
+Here, we give important necessary conditions for the existence of such solutions and
+their asymptotic expansion inϵ. Additionally, we provide numerical results show-
+ing these solutions. In particular, we present a system of equations for the cluster
+frequencies Ωµ.
+Proposition 3.4. Suppose 2ai,µ = aµmod 2π for all µ = 1,...,M and i =
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 11
+1,...,N µ. If system (1.1)–(1.2) possesses antipodal multi-cluster solution(φi,µ,κij,µν)
+then its ﬁrst asymptotic expansion inϵ is given by
+φ(1)
+i,µ = Ω(1)
+µ t +ai,µ−ϵ
+M∑
+ν=1
+ν⁄=µ
+nν
+4
+(
+∆Ω(1)
+µν
+)2 cos(2∆Ω(1)
+µνt +aµ−aν +α +β),
+κ(1)
+ij,µµ =− sin(ai,µ−aj,µ +β),
+κ(1)
+ij,µν = ϵ
+∆Ω(1)
+µν
+cos(∆Ω(1)
+µνt +ai,µ−aj,ν +β), µ ⁄=ν
+with the cluster frequenciesΩ(1)
+µ up to ﬁrst order inϵ whenever the following implicit
+equation can be solved
+Ω(1)
+µ =
+
+nµ sin(α) sin(β)−ϵ
+M∑
+ν=1
+ν⁄=µ
+nν
+2∆Ω(1)
+µν
+sin(α−β)
+
+.(3.6)
+Here,µ = 1,...,M, i,j = 1,...,N µ and ∆Ωµν := Ω(1)
+µ − Ω(1)
+ν .
+This ﬁrst order perturbation reveals a nonlinear modulationpµ, which is periodic or
+quasi-periodic with the frequencies∆Ω(1)
+µν given by the diﬀerences in the frequencies
+of the clusters.
+Figure 3.3 shows the numerically obtained 3-cluster solution of antipodal type.
+The dynamics of system (1.1)–(1.2) is shown after a suﬃciently long transient so that
+it represents dynamically stable solution (more on stability in section 4). One can
+clearly observe three clusters in the coupling matrix. Similarly to the previous multi-
+cluster cases, we ﬁrst sort the oscillators with respect to their average frequency
+and subsequently by their phases. In contrast to the splayed distribution of the
+phases described in section 3.1, the oscillators within the clusters additionally form
+two groups, in which the phases diﬀer byπ.
+In order to observe the modulation of the cluster frequencies, time series for three
+representative oscillators from each cluster are shown in Fig. 3.4(a). The averaged
+linear growth of the phases due to⟨Ωµ⟩t has been subtracted to show the modu-
+lation. Such small but non-vanishing oscillations do not exist in the case of splay
+type multi-clusters. In addition, the black dashed lines show the modulation given by
+Proposition 3.4 conﬁrming that the asymptotic expansion describes the whole tem-
+poral behaviour very well. Furthermore, Proposition 3.4 implies that the amplitudes
+of the modulations are proportional tonν/(∆Ω(1)
+µν )2. Thus, if the diﬀerence in the
+frequencies is high the amplitude is small and vice versa. This relation is also reﬂected
+by the power spectrum, see Fig. 3.4(b). Figure 3.4(b) conﬁrms that the frequencies of
+the modulation oscillations correspond to the diﬀerences of the average frequencies.
+Let us consider the case of two clusters in more details. LetN1 andN2 =N−N1
+be the numbers of oscillators in group 1 and 2, respectively. The following result
+follows from Proposition 3.4.
+Corollary 3.5. Suppose 2ai,µ = aµ for all µ = 1, 2 and i = 1,...,N µ. If
+system (1.1)–(1.2) possesses an antipodal multi-cluster solution(φi,µ,κij,µν) then its
+12 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+(c)
+φ
+j
+⟨Ω
+j⟩
+index
+i
+timeindex j
+κij φi(a) (b)
+(d)
+π
+π
+π
+index jindex j
+Figure 3.3. Three-cluster of antipodal type. (a) Coupling weights att = 10000 showing three
+clusters; (b) Distribution of the phases within each cluster; space-time raster plot; (c) Average
+frequency of oscillators; each plateau corresponds to one cluster; (d) Oscillator phasesφi(t) at ﬁxed
+time t = 10000. Parameter values:ϵ = 0.01, α = 0.3π, β =−0.53π, andN = 100.
+time ¯ω
+φ
+i,µ
+(t)−⟨
+Ω
+µ⟩t
+S
+(a) (b)
+Figure 3.4. For 3-cluster solution from Fig. 3.3, panel (a) shows time series of an oscillator
+from one of the clusters after subtracting the average linear growthφµ,i(t)−⟨Ωµ⟩t. The black dashed
+lines show the corresponding analytic results from the asymptotic expansion in Proposition 3.4. (b)
+Power spectrum of the time series given in (a).
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 13
+ﬁrst order asymptotic expansion inϵ is given by
+φ(1)
+i,1 = Ω(1)
+1 t +ai,1−ϵ n2
+4
+(
+∆Ω(1)
+12
+)2 cos(2∆Ω(1)
+12t +a1−a2 +α +β),
+φ(1)
+i,2 = Ω(1)
+2 t +ai,2−ϵ n1
+4
+(
+∆Ω(1)
+12
+)2 cos(2∆Ω(1)
+12t +a1−a2−α−β),
+κ(1)
+ij,µµ =− sin(ai,µ−aj,µ +β),
+κ(1)
+ij,µν = ϵ
+∆Ω(1)
+µν
+cos(∆Ω(1)
+µνt +ai,µ−aj,ν +β),
+with
+Ω(1)
+µ =
+(
+nµ sin(α) sin(β)−ϵ nν
+2∆Ω(1)
+µν
+sin(α−β)
+)
+for µ = 1, 2, ν⁄=µ, i,j = 1,...,N µ, ∆Ω(1)
+µν := Ω(1)
+µ − Ω(1)
+ν ,
+(
+∆Ω(1)
+12
+)
+1,2
+=
+(
+n1− 1
+2
+)
+sin(α) sin(β)±
+√(
+n1− 1
+2
+)2
+sin2α sin2β− ϵ
+2 sin(α−β).
+(3.7)
+This result follows directly from Proposition 3.4. It shows, in particular, that the
+system of equations (3.6) can be solved explicitly by (3.7) in case of two clusters.
+Similarly to the splay multi-clusters, for any ﬁxed set of parameters and eachn1,
+equation (3.7) can lead to two antipodal multi-clusters with two diﬀerent frequency
+diﬀerences. Hence, a large number of antipodal two-clusters can coexist for the same
+parameter values. Figure 3.5 illustrates such a coexistence, where we present the one-
+cluster solutions given by (2.4) and the solutions to the equation (3.7). Blue solid lines
+represent those solutions for which the asymptotic expansion led to an existing and
+stable two-cluster solutions of antipodal type. Note further that for two-cluster solu-
+tions of antipodal type, the asymptotic expansion presented in Proposition 3.4 turns
+into a formal expansion whenever|∆Ω|>ϵ , i.e.,ϵ is not assumed to be inﬁnitesimal
+(ϵ→ 0). The interval[−ϵ,ϵ ] is therefore highlighted in Fig. 3.5.
+3.3. Multi-cluster solutions of mixed type.We have seen how clusters are
+described consisting of oscillator groups of splay type (section 3.1) as well as clusters
+consisting of oscillator groups with in- and anti-phase relation (section 3.2). It is
+therefore reasonable to ask for multi-cluster solutions that consist of both of these
+types. In order to describe these solutions we have to loosen the deﬁnition of a multi-
+cluster solution.
+Definition 3.6. Phase oscillators φi(t) form a pseudo multi-cluster if they
+can be separated intoM groups such that for allµ∈{ 1,...,M } the phase oscillators
+φi,µ, i∈{ 1,...,N µ}, from each groupµ satisfy φi,µ(t) = Ωµt +si,µ(t) with bounded
+functions si,µ.
+Note that every multi-cluster solution is by deﬁnition already a pseudo multi-cluster
+solution.
+Proposition 3.7. Suppose 2ai,µ = aµ for all µ = 1,...,M 1, and R2(aµ) = 0
+for all µ = M1 + 1,...,M , i = 1,...,N µ where M1 is the number of antipodal
+14 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+∆Ω
+(1)12
+(a) (b)
+β/π β/π
+Figure 3.5. Two-cluster solutions (upper panels) and one-cluster solutions (lower panels) of
+antipodal type given by the asymptotic expansion in Corollary 3.5 and Proposition 2.4, respectively.
+For this, the diﬀerence of the frequencies∆Ω(1)
+12 is displayed corresponding to (3.7) and (2.4). The
+dotted lines (black) indicate unstable solutions while the solid lines (blue) indicate stable solutions.
+Here, every second solution is plotted for the sake of visibility. The insets show a blow-up of the
+interval [−ϵ,ϵ ]. Parameter values: (a) N = 20, ϵ = 0.01; (b)N = 50, ϵ = 0.01; α = 0.3π is ﬁxed
+for all panels.
+type clusters. The mixed pseudo multi-cluster solutions of (1.1)–(1.2) withφi,µ(t) =
+Ωµ(ϵ)t +si,µ(t) +ai,µ possess the following ﬁrst order asymptotic expansion inϵ
+φ(1)
+i,µ = Ω(1)
+µ t +ai,µ +ϵpi,µ;1(t),
+κ(1)
+ij,µµ =− sin(ai,µ−aj,µ +β),
+κ(1)
+ij,µν = ϵ
+∆Ω(1)
+µν
+cos(∆Ω(1)
+µνt +ai,µ−aj,ν +β),
+with
+pi,µ;1(t) =pµ;1 =−
+M1∑
+ν=1
+ν⁄=µ
+nν
+4
+(
+∆Ω(1)
+µν
+)2 cos(2∆Ω(1)
+µνt +aµ−aν +α +β)
+for µ = 1,...,M 1,
+pi,µ;1(t) =−
+M∑
+ν=1
+ν⁄=µ
+nν
+4
+(
+∆Ω(1)
+µν
+)2 cos(2∆Ω(1)
+µνt +ai,µ−aν +α +β)
+for µ = M1 + 1,...,M , and the cluster frequencies Ω(1)
+µ up to second order inϵ
+whenever the following system of equations can be solved
+Ω(1)
+µ =
+
+Ωµ;0−ϵ
+M∑
+ν=1
+ν⁄=µ
+nν
+2∆Ω(1)
+µν
+sin(α−β)
+
+(3.8)
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 15
+with
+Ωµ;0 =nµ sin(α) sin(β) µ = 1,...,M 1
+Ωµ;0 = nµ
+2 cos(α−β). µ =M1 + 1,...,M
+Here,µ = 1,...,M, i,j = 1,...,N µ and ∆Ω(1)
+µν := Ω(1)
+µ − Ω(1)
+ν .
+As in the previous sections, we are going to show that equation (3.8) possesses solu-
+tions. For this, we consider the case of two clustersφi,µ (µ = 1, 2).
+Corollary 3.8. Suppose 2ai,1 = a1 for all i = 1,...,N 1 and R(a2) = 0. The
+mixed pseudo multi-clusters of system (1.1)–(1.2) possess the following ﬁrst order
+asymptotic expansion inϵ
+φ(1)
+i,1 = Ω(1)
+1 t +ai,1,
+φ(1)
+i,2 = Ω(1)
+2 t +ai,2−ϵ n1
+4
+(
+∆Ω(1)
+12
+)2 cos(2∆Ω(1)
+12t +a1−ai,2−α−β),
+κ(1)
+ij,µµ =− sin(ai,µ−aj,µ +β),
+κ(1)
+ij,µν = ϵ
+∆Ω(1)
+µν
+cos(∆Ω(1)
+µνt +ai,µ−aj,ν +β),
+where
+Ω(1)
+µ =
+(
+Ωµ;0−ϵ nν
+2∆Ω(1)
+µν
+sin(α−β)
+)
+,
+Ω1;0 =n1 sin(α) sin(β),
+Ω2;0 = n2
+2 cos(α−β),
+(
+∆Ω(1)
+12
+)
+1,2
+= 1
+2
+[(
+n1− 1
+2
+)
+cos(α−β)− n1
+2 cos(α +β)
+]
+± 1
+2
+√[(
+n1− 1
+2
+)
+cos(α−β)− n1
+2 cos(α +β)
+]2
+− 2ϵ sin(α−β)
+(3.9)
+for µ = 1, 2, ν⁄=µ and i,j = 1,...,N µ.
+Illustration of the mixed 2-clusters is shown in Fig. 3.6. Moreover, we performed a
+Fourier analysis of the temporal behaviour of the oscillators, see Fig. 3.7. First, it can
+be observed that the oscillators representing the second cluster (i = 80, 100) show the
+same evolution in time but with a phase lag due to the spatial dependency described
+above. In order to show the agreement with the asymptotic expansion presented in
+Corollary 3.8, the analytic results are displayed with black dashed lines. Furthermore,
+the power spectrum shows a prominent peak at2⟨∆Ω⟩12 for both oscillators of the
+second cluster and a ﬂat curve for the representative of the ﬁrst cluster. These nu-
+merical results are in complete agreement with the analytic ﬁndings. Analogously, to
+the antipodal two-clusters, for any ﬁxed set of parameters and eachn1, equation (3.9)
+can lead to two multi-clusters of mixed type with two diﬀerent frequency diﬀerences.
+Hence, a large number of those clusters can coexist for the same parameter values.
+16 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+(c)
+index
+i
+timeindex j
+κij φi(a) (b)
+(d)
+φ
+j
+⟨Ω
+j⟩
+index jindex j
+π
+Figure 3.6. 2-Cluster solution of mixed type. (a) Coupling weights att = 10000 showing two
+clusters, (b) Distribution of the phases within each cluster, space-time representation. (c) Average
+frequency of each oscillator, (d) Oscillator phasesφi for ﬁxed timet = 10000. Parameter values:
+ϵ = 0.01, α = 0.3π, β =−0.4π, N = 100.
+Figure 3.8 illustrates such a coexistence, where we present the solutions to the equa-
+tion (3.9). Again, blue solid lines represent those solutions for which the asymptotic
+expansion led to an existing and stable two-cluster solutions of mixed type. Addition-
+ally, Figure 3.8 shows the one-cluster solutions of splay and antipodal type (in both
+cases ∆Ω12 = 0) together with their common regions of stability. As in the case of
+two-clusters of antipodal type, the asymptotic expansion presented in Proposition 3.4
+turns into a formal expansion whenever|∆Ω| > ϵ. The interval [−ϵ,ϵ ] is therefore
+highlighted in Fig. 3.8.
+4. Stabilityofclustersolutions. Insections2–3theexistenceofone-clusteras
+well as (pseudo) multi-cluster solutions were discussed. This section is devoted to the
+analysis of their stability. First, the stability of the one-cluster solutions is analyzed
+and an analytic result for all rotating-wave one-cluster solutions which are described
+in section 4.1 is presented. The ﬁndings are discussed with respect to all one-cluster
+solutions found in Proposition 2.4. Subsequently, we use numerical simulations in
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 17
+time ¯ω
+φ
+i,µ
+(t)−⟨
+Ω
+µ⟩t
+S
+(a) (b)
+Figure 3.7 . For mixed type 2-cluster solution from Fig. 3.6, panel (a) shows time series of
+an oscillator from one of the clusters after subtracting the average linear growthφµ,i(t)−⟨ Ωµ⟩t.
+The black dashed lines show the corresponding analytic results from the asymptotic expansion in
+Proposition 3.7. (b) Power spectrum of the time series given in (a).
+∆Ω
+(1)12
+(a)
+β/π β/π
+(b)
+Figure 3.8 . Two-cluster solutions of mixed type (upper panels) and one-cluster solutions
+(lower panels) of either splay or antipodal type given by the asymptotic expansion in Corollary 3.8
+and Proposition 2.4, respectively. For this, the diﬀerence of the frequencies∆Ω(1)
+12 is displayed
+corresponding to (3.9) and (2.4). The dotted lines (black) indicate unstable solutions while the solid
+lines (blue) indicate stable solutions. Here, every second solution is plotted for the sake of visibility.
+The insets show a blow-up of the interval[−ϵ,ϵ ]. Parameter values: (a) N = 20, ϵ = 0.01; (b)
+N = 50, ϵ = 0.01; α = 0.3π is ﬁxed for all panels.
+order to analyze the stability for two-cluster solutions.
+4.1. One-cluster solutions. In order to study the local stability of one-cluster
+solutions described in section 2, we linearize the system (1.1)–(1.2) around the solu-
+18 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+tions (2.2)–(2.3). We obtain the following linearized system
+d
+dtδφi = 1
+N
+N−1∑
+m=0
+sin(ai−ai+m +β) cos(ai−ai+m +α) (δφi−δφi+m)(4.1)
+− 1
+N
+N−1∑
+m=0
+sin(ai−ai+m +α)δκi(i+m),
+d
+dtδκi(i+m) =−ϵ
+(
+δκi(i+m) + cos(ai−ai+m +β) (δφi−δφi+m)
+)
+,(4.2)
+where we have introduced the new labelm :=j−i and the conventioni+m = (i+m)
+mod N for convenience. Throughout this paragraph we will make use of Schur’s
+complement [13] in order to simplify characteristic equations. More precisely, any
+m×m matrix M in the 2× 2 block form can be written as
+M =
+(A B
+C D
+)
+=
+(Ip BD−1
+0 Iq
+)(A−BD−1C 0
+0 D
+)( Ip 0
+D−1C Iq
+)
+(4.3)
+whereAis ap×pmatrix andD is an invertibleq×q matrix. The matrixA−BD−1C is
+called Schur’s complement. A simple formula for the determinant ofM can be derived
+with the decomposition (4.3)
+det(M) = det(A−BD−1C)· det(D).
+This result is important for the subsequent stability analysis. Note that in the fol-
+lowing an overline indicates the complex conjugate.
+Lemma 4.1. Suppose ak = (0, 2πk/N,..., (N− 1)2πk/N)T with k∈{ 0,...,N −
+1} and the linear system around the one-cluster solutionφ = Ωt· (1,..., 1)T + ak is
+given by (4.1)–(4.2). Then there exist new coordinates(δψ,δζ ) such that the linearized
+system can be decomposed intoN linear diﬀerential equations of the form
+
+
+δ ˙ψl
+δ ˙ζl0
+...
+δ ˙ζl(N−1)
+
+ =Cl
+
+
+δψl
+δζl0
+...
+δζl(N−1)
+
+ l = 0,...,N − 1(4.4)
+with
+Cl :=
+( ˆλl b
+cl −ϵIN
+)
+,
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 19
+where, IN is theN-dimensional identity matrix and
+ˆλl = 1
+2 ((Z1(al)− 1) sin(α−β)−ℑ (Z2(ak)) cos(α +β) +ℜ(Z2(ak)) sin(α +β))
+(4.5)
++ 1
+4
+(
+Z1(a2k−l)iei(α+β)−Z1(a2k+l)ie−i(α+β)
+)
+.
+b = 1
+N
+(
+sin(−α),..., sin((N− 1)k 2π
+N −α)
+)
+,
+(4.6)
+cl =
+(
+0, cos(k 2π
+N −β)
+(
+1−eil 2π
+N
+)
+,..., cos((N− 1)k 2π
+N −β)
+(
+1−eil(N−1) 2π
+N
+))T
+(4.7)
+with anyj∈{ 1,...,N }.
+Proof. Due to the cyclic structure in the equations (4.1) and (4.2) it is possible
+to decouple them using a discrete Fourier ansatz [38]
+δφj =
+N−1∑
+l=0
+eilj 2π
+Nδψl,
+δκj(j+m) =
+N−1∑
+l=0
+eilj 2π
+Nδζlm.
+Taking this Fourier ansatz and plugging it into the equations (4.1) and (4.2) we get
+N−1∑
+l=0
+eilj 2π
+N ˙δψl = 1
+N
+N−1∑
+m=0
+sin(−mk 2π
+N +β) cos(−mk 2π
+N +α)
+N−1∑
+l=0
+eilj 2π
+N
+(
+1−eilm 2π
+N
+)
+δψl
+− 1
+N
+N−1∑
+m=0
+sin(−mk 2π
+N +α)
+N−1∑
+l=0
+eilj 2π
+Nδζlm,
+N−1∑
+l=0
+eilj 2π
+N ˙δζlm =−ϵ
+N−1∑
+l=0
+(
+eilj 2π
+Nδζlm + cos(−mk 2π
+N +β)eilj 2π
+N
+(
+1−eilm 2π
+N
+)
+δψl
+)
+.
+After making use of well known trigonometric identities and using the order parame-
+ters deﬁned in (2.1) we ﬁnd
+ˆλl = 1
+2N
+N−1∑
+m=0
+(
+sin(−4π
+N mk +α +β)− sin(α−β)
+)(
+1− cos(lm 2π
+N )− i sin(lm 2π
+N )
+)
+= 1
+2 ((Z1(al)− 1) sin(α−β)−ℑ (Z2(ak)) cos(α +β) +ℜ(Z2(ak)) sin(α +β))
++ 1
+4
+(
+Z1(a2k−l)iei(α+β)−Z1(a2k+l)ie−i(α+β)
+)
+.
+The row and the column vectorsbl andcl can directly be read of from the transformed
+equation above.
+Note that the valuesˆλl are exactly the eigenvalues for the case where no interaction
+between the oscillators and their coupling are assumed or the dynamics of the coupling
+20 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+weights are left constant. One might expect that due to the slow-fast dynamics of the
+system (1.1)– (1.2) a small perturbation in the coupling weights could be neglected
+for the analysis of stability [7]. In contrast, we show that the local dynamics of the
+system around the one-cluster solution depends on the interplay between phases and
+couplings.
+Proposition 4.2. Suppose ak = (0, 2π
+Nk,..., (N−1) 2π
+Nk)T and the linear system
+around the one-cluster solutionφ = Ωt·(1,..., 1)T +ak is given by (4.1)–(4.2). Then
+the JacobianJ of this linearized system possesses the following spectrum
+σ(J) ={−ϵ, (λl;1,2)l=0,...,N−1}
+with
+λl;1,2 =
+ˆλl−ϵ
+2 ± 1
+2
+√
+(ˆλl +ϵ)2 + 4ϵ (b·c)l(4.8)
+and ˆλl, bl, cl as deﬁned in (4.5), (4.6) and (4.7).
+Proof. Using Lemma 4.1 we decompose the linear system (4.1)–(4.2) into theN
+blocks (4.4). Consider now the characteristic polynomial for the(N + 1)× (N + 1)
+matrix Cl and assume thatλl⁄=−ϵ then by (4.3) we obtain
+det(λlIN+1−Cl) = det
+(
+λl− ˆλl −bl
+−ϵcl (ϵ +λl)IN
+)
+= (ϵ +λl)N−1
+(
+(ϵ +λl)(λl− ˆλl)−ϵ (b·c)l
+)
+= 0.
+Thus for eachl∈ 0,...,N − 1 there are N− 1 eigenvalues λl =−ϵ. For the two
+remaining eigenvalues we have to solve the quadratic equation
+λ2
+l + (ϵ− ˆλl)λl−ϵˆλl−ϵ (b·c)l = 0.(4.9)
+In the case of no weight dynamics or no coupling between the oscillators and the
+weights the eigenvalues would readλl;1 = ˆλl and λl;2 =−ϵ. Therefore, the spectrum
+would look like σc = {−ϵ, (ˆλl)l=0,...,N−1} with (N− 1)N-fold multiplicity for the
+eigenvalue−ϵ. In contrast to that, we get in general2N eigenvalues that are diﬀerent
+from−ϵ which stem from the interplay of phases and coupling weights. We should
+further mention that ˆλl(α + π
+2,β− π
+2 ) = (b·c)l(α,β ). With this we write equation
+(4.9) as
+λ2
+l (α,β ) +
+(
+ϵ− ˆλl(α,β )
+)
+λl−ϵ
+(
+ˆλl(α,β ) + ˆλl(α− π
+2,β + π
+2 )
+)
+= 0.
+The following corollary summarizes the results on the spectrum of the linearized
+system (4.1)–(4.2).
+Corollary 4.3. Suppose we haveak = (0, 2π
+Nk,..., (N− 1) 2π
+Nk)T and the linear
+system (4.1)–(4.2) then
+1. (in-phase and anti-phase synchrony) ifk = 0 or k = N/2, the spectrum is
+given by
+σ(C) =
+{
+(0)1, (−ϵ)(N−1)N+1, (λ1)N−1, (λ2)N−1
+}
+whereλ1 and λ2 solve λ2 + (ϵ− cos(α) sin(β))λ−ϵ sin(α +β) = 0,
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 21
+2. (incoherent rotating-wave) ifk⁄= 0,N/ 2,N/ 4, 3N/4, the spectrum is
+σ(C) =
+{
+(0)N−2, (−ϵ)(N−1)N+1,
+(
+−sin(α−β)
+2 −ϵ
+)
+N−3
+,
+(ϑ1)1, (ϑ2)1,
+(
+ϑ1
+)
+1,
+(
+ϑ2
+)
+1
+}
+whereϑ1 and ϑ2 solve ϑ2 +
+(
+ϵ + 1
+2 sin(α−β)− 1
+4iei(α+β))
+ϑ− ϵ
+2iei(α+β) = 0,
+3. (4-rotating-wave solution) ifk =N/4, 3N/4, the spectrum is
+σ(C) =
+{
+(0)N−1, (−ϵ)(N−1)N+1,
+(
+−sin(α−β)
+2 −ϵ
+)
+N−2
+, (λ1)1, (λ2)1
+}
+whereλ1 and λ2 solve λ2 + (ϵ + sin(α) cos(β))λ +ϵ sin(α +β) = 0.
+Here, the multiplicities for each eigenvalue are given as lower case labels.
+As we can see from this corollary there exists always at least one zero eigenvalue. This
+is due to the phase-shift symmetry of (1.1)–(1.2) we already discussed in section 1.
+The additional zero eigenvalues for the wave numbersk⁄= 0,N/ 2 can be explained
+with our ﬁndings from Proposition 2.4 and Corollary 2.5. These linear rotating-wave
+solutions belong to aN−2dimensional family of solutions characterized byR2(a) = 0.
+Thus, around any point of this family the linear equation
+N∑
+j=1
+ei2ajδφj = 0(4.10)
+holds for a certain choice of coordinates{δφ,δκij}, and hence there are two linearly
+independent equations for the inﬁnitesimal perturbationsδφi. This explains the ap-
+pearance of N− 2 zero eigenvalues. They correspond to the variation along the
+manifold of solution. In the special case ofk = N/4, 3N/4 the two algebraic equa-
+tions (4.10) are linear dependent and we are thus left with only one linear equation
+which increases the multiplicity of the zero eigenvalue by one. The results of Corol-
+lary 4.3 are presented in Fig. 4.1(a–c) and compared with numerical simulations. The
+numerical results are obtained by numerical integration of system (1.1)–(1.2) with
+N = 20. The initial conditions for each simulation are set to the one-cluster so-
+lution given in Proposition 2.4 with a small perturbation added to each dynamical
+variable and randomly chosen from the interval[−0.01, 0.01]. The numerical integra-
+tion is stopped aftert = 5000 time steps. The relative coordinates Θi := φi−φ1
+for i = 1,...,N are introduced in order to compare the initial phase conﬁguration
+with the distribution of the phases after numerical integration. A one-cluster is said
+to be stable if Θ after numerical integration is closer to the theoretical one-cluster
+state than Θ of the initially perturbed phase distribution. Closeness is measured by
+the Euclidean distance. Otherwise, the one-cluster solution is considered as unstable.
+The parameter regions in the(α,β ) plane for stable one-cluster solutions are coloured
+blue while the regions for unstable one-cluster solutions are coloured yellow. The
+black dashed lines correspond to the borders of stability determined with the results
+in Corollary 4.3. In particular, a state is asymptotically stable ifℜ(λ) < 0 for all
+λ∈σ(C) except the zero eigenvalues related to the perturbations along the solution
+families. In all three cases the numerical and analytic results agree very well.
+In addition to the analysis of rotating-wave solutions, we investigate the stability
+for the splay solutions characterized byR(a) = 0 and the antipodal solutions char-
+acterized byR(a) = 1 . For this, the stability is calculated by taking the solutions
+22 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+β/π
+α/π
+β/π β/π
+(a) (b) (c)
+Figure 4.1. Stability diagrams for rotating-wave clusters depending on the parametersα andβ
+are shown. The regions are coloured according to numerical simulation. Blue regions correspond to
+stable solutions while yellow regions correspond to unstable solutions. The black dashed lines show to
+the borders of stability determined by Corollary 4.3. Parameterϵ = 0.01 is ﬁxed fo all simulations.
+(a) k = 1, (b)k =N/2, (c)k =N/4
+β/π
+α/π
+β/π
+(a) (b)
+Figure 4.2. Stability diagram for splay and antipodal one-cluster solutions depending on the
+parameters α and β are shown. The regions are coloured according numerical eigenvalues of the
+Jacobian 4.1–4.2. Blue areas correspond to stable while yellow areas correspond to unstable regions.
+Parameterϵ = 0.01 is ﬁxed in all simulations. (a) Splay solution as in Fig. 2.1(a), (b) Anti-phase
+solution as in Fig. 2.1(b).
+displayed in Fig. 2.1(a–b), plugging them into the Jacobian matrix given by the lin-
+earized equations 4.1–4.2 and determining the eigenvalues of the Jacobian numerically.
+The results of this procedure are shown in Fig. 4.2 together with the borders of stabil-
+ity calculated with Corollary 4.3. In comparison with Fig. 4.1, the analysis yields the
+same stability regions which are found for the rotating-wave solutions. The numerical
+ﬁndings indicate that the stability for all splay and antipodal solutions coincide with
+the stability of the rotating-waves.
+4.2. Stability of multi-cluster solutions.In section 3.1 we discussed multi-
+cluster solutions of splay type and showed under which condition they exist. The
+solutions for two-cluster solutions of splay type and their stability are presented in
+Fig. 3.2. In Fig. 3.2(b) the solution for the case of50 oscillators is shown. The solid
+lines (blue) correspond to solutions that are stable. It can be seen that whenever a
+2-cluster solution is stable the one-cluster solution (with∆Ω12 = 0) is also stable.
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 23
+β/π
+α/π
+Figure 4.3 . Stability diagram for the one-cluster and two-cluster solution of the splay type
+depending on the parametersα andβ. Yellow region corresponds to the instability of both solutions,
+dark blue to the stability of both solutions, and light-blue to the stability of only the one-cluster
+solution. Parameterϵ = 0.01 is ﬁxed in all simulations.
+A more detailed validation of this statement is presented in Fig. 4.3, where we show
+the stability regions of both one- and two-cluster solutions in the(α,β ) plane. The
+stability for each type of cluster solution is determined numerically. The numerical
+approach was already introduced in section 4.1. For the two-cluster solutions the
+norm for the phase conﬁguration is calculated in the relative coordinates given by
+Θi,µ = φi,µ−φ1,µ with µ = 1, 2. Additionally, we calculated the maximal value of
+all inter-cluster connections and compared it to the theoretical maximum given by
+ρ12. If after numerical integration the maximal inter-cluster coupling is bigger than
+ρ12+0.01, the two-cluster is considered as unstable. Here, region where the both types
+of solutions are stable are colored in dark blue. Regions of only stable one-cluster
+solutions are colored in light blue. Since two-cluster solutions do not exist for certain
+values ofα andβ, we can ﬁnd a light blue stripe in the middle of Fig. 4.3. Further, we
+have not found any conﬁguration ofα andβ for which two-cluster solutions are stable
+and one-cluster are not. This supports the claim that the stability of a one-cluster
+solution is necessary condition for the stability of a two-cluster solution. This can be
+explained by the fact that for the stability of the multi-clusters, it is necessary that its
+one-cluster components are each stable with respect to the perturbations that disturb
+the structure of just one cluster (see similarly in [32]). A more rigorous formulation
+of this issue is beyond the scope of this paper.
+Figure 3.2(b) further provides us with information about the stability of two-
+cluster solutions depending on the ratio between cluster sizes. First, due to (3.4)
+there exist two branches of two-cluster solution of splay type. Only solutions with
+higher frequency diﬀerence are stable which can be seen in the inset of Fig. 3.2(b).
+For an increasing number of oscillators in the second cluster of relative sizen2 =
+1−n1 the stability changes. Above a certain value ofn2 both branches are unstable.
+This observation explains why only multi-cluster solutions with unequal as well as
+hierarchical cluster sizes were found in simulations, see Fig. (3.1) and [26].
+5. Conclusions. In summary, this work provides a wide-ranging analysis of
+multi-cluster solutions in networks of adaptively coupled phase oscillators. It covers
+questions on the existence, the explicit form as well as the stability of such solu-
+tions. It is well known that under certain conditions systems of coupled oscillators
+can be simpliﬁed to systems of coupled phase oscillators. In these cases, the model
+24 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+of phase oscillators captures the underlying dynamics of complex dynamical systems.
+In this sense, the considered model may have multiple applications. In particular, the
+model which was in the focus of this work was inspired by dynamical neuronal net-
+works with adaptive plasticity. Therefore, it may help to understand the fundamental
+mechanisms of pattern formation in neuronal systems.
+Here, we have focused on multi-cluster solutions, which are composed of several
+one-clusters with distinct frequencies. The one-cluster solutions are shown to be of the
+following three types: splay type, antipodal type, and a new third type, named double
+antipodal, see Proposition 2.4. Moreover, it was shown that all one-cluster solutions
+of splay type form anN− 2 dimensional family and thus give rise to inﬁnitely many
+solutions the system can achieve. With this, we have generalized and extended the
+results reported in [7, 19, 35].
+While the one-cluster solutions are relative equilibria of our system due to the
+phase-shift symmetry, the multi-cluster solutions contain components with diﬀerent
+frequencies, and, hence, theycannotbereducedtoanequilibriumbytransforminginto
+another co-rotating frame. As a result, the study of multi-clusters is more involved.
+However, to our surprise, we have still been able to ﬁnd an explicit form of multi-
+clusters with the components of the splay type. Remarkably, in addition to its ring-
+like spatial structure that dynamically emerges, the network behaves in such a case
+(quasi-)periodically in time such that the whole solution can be interpreted as a
+spatial-temporal wave.
+The analysis of multi-cluster solutions of antipodal type is more subtle due to the
+modulation of the frequency. More speciﬁcally, we look at multi-clusters with bounded
+frequency modulation. For these types of multi-clusters, we derive an asymptotic
+expansion in the parameterϵ that gives explicit existence conditions.
+In addition, we have shown the existence of mixed multi-clusters, which consist
+of clusters of splay type and clusters of antipodal type. For the mixed multi-clusters,
+the temporal behavior within one cluster has been shown to be slightly non-identical,
+namely, the oscillators possess the same averaged frequency, but they still can have a
+bounded quasi-periodically modulated phase diﬀerence.
+We have been able to study the stability of multi-clusters analytically to some
+extent, and otherwise numerically. The main messages from this analysis are as
+follows: there is a high degree of coexistence of stable multi-clusters that can be
+reached from diﬀerent initial conditions; in particular, a certain amount of imbalance
+in the number of oscillators within the clusters is needed to achieve stability. This
+explains the appearance of only hierarchical structures in numerical simulations.
+Moreover, the ﬁndings on multi-cluster solutions as they are reported in this arti-
+cle are in very good agreement with previous results on adaptive neural networks [43].
+Here, stable multi-cluster solutions of coherently spiking neurons with weak but time-
+dependent inter-cluster coupling are reported. With this work we shed some light on
+these generic time-dependent network patterns.
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 25
+Appendix A. Proofs of propositions from sections 2–3.
+A.1. One-cluster solution. Here we provide a proof of Proposition 2.4. We
+ﬁrst need a preliminary lemma.
+Lemma A.1. For a phase-locked solutionφ(t), R2(φ(t)) = 1 for allt if and only
+ifφ(t) is either an in-phase or an anti-phase synchronous solution.
+Proof. As follows from table 2.1,R2(a) = 1
+N
+⏐⏐⏐∑N
+j=1ei2aj
+⏐⏐⏐ = 1 for all in-phase and
+anti-phase solutions. Let us show the opposite. IfR2(a) = 1, thenei2aj =ei2a1 = 1
+for allj, since
+⏐⏐⏐∑N
+j=1ei2aj
+⏐⏐⏐≤∑N
+j=1
+⏐⏐ei2aj
+⏐⏐ =N. Hence,aj∈{ 0,π}. The latter means
+that the phase-locked solution is either in-phase, if allaj have the same values, or
+anti-phase otherwise.
+Now we present the proof of Proposition 2.4.
+Proof. Substituting (2.2)–(2.3) into (1.1)–(1.2) we obtain˙κij = 0 and
+˙φi(t) = Ω = 1
+N
+N∑
+j=1
+sin(ai−aj +β) sin(ai−aj +α)
+= 1
+2 cos(α−β)− 1
+2ℜ
+(
+e−i(2ai+α+β)Z2(a)
+)
+.(A.1)
+Therefore solution (2.2)–(2.3) are solutions if and only if the expression on the right
+hand side of the equation (A.1) is independent of the oscillators indexi = 1,...,N .
+In particular, for any choice ofai the complex second order parameter is either zero
+or can be written asZ2(a) = R2(a)e−iγ. Thus, according to (A.1)ai has to be such
+that R2(a) = 0 or cos(2ai +α +β +γ) is independent ofi. For anyα,β and γ the
+latter requirement is equivalent with2ai∈{ 0,−2(α +β +γ)}. Here, we made use
+of the phase-shift symmetry of (1.1)–(1.2) by setting2a1 = 0. Due to the deﬁnition
+of the complex order parameter the value forγ depends on the choice of the phase
+lags ai. Assuming that one fraction q1 = Q1/N of the oscillators have 2ai = 0
+with Q1 ∈ {1,...,N − 1} and the other fraction of oscillators q2 = 1 −q1 have
+2ai =−2(α +β +γ) one obtains
+q1 +q2e−i2(α+β)e−i2γ =R2(a)e−iγ.
+which is equivalent to the equations
+q1 cos(γ) +q2 cos(γ + 2ϑ) =R2(a),
+q1 sin(γ)−q2 sin(γ + 2ϑ) = 0.(A.2)
+withϑ =α+β. Here, the ﬁrst equation gives the value for the second order parameter
+while the second equation determinesγ. A special solution can be given if we set
+q2 = 0, equivalentlyq1 = 1 . Then γ = 0 and γ =π would solve the equation above
+and thus 2ai = 0 for alli = 1,...,N . Note that, for both values ofγ the value for
+the complex second order parameter coincideZ2(a) = 1. This solution corresponds to
+R2(a) = 1. Inanyothercasethelastequationcanbewrittenintheform sin(γ−ν) = 0
+which has two solutionsγ =ν,ν +π. Both solution would coincide while determining
+2ai. Writing (A.2) as
+1
+C ((q1− (1−q1) cos(2ϑ)) sin(γ)− (1−q1) sin(2ϑ) cos(γ)) = 0
+26 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+where the normalization constantC is deﬁned as
+C =
+√
+(q1− (1−q1) cos(2ϑ))2 + (1−q1)2 sin2(2ϑ),
+yields the equations
+sin(ν) = sin(2ϑ)√(
+q1
+1−q1
+)2
++ 1− 2 q1
+1−q1
+cos(2ϑ)
+,(A.3)
+cos(ν) = q1− (1−q1) cos(2ϑ)√
+(1−q1)2 +q2
+1− 2q1(1−q1) cos(2ϑ)
+.
+Therefore, considering the inverse function arcsin : [−1, 1] → [−π/2,π/ 2] applied
+to (A.3) determinesν to be eitherν′ or π−ν′, whereν′ := arcsin(sin(ν)) and sin(ν)
+as given in (A.3). The second equation for cos(ν) then ﬁxesν to take one of the
+values. Thus,γ exists and is unique for everyq1∈ [0, 1). The Proposition is proved
+by Taking into account that a ﬁnite numberN of oscillatorsq1 takes values in the
+range from 1/N to (N− 1)/N and deﬁningγ :=−ψ−ϑ.
+A.2. Multi-cluster solutions of splay type.Proof of Proposition (3.2).We
+prove by direct substitution. Plugging (3.1) and (3.2) into (1.2) the identity is ob-
+tained. Further, substituting (3.1) and (3.2) into (1.2) we obtain
+Ωµ = 1
+2N
+M∑
+ν=1
+ρµν
+Nµ∑
+j=1
+(cos(α−β +ψµν)
+− cos(2(∆Ωµνt +ai,µ−aj,ν) +α +β−ψµν))
+=
+M∑
+ν=1
+ρµν
+(nν
+2 cos(α−β +ψµν)− 1
+2ℜ
+(
+e−i(2∆Ωµνt+2ai,µ+α+β−ψµν)Z2(aν)
+))
+.
+If Z2(aµ) = 0 for allµ = 1,...,M then
+Ωµ = 1
+N
+M∑
+ν=1
+Nµ∑
+j=1
+ρµν cos(α−β +ψµν)
+which agrees with the system (3.3) for the frequenciesΩµ. On the contrary, assume
+that the multi-cluster phase-locked solution (3.1) and (3.2) solve the equation (1.1).
+Analog to Proposition 2.4∑M
+ν=1ρµνℜ
+(
+e−i(2∆Ωµνt+2ai,µ+α+β−ψµν)Z2(aν)
+)
+has to be
+independent of the oscillator indexi = 1,...,N µ andt∈ R for allµ = 1,...,M . Take
+anyµ = 1,...,M and supposeZ2(aν)⁄= 0 for ν∈A with A⊆{ 1,...,M }. Then
+M∑
+ν=1
+ρµνℜ
+(
+e−i(2∆Ωµνt+2ai,µ+α+β−ψµν)Z2(aν)
+)
+=
+∑
+ν∈A
+ρµν (R2(aν) cos(2∆Ωµνt + 2ai,µ +α +β−ψµν +γν))
+(A.4)
+where γν is deﬁned as in Proposition 2.4, see type 2 or 3. For ﬁxedµ all frequency
+diﬀerences∆Ωµν diﬀer due to the assumption that the frequenciesΩµ are all pairwise
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 27
+diﬀerent. This is why only terms with ∆Ωµν and ∆Ωµν′ = −∆Ωµν (ν,ν′ ∈ A)
+are candidates to compensate each other in the right hand side of (A.4) to give a
+constant value forΩµ. Therefore, the number of clusters withZ2(aν)⁄= 0 excluding
+the µ-th cluster which is under consideration has to be even, i.e.,|A\{µ}| even for
+all µ = 1,...,M . This already yields that|A| odd and A ={1,...,M }. Consider
+now µ such that Ωµ = minν∈1,...,M Ων. Then for every other ν∈{ 1,...,M } with
+∆Ωµν < 0 there has to beν′∈{ 1,...,M } so that−∆Ωµν = ∆Ωµν′ = Ωµ− Ων′.
+Hence, Ων′ < Ωµ which contradicts that Ωµ = minν∈1,...,M Ων. Therefore, for this
+choice ofµ∈ 1,...,M the expression in (A.4) cannot be constant contradicting the
+assumption made in the beginning.
+A.3. Asymptotic expansions of multi-cluster solutions. In this section
+we give an analytic description of multi-cluster solutions in terms of an asymptotic
+expansion. We consider therefore the expansion ofr-th order together with a multi-
+time scale ansatz [53]
+φ(r)
+i,µ(ϵ,t ) := Ω(r)
+µ (τ0,...,τ r) +ai,µ +
+r∑
+l=1
+ϵlpi,µ;l(t)
+κ(r)
+ij,µν(ϵ,t ) :=
+r∑
+l=0
+ϵlkij,µν;l(t)
+µ,ν = 1,...,M
+i,j = 1,...,N µ
+(A.5)
+where Ω(r)
+µ ∈C1(Rr+1) is a function depending on the multi-time scalesτl :=ϵlt. We
+show under under which conditions this expansion describes the time evolution for
+the system (1.1)–(1.2).
+The section is organized as follows. We ﬁrst introduce some notations and state
+the main result. Then, we outline the strategy of the proof. We then prove some
+technical lemmata that will help us to prove the main result. For ease of notation,
+for the remainder of the section indices are used as follows. Small Latin lettersi,j in
+the subscript are oscillator indices while Greek lettersµ, ν represent cluster indices.
+These are separated by a comma. Two further indices, separated by semicolon, are
+the coeﬃcient index and the mode index, respectively. The indices in superscript are
+either powers or the order for the expansion which are then written in parenthesis.
+The following deﬁnition is introduced to handle the order of approximation.
+Definition A.2. Letf : R× R→ R andg : R× R→ R real functions. We deﬁne
+the following notations:
+1. f(ϵ,t )∈O(g(ϵ,t )) as ϵ→ 0 on the intervalI⊆ R if for anyt∈I there exist
+C(t)> 0 and ϵ0(t)> 0 such that|f(ϵ,t )|<C (t)|g(ϵ,t )| for allϵ<ϵ 0(t),
+2. f(ϵ,t )∈ o(g(ϵ,t )) as ϵ→ 0 on the intervalI⊆ R if for anyt∈ I and all
+C >0 there existϵ0(t)> 0 such that|f(ϵ,t )|<C|g(ϵ,t )| for allϵ<ϵ 0(t).
+Remark A.3. If the constantsC and ϵ0 can be chosen independently oft∈I we
+say thatf(ϵ,t )∈O(g(ϵ,t )) (or f(ϵ,t )∈o(g(ϵ,t ))) asϵ→ 0 uniformly onI.
+In order to ﬁnd an expressions for the asymptotic expansion of the coupling
+weightsκ, we use the concept of the pullback attractor. It is deﬁned as an nonempty,
+compact and invariant set and well known from the theory of nonautonomous dy-
+namical systems. For our purposes, suppose we know the functions φi(t) for all
+i = 1,...,N . Then, the diﬀerential equations (1.2) is nonautonomous and can be
+28 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+solved explicitly by
+κij(t) :=κij,0e−ϵ(t−t0)−ϵ
+∫ t
+t0
+e−ϵ(t−t′) sin(φi(t′)−φj(t′) +β) dt′(A.6)
+with κij,0∈ [−1, 1] for alli,j = 1,...,N . For this, the pullback attractorA is given
+by the set
+A :=
+⋃
+t∈R
+{(κ(t))∗}(A.7)
+where
+(κij(t))∗ :=− lim
+t0→−∞
+(
+ϵ
+∫ t
+t0
+e−ϵ(t−t′) sin(φi(t′)−φj(t′) +β) dt′
+)
+(A.8)
+for alli,j ∈{ 1,...,N }. We remark the following important properties. For given
+functions φi the equations (1.2) posses the compact absorbing setG :={κij : κij∈
+[−1, 1],i,j = 1,...,N }. Hence, the pullback attractor exists, c.f. Theorem 3.18 in [27,
+pp. 45–46], and is unique due to Proposition 3.8 [27, p. 41]. Moreover,(κ(t))∗ is a
+solution for the nonautonomous system which can be shown by direct computation.
+We callκ(t))∗ the parametrization of the pullback attractor and use it in order to
+ﬁnd an analytic expression for the (pseudo-)multi-cluster states. Note that we have
+already seen such parametrizations explicitly in (2.3) and (3.2). For more details
+regarding nonautonomous systems and the pullback attractor we refer the reader to
+[44, 27].
+We use the following notations for the sake of brevity.
+M :={m = (m1,...,m M) : m1,...,m M∈ Z},
+cm :=cm1,...,mM,
+∆Ω(m) :=
+M∑
+µ=1
+mµΩµ.
+Furthermore, we say that two elementsm, n∈ M are equivalentm∼ n if and only if
+∆Ω(m) = ∆Ω(n). The corresponding quotient space is denoted by˜M := M/∼. If Ωµ
+isconsideredasfrequenciestheequivalencerelationfactorsoutallresonantlinearcom-
+binations of those. Let us further deﬁne˜M(f) as the set of all(m1,...,m M) such that
+the functionf can be written asf =∑
+m∈M(f)cmei∆Ω(m)t for somecm∈ C. Finally,
+we introduce the shorthand notion (mµnν) := (0 ,..., 0,mµ, 0,..., 0,mν, 0,..., 0)
+with mµ = m and mν = n for further convenience if only frequencies of two dis-
+tinguished clusters are considered.
+The main result on the asymptotic expansion for (pseudo-)multi-cluster solutions
+reads as follows.
+Proposition A.4. Letr∈ N. Suppose the system (1.1)– (1.2) possesses a pseudo
+multi-cluster solution (φi,µ,κij,µν) with φi,µ(ϵ,t ) = Ω µ(ϵ)t +ai,µ +si,µ(ϵ,t ) where
+ai,µ∈ T1 and the coupling matrixκij,µν(ϵ,t ) is given as the parametrization of the
+pullback attractor deﬁned in (A.8). Assume further thatM1 clusters are of antipodal
+type (2ai,µ = aµ) and M2 are of splay type (R2(aµ) = 0 ). Then, the r-th order
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 29
+asymptotic expansion ofφi,µ(ϵ,t ) for t∈O(1/ϵr) as ϵ→ 0 is given by
+φ(r)
+i,µ(ϵ,t ) := Ω(r)
+µ,0t +ai,µ +
+r∑
+l=1
+ϵl
+(
+Ω(r)
+µ,lt +pi,µ;l(t)
+)
+µ,ν = 1,...,M(A.9)
+κ(r)
+ij,µν(ϵ,t ) :=
+r∑
+l=0
+ϵlkij,µν;l(t), i = 1,...,N µ
+j = 1,...,N ν
+(A.10)
+where
+(i) all coeﬃcients of the expansion can be found inductively;
+(ii) the ﬁrst order approximation can be written as
+φ(1)
+i,µ =
+
+nµ
+2 (cos(α−β)− cos(α +β))−ϵ
+M∑
+ν=1
+ν⁄=µ
+nν
+2∆Ω(1)
+µν
+sin(α−β)
+
+t +ai,µ +ϵpµ;1
+for µ = 1,...,M 1, and
+φ(1)
+i,µ =
+
+nµ
+2 cos(α−β)−ϵ
+M∑
+ν=1
+ν⁄=µ
+nν
+2∆Ω(1)
+µν
+sin(α−β)
+
+t +ai,µ +ϵpi,µ;1(t)
+for µ =M1 + 1,...,M with
+pµ;1 =−
+M1∑
+ν=1
+ν⁄=µ
+nν
+4
+(
+∆Ω(1)
+µν
+)2 cos(2∆Ω(1)
+µνt +aµ−aν +α +β) µ = 1,...,M 1
+pi,µ;1 =−
+M∑
+ν=1
+ν⁄=µ
+nν
+4
+(
+∆Ω(1)
+µν
+)2 cos(2∆Ω(1)
+µνt + 2ai,µ−aν +α +β). µ =M1 + 1,...,M
+The coupling weights are given by
+κ(1)
+ij,µµ =− sin(ai,µ−aj,µ +β),
+κ(1)
+ij,µν = ϵ
+∆Ω(1)
+µν
+cos(∆Ωµνt +ai,µ−aj,ν +β).
+The proof makes use of several lemmas and is presented at the end of this section.
+Overall, we aim to describe the following particular form for the dynamical behaviour
+of the phase oscillators. The phases of the oscillatorsφi,µ form a pseudo multi-cluster,
+c.f. deﬁnition 3.6. Further, the bounded modulations for the phases of each oscillator
+are given as Taylor expansions inϵ with periodic coeﬃcients that can be expressed
+as Fourier sums with even modes. The strategy for the proof of the main result is as
+follows.
+1. Assume that the phases of the oscillators are given as ﬁnite Taylor sums inϵ
+with periodic coeﬃcients, which are represented as ﬁnite Fourier sums. With
+this, the equations (1.2) can be explicitly solved. Introducing the pull-back
+attractor provides us with a unique expression for the asymptotic solutions
+(t→∞ ). An explicit form for the expansion inϵ of these solutions of the
+coupling weightsκ is given in Lemma A.6.
+30 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+2. The solutions of the coupling weights depend on the Fourier modes of the
+periodic expansion coeﬃcients of the oscillators. An statement on their ex-
+plicit dependence is provided by Lemma A.8. More speciﬁcally, the expansion
+coeﬃcients of the couplings weights only consist of even modes whenever the
+expansion coeﬃcients for the phases of the oscillators consist only of odd
+modes.
+3. The expressions for the coupling weights in Lemma A.6 are used to derive
+the explicit form for the phase oscillators. More speciﬁcally, the expansions
+coeﬃcients are derived such that they satisfy the equations (1.1). Higher
+order terms which contribute to a linear growth are absorbed in an expansion
+for the oscillator frequencies.
+4. Finally, we ﬁnd an iterative scheme to determine all expansion coeﬃcients
+of the phases and coupling weights up to any order. Moreover, it is shown
+that the coeﬃcients provided by the iterative scheme are consistent with the
+assumption on the expansion coeﬃcients given in the beginning of the proof.
+To determining the asymptotic expansion explicitly, derivatives of composed func-
+tion have to be carried out. The following Lemma provides us with a general form.
+Lemma A.5. Suppose we haven-times diﬀerentiable real functionsf and g. Let
+Tn := {(k1,...,k n) : 1k1 + 2k2 +··· +nkn =n,k 1,...,k n∈ N0} denote the parti-
+tions ofn. The composition(f◦g) is alson-times diﬀerentiable and thenth derivative
+can be written as
+Dn
+x(f◦g)(x0) =
+∑
+(k1,...,k n)∈Tn
+n!
+k1!· ··· ·kn!
+(
+Dk1+...+kn
+x f)◦g(x0)
+n∏
+m=1
+(Dmg
+m!
+)km
+(x0).
+(A.11)
+Proof. See [2, pp. 95–96].
+This expression for thenth-derivative is also known as the Faà di Bruno formula.
+Lemma A.6. Suppose the phase oscillators behave as
+φi,µ(ϵ,t ) := Ωµt +ai,µ +
+r∑
+l=1
+ϵlpi,µ;l(t), µ = 1,...,M
+i = 1,...,N µ
+with Ωµ∈ R, ai,µ∈ T1 and there aremi,µ;l∈ N0 such that the bounded functions
+pi,µ;l : R→ R are given by the ﬁnite multi-Fourier series
+pi,µ;l(t) =
+∑
+m∈ ˜M(pi,µ;l)
+ci,µ;l;mei∆Ω(m)t
+with| ˜M(pi,µ;l)| =mi,µ;l.
+Then, fors≤r there exist functionskij,µν;l(t) such that the asymptotic expansion
+of the pull-back attractor(κij,µν)∗ deﬁned in (A.8) can be written as
+(κij,µν)∗ =
+s∑
+l=0
+ϵlkij,µν;l(t) + ˆRij,µν(ϵ,t )
+µ,ν = 1,...,M
+i = 1,...,N µ
+j = 1,...,N ν
+,(A.12)
+where ˆRij,µν(ϵ,t )∈o(ϵs) uniformly on R as ϵ→ 0 and κ(s)
+ij,µν(t) :=∑s
+l=0ϵlkij,µν;l(t).
+The κ(s)
+ij,µν(t) is called thes-th-order asymptotic approximation of(κij,µν)∗. Further,
+all kij,µν;l can also be written as a Fourier sum.
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 31
+Proof. For ﬁxed functionsφi,µ(t) the nonautonomous systems corresponding to
+the diﬀerential equation (1.2) posses the following parametrization of the pullback
+attractor
+(κij,µν(t))∗ :=− lim
+t0→−∞
+(
+ϵ
+∫ t
+t0
+e−ϵ(t−t′) sin(φi,µ(t′)−φj,ν(t′) +β) dt′
+)
+.
+Using (A.11) withf = sin(φi,µ−φj,ν +β) andg = ∆Ωµνt+aij,µν +β +∑r
+l=1ϵlpij,µν;l
+we can perform a Taylor expansion off(ϵ,t ) = sin(φi,µ−φj,ν +β) aroundϵ = 0. Due
+to Theorem 2.4.15 in [2, pp. 93–94] we get
+sin(∆Ωµνt +aij,µν +β +
+r∑
+l=1
+ϵlpij,µν;l(t)) = sin(∆Ωµνt +aij,µν +β)
++ϵ cos(∆Ωµνt +aij,µν +β)pij,µν;1
++··· +ϵsRij,µν(ϵ,t )
+=:
+s∑
+l=0
+ϵlrij,µν;l(β,t ) +ϵsRij,µν(ϵ,t )
+where the abbreviationspij,µν;l :=pi,µ;l−pj,ν;l andaij,µν :=ai,µ−aj,ν are used. Here,
+Rij,µν denotes the remainder of the Taylor expansion. The remainderR(ϵ,t )→ 0 and
+Rij,µν(ϵ,t )∈o(ϵ) for allt∈ R as ϵ→ 0. We get
+(A.13) (κij,µν(t))∗ =−
+s∑
+l=0
+ϵl+1
+∫ t
+−∞
+e−ϵ(t−t′)rij,µν;l(β,t′) dt′
++ϵs+1
+∫ t
+t0
+e−ϵ(t−t′)Rij,µν(ϵ,t′) dt′.
+In order to derive the expansion for(κij,µν)∗ the integrals of the formula above have
+to be investigated. Faà di Bruno’s formula (A.11) provides us with
+rij,µν;l(β,t ) :=
+∑
+(k1,...,k l)∈Tl
+(
+Dk1+...+kl sin)(∆Ωµνt +aij,µν +β)
+k1!· ··· ·kl!
+l∏
+m=1
+(
+pij,µν;m
+)km
+.
+(A.14)
+First, we conclude that the Taylor coeﬃcientsrij,µν;l(β) can also be written in a
+(ﬁnite) multi-Fourier sum
+rij,µν;l(β,t ) =
+∑
+m∈ ˜M(rij,µν;l(β))
+dij,µν;l;m(β)ei∆Ω(m)t.(A.15)
+Second, dij,µν;l;0⁄= 0 if∏l
+m=1
+(
+pij,µν,m
+)km
+possess a non vanishing term forei∆Ωµνt.
+With this, we are able to calculate the integrals in (A.13) and get
+∫ t
+−∞
+e−ϵ(t−t′)rij,µν;l(β,t ) =
+∑
+m∈ ˜M(rij,µν;l(β))
+dij,µν;l;m(β)
+∫ t
+−∞
+e−ϵ(t−t′)ei∆Ω(m)t′
+dt′
+=
+∑
+m∈ ˜M(rij,µν;l(β))
+( 1
+ϵ + i∆Ω(m)
+)
+dij,µν;l;m(β)ei∆Ω(m)t.
+32 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+The last term in the equation (A.13) is ino(ϵs) which can be seen as follows. Since
+Rij,µν(ϵ,t ) ∈ o(ϵ) as ϵ → 0 for all C > 0 there exist an ϵ0(t) > 0 such that
+|Rij,µν(ϵ,t )| < Cϵfor allϵ < ϵ0(t). Due to the boundedness of allpi,µ;l the remain-
+der Rij,µν(ϵ,t ) is also bounded by some positive number˜C. Thus, Rij,µν(ϵ,t )∈o(ϵ)
+uniformly on R as ϵ→ 0 , hence for allC >0
+⏐⏐⏐⏐
+∫ t
+t0
+e−ϵ(t−t′)R(ϵ,t′) dt′
+⏐⏐⏐⏐≤C
+⏐⏐⏐1−eϵ(t0−t)
+⏐⏐⏐.
+Finally, we end up with
+(κij,µν)∗(t) =−
+s∑
+l=0
+ϵl ∑
+m∈ ˜M(rβ
+ij,µν;l)
+dβ
+ij,µν;l;m
+1
+1 + i∆Ω(m)
+ϵ
+ei∆Ω(m)t + ˜Rij,µν(ϵ,t )
+(A.16)
+where ˜Rij,µν :=
+(
+ϵs+1∫t
+t0
+e−ϵ(t−t′)R(ϵ,t′) dt′
+)
+∗
+∈ o(ϵs) uniformly on R as ϵ→ 0. By
+considering the Laurent series
+1
+1 + i∆Ω(m)
+ϵ
+=−
+∞∑
+n=1
+in
+( ϵ
+∆Ω(m)
+)n
+,
+which converges wheneverϵ< |∆Ω(m)|, the coeﬃcients of the expansion(κij,µν)(s)
+∗ =∑s
+l=0ϵlkij,µν;l(t) are given by
+κij,µν;0 =−dij,µν;0;0(β),
+κij,µν;l>0 =−dij,µν;l;0(β) +
+l−1∑
+n=0
+∑
+m∈ ˜M(rij,µν;n(β))/{0}
+il−ndij,µν;n;m(β)
+(∆Ω(m))l−nei∆Ω(m)t.
+Note that, ϵ can always be chosen such thatϵ <|∆Ω(m)|, since we consider the
+asymptotic limitϵ→ 0. The coeﬃcients are determined via comparing the terms of
+both sides of the equation (A.16) with respect to their order inϵ. In the caseµ⁄=ν
+we getκij,µν;0 = 0. All terms of order O(ϵs+1) and ˜Rij,µν(ϵ,t ) are summarized in
+ˆRij,µν(ϵ,t )∈o(ϵs) as ϵ→ 0.
+Remark A.7. Without considering the asymptotic limitϵ→ 0, the s-th order
+formal expansion forκij,µν would have the form as it is given in Lemma A.6 under
+the condition that∆Ω(m)>ϵ for all m∈⋃s−1
+l=1 ˜M(rβ
+ij,µν;l).
+Lemma A.8. Suppose everything is given as in Lemma A.6. Then, if for all
+µ∈ 1,...,M , i∈{ 1,...,N µ} and l∈ 1,...,r , pi,µ;l(t) can be written completely in
+terms of even modes, i.e., allm1,...,m M are even for (m1,...,m M)∈ ˜M(pi,µ;l),
+then for all (n1,...,n M)∈ ˜M(κs
+ij,µν(t)) holds: nλ are even forλ⁄= µ,ν and odd
+otherwise.
+Proof. It is fairly easy to verify that ifpi,µ;l(t) can be completely written in terms
+ofevenmodesforall i,µ,l , socanpij,µν;l(t)andmoreover, theproduct pij,µν;l·pij,µν;m.
+According to (A.14)rij,µν;l consists only of terms of the forme±i∆Ωµνt·ei∆Ω(m)t and
+hence mλ are even for everyλ⁄= µ,ν and odd otherwise for all (m1,...,m M)∈
+˜M(rij,µν;l). Since integration by time (A.13) does not make any changes in the modes,
+the same holds forkij,µν;l(t) and henceκs
+ij,µν(t).
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 33
+Now, we have everything which is needed to proof the main result Prop A.4.
+Proof. Note, whenever we write∆Ω(m), ∆Ω(r)(m) is meant. We omit the super-
+script for the sake of readability. (i) Combing the formal time derivative of the ﬁrst
+equation in (A.5), the system equations (1.1)–(1.2) and Lemma A.6 we get
+˙φ(r)
+i,µ =
+r∑
+l=0
+ϵl∂Ω(r)
+µ
+∂τl
++
+r∑
+l=1
+ϵl ˙pi,µ;l(t) =− 1
+N
+M∑
+ν=1
+Nν∑
+j=1
+r∑
+l=0
+r∑
+n=0
+ϵl+nkij,µν;l(t)rij,µν,n(α,t ).
+(A.17)
+Assume thatpi,µ;l(t) =∑
+m∈ ˜M(pi,µ;l)ci,µ;l;mei∆Ω(m)t with| ˜M(pi,µ;l)|∈ N. We get
+∂Ω(r)
+µ
+∂t = 1
+N
+M∑
+ν=1
+Nν∑
+j=1
+∑
+m∈ ˜M(rij,µν;0(α))
+dij,µν;0;m(α)dij,µν;0;0(β)ei∆Ω(m)t,
+∂Ω(r)
+µ
+∂τl
++ ˙pi,µ;l(t) =− 1
+N
+M∑
+ν=1
+Nν∑
+j=1
+l∑
+m=0
+kij,µν;mrij,µν,l−m(α)
+(A.18)
+by comparing both sides of the equation (A.17) with respect to the order ofϵ. Due
+to Lemma A.6
+∂Ω(r)
+µ (τ0,...,τ m)
+∂t = 1
+N
+Nµ∑
+j=1
+dij,µµ;0;0(α)dij,µµ;0;0(β) =: Ωµ,0∈ R.
+This equation can be solved by˜Ωµ = Ωµ,0t+ ˜Ωµ,0(τ1,...,τ m). Due to our assumptions
+the right hand side of equation (A.18) can be written as
+−
+M∑
+ν=1
+Nν∑
+j=1
+l∑
+m=0
+kij,µν;mrij,µν,l−m(α) =
+M∑
+ν=1
+Nν∑
+j=1
+l∑
+m=0
+
+dij,µν;m;0(β)−
+m−1∑
+n=0
+∑
+m∈ ˜M(rij,µν;n(β))/{0}
+im−n dij,µν;n;m(β)
+(∆Ω(m))m−nei∆Ω(m)t
+
+×
+
+dij,µν;l−m;0(α) +
+∑
+m∈ ˜M(rij,µν;l−m(α))/{0}
+dij,µν;l−m;m(α)ei∆Ω(m)t
+
+.
+By using 1.) and 2.) of Lemma A.6 we ﬁnd
+∂Ω(r)
+µ
+∂τl
+= 1
+N
+M∑
+ν=1
+Nν∑
+j=1
+l∑
+m=0
+[dij,µν;m;0(β)dij,µν;l−m;0(α)
+−
+m−1∑
+n=0
+∑
+m∈ ˜M(rij,µν;n(β))/{0}
+im−ndij,µν;n;m(β)dij,µν;l−m;−m(α)
+(∆Ω(m))m−n
+
+,
+34 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+˙pi,µ;l =
+1
+N
+M∑
+ν=1
+Nν∑
+j=1
+l∑
+m=0
+
+dij,µν;m;0(β)
+
+ ∑
+m∈ ˜M(rij,µν;l−m(β))/{0}
+dij,µν;l−m;m(α)ei∆Ω(m)t
+
+
+−dij,µν;l−m;0(α)
+
+
+m−1∑
+n=0
+∑
+m∈ ˜M(rij,µν;n(β))/{0}
+im−n dij,µν;n;m(β)
+(∆Ω(m))m−nei∆Ω(m)t
+
+
+−
+m−1∑
+n=0
+∑
+m∈ ˜M(rij,µν;n(β))/{0}
+n∈ ˜M(rij,µν;l−m(α))/{0,−m}
+im−ndij,µν;n;m(β)dij,µν;l−m;n(α)
+(∆Ω(m))m−n ei∆Ω(m+n)t
+
+.
+Note that we use the multi-time scale function Ω(r)
+µ to deal with all terms of the
+expansion describing a linear growth. All the other terms are considered to determine
+the behaviour ofpi,µ;l. With this ansatz we are able to maintain the boundedness of
+pi,µ;l while letting Ω(r)
+µ alone describing unbounded behaviour int∈ R. Note further
+that Ω(r)
+µ can be directly computed if all functionspi,µ;k≤l(t) are known. Thus, we
+ﬁnally end up with
+Ω(r)
+µ =
+r∑
+l=0
+ϵlΩµ,lt.
+We assume now that for alli,µ andl> 1,pi,µ;l can be written completely in terms of
+even modes, c.f., Lemma A.8. In particular,(µν) /∈M(pi,µ;l). Thus,dij,µν;l;0(β) = 0
+by (A.14) for allµ,ν = 1,...,M , i = 1,...,N µ, j = 1,...,N ν and l≥ 1 and
+˙pi,µ;l =− 1
+N
+M∑
+ν=1
+Nν∑
+j=1
+l,m−1∑
+m=1
+n=0
+∑
+m∈ ˜M(rij,µν;n(β))/{0}
+n∈ ˜M(rij,µν;l−m(α))/{0,−m}
+im−n×
+dij,µν;n;m(β)dij,µν;l−m;n(α)
+(∆Ω(m))m−n ei∆Ω(m+n)t.
+Hence, we get an equation to determine the value of pi,µ;l inductively. Due to
+Lemma A.8, we know that if allpi,µ;l can be written in terms of even modes then
+mµ and mν are odd for all (m1,...,m M)∈ ˜M(rij,µν;l(α)). Therefore pi,µ;l can be
+written in terms of even modes. This is consistent with our assumption thatpi,µ;l can
+be written in terms of even modes. Consider further
+˙pi,µ;1 =− 1
+N
+M∑
+ν=1
+Nν∑
+j=1
+∑
+m∈ ˜M(rij,µν;0(β))/{0}
+n∈ ˜M(rij,µν;0(α))/{0,−m}
+idij,µν;0;m(β)dij,µν;0;n(α)
+(∆Ω(m))m−n ei∆Ω(m+n)t.
+The expression forpi,µ,1 can be found by integration
+pi,µ;1(t) =− 1
+N
+M∑
+ν=1
+Nν∑
+j=1
+∑
+m∈ ˜M(rij,µν;0(β))/{0}
+n∈ ˜M(rij,µν;0(α))/{0,−m}
+dij,µν;0;m(β)dij,µν;0;n(α)
+(∆Ω(m)) ∆Ω(m + n) ei∆Ω(m+n)t.
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 35
+Sincepi,µ;1 can be written as a Fourier sum the same holds true for allpi,µ,l by induc-
+tion. This is consistent with our assumption forpi,µ,l in the beginning of this proof.
+The expressionskij,µν;l follow from Lemma A.6. Furthermore, analog to Lemma A.6,
+from Theorem 2.4.15 in [2, pp. 93–94] we concludeκij,µν(ϵ,t )−κr
+ij,µν(ϵ,t )∈ O(ϵr)
+and φi,µ(ϵ,t )−φ(r)
+i,µ(ϵ,t )∈O(ϵr) for t∈O(1/ϵr) as ϵ→ 0.
+(ii) To achieve this result we apply now (i) which allows for iteratively determining
+the function appearing in the asymptotic expansion.
+0-th order: For the expansion of the sine-function from equation (A.14) we ﬁnd
+rij,µµ;0(β) = sin(aij,µµ +β) =dij,µµ;0;0(β) and
+rij,µν;0(β) = sin(∆Ω(1)
+µνt +aij,µν +β) =dij,µν;0;(µν)(β)ei∆Ω(1)
+µνt +c.c.
+where dij,µν;0;(µν)(β) := (1 /2i)ei(aij,µν+β) and c.c. stands for complex conjugated.
+Hence, for the coupling matrix we ﬁnd
+κij,µµ;0 =− sin(aij,µµ +β).
+Depending on the cluster the zero-th order approximation for the frequencies read
+Ωµ,0 = 1
+N
+Nµ∑
+j=1
+sin(aij,µµ +β) sin(aij,µµ +β) = nµ
+2 (cos(α−β)− cos(α +β))
+for allµ = 1,...,M 1 and analogouslyΩµ,0 = nµ
+2 cos(α−β) for allµ =M1 +1,...,M .
+1-th order: Since we know the0-th order expansion we are able to calculate the
+next order. We get
+Ωµ,1 =− 1
+N
+M1∑
+ν=1
+ν⁄=µ
+Nν∑
+j=1
+∑
+m∈{(µν),−(µν)}
+idij,µν;0;m(β)dij,µν;0;−m(α)
+∆Ω(1)(m)
+= 1
+2N
+M∑
+ν=1
+ν⁄=µ
+Nν∑
+j=1
+1
+2i
+(
+ei(aij,µν+β)e−i(aij,µν+α)
+∆Ω(1)
+µν
+− e−i(aij,µν+β)ei(aij,µν+α)
+∆Ω(1)
+µν
+)
+= 1
+2N
+M∑
+ν=1
+ν⁄=µ
+Nν∑
+j=1
+1
+2i
+(
+ei(β−α)
+∆Ω(1)
+µν
+− e−i(β−α)
+∆Ω(1)
+µν
+)
+=−
+M∑
+ν=1
+ν⁄=µ
+nν
+2∆Ω(1)
+µν
+sin(α−β).
+For allµ = 1,...,M 1 we get
+˙pµ;1 =− 1
+N
+M1∑
+ν=1
+ν⁄=µ
+Nν∑
+j=1
+∑
+m∈{(µν),−(µν)}
+(
+idij,µν;0;m(β)dij,µν;0;m(α)
+∆Ω(1)(m)
+)
+ei2∆Ω(1)(m)t
++
+M∑
+ν=M1+1
+Nν∑
+j=1
+∑
+m∈{(µν),−(µν)}
+(
+idij,µν;0;m(β)dij,µν;0;m(α)
+∆Ω(1)(m)
+)
+ei2∆Ω(1)(m)t
+=−1
+2
+M∑
+ν=1
+ν⁄=µ
+nν
+2i
+(
+ei(aµ−aν+α+β)
+∆Ω(1)
+µν
+)
+ei2∆Ω(1)
+µνt− nν
+2i
+(
+e−i(aµ−aν+α+β)
+∆Ω(1)
+µν
+)
+e−i2∆Ω(1)
+µνt
+36 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+and for allµ =M1 + 1,...,M we get
+˙pi,µ;1 =− 1
+N
+M1∑
+ν=1
+Nν∑
+j=1
+∑
+m∈{(µν),−(µν)}
+(
+idij,µν;0;m(β)dij,µν;0;m(α)
+∆Ω(1)(m)
+)
+ei2∆Ω(1)(m)t
++
+M∑
+ν=M1 +1
+ν⁄=µ
+Nν∑
+j=1
+∑
+m∈{(µν),−(µν)}
+(
+idij,µν;0;m(β)dij,µν;0;m(α)
+∆Ω(1)(m)
+)
+ei2∆Ω(1)(m)t
+=−1
+2
+M∑
+ν=1
+nν
+2i
+(
+ei(ai,µ−aν+α+β)
+∆Ω(1)
+µν
+)
+ei2∆Ω(1)
+µνt− nν
+2i
+(
+e−i(ai,µ−aν+α+β)
+∆Ω(1)
+µν
+)
+e−i2∆Ω(1)
+µνt.
+Thus, solving this fairly easy diﬀerential equation the following expression is obtained
+for µ = 1,...,M 1
+pµ;1 = 1
+4
+M∑
+ν=1
+ν⁄=µ
+nν
+2
+
+ei(aµ−aν+α+β)
+(
+∆Ω(1)
+µν
+)2
+
+ei2∆Ω(1)
+µνt + nν
+2
+
+e−i(aµ−aν+α+β)
+(
+∆Ω(1)
+µν
+)2
+
+e−i2∆Ω(1)
+µνt.
+Analogously we ﬁnd the expression forpi,µ;1 withµ =M1+1,...,M . For the coupling
+matrix we get
+κij,µν;1 =
+∑
+m∈{(µν),−(µν)}
+(
+idij,µν;0;m(β)
+∆Ω(1)(m)
+)
+ei∆Ω(1)(m)t
+= ei(aij,µν+β)
+2∆Ω(1)
+µν
+ei∆Ω(1)
+µνt + e−i(aij,µν+β)
+2∆Ω(1)
+µν
+e−i∆Ω(1)
+µνt.
+Acknowledgments. We thank Vladimir Nekorkin for stimulating discussions.
+REFERENCES
+[1] L. F. Abbott and S. Nelson , Synaptic plasticity: taming the beast, Nat. Neurosci., 3 (2000),
+pp. 1178–1183.
+[2] R. Abraham, J. E. Marsden, and T. Ratiu , Manifolds, Tensor Analysis, and Applications,
+Springer, New York, 1988.
+[3] D. M. Abrams and S. H. Strogatz , Chimera states for coupled oscillators, Phys. Rev. Lett.,
+93 (2004), 174102 (4 pages), https://doi.org/10.1103/physrevlett.93.174102.
+[4] J. A. Acebrón, L. L. Bonilla, C. J. P. Vicente, F. Ritort, and R. Spigler , The
+kuramoto model: A simple paradigm for synchronization phenomena, Rev. Mod. Phys., 77
+(2005), pp. 137–185.
+[5] T. Aoki, Self-organization of a recurrent network under ongoing synaptic plasticity, Neural
+Networks, 62 (2015), pp. 11–19, https://doi.org/10.1016/j.neunet.2014.05.024.
+[6] T. Aoki and T. Aoyagi , Co-evolution of phases and connection strengths in a network of
+phase oscillators, Phys. Rev. Lett., 102 (2009), 034101 (4 pages), https://doi.org/10.1103/
+physrevlett.102.034101.
+[7] T. Aoki and T. Aoyagi , Self-organized network of phase oscillators coupled by activity-
+dependent interactions, Phys. Rev. E, 84 (2011), 066109 (14 pages), https://doi.org/10.
+1103/physreve.84.066109.
+[8] P. Ashwin, C. Bick, and O. Burylko , Identical phase oscillator networks: Bifurcations,
+symmetry and reversibility for generalized coupling, Front. Appl. Math. Stat., 2 (2016),
+https://doi.org/10.3389/fams.2016.00007.
+[9] P. Ashwin, O. Burylko, and Y. Maistrenko , Bifurcation to heteroclinic cycles and
+sensitivity in three and four coupled phase oscillators, Physica D, 237 (2008), https:
+//doi.org/doi:10.1016/j.physd.2007.09.015.
+MULTI-CLUSTERS IN ADAPTIVE NETWORKS 37
+[10] V. A v alos-Gaytán, J. A. Almendral, I. Leyv a, F. Battiston, V. Nicosia, V. Latora,
+and S. Boccaletti , Emergent explosive synchronization in adaptive complex networks,
+Phys. Rev. E, 97 (2018), 042301 (7 pages), https://doi.org/10.1103/physreve.97.042301.
+[11] K. Blaha, J. Lehnert, A. Keane, T. Dahms, P. Hövel, E. Schöll, and J. L. Hudson ,
+Clustering in delay-coupled smooth and relaxational chemical oscillators, Phys. Rev. E, 88
+(2013), 062915 (9 pages), https://doi.org/10.1103/physreve.88.062915.
+[12] B. Blasius, A. Huppert, and L. Stone , Complex dynamics and phase synchronization in
+spatially extended ecological systems, Nature, 399 (1999), pp. 354–359.
+[13] S. Boyd and L. V andenberghe , Convex Optimization, Cambridge University Press, 2004.
+[14] O. Burylko and A. Pikovsky , Desynchronization transitions in nonlinearly coupled phase
+oscillators, Physica D, 240 (2011), https://doi.org/10.1016/j.physd.2011.05.016.
+[15] N. Caporale and Y. Dan , Spike timing−dependent plasticity: A hebbian learning rule,
+Annu. Rev. Neurosci., 31 (2008), pp. 25–46, https://doi.org/10.1146/annurev.neuro.31.
+060407.125639.
+[16] C. U. Choe, T. Dahms, P. Hövel, and E. Schöll , Controlling synchrony by delay coupling
+in networks: from in-phase to splay and cluster states, Phys. Rev. E, 81 (2010), 025205(R)
+(4 pages), https://doi.org/10.1103/physreve.81.025205.
+[17] T. Dahms, J. Lehnert, and E. Schöll , Cluster and group synchronization in delay-coupled
+networks, Phys. Rev. E, 86 (2012), 016202 (10 pages), https://doi.org/10.1103/physreve.
+86.016202.
+[18] T. Gross and B. Blasius , Adaptive coevolutionary networks: a review, J. R. Soc. Interface,
+5 (2008), pp. 259–271, https://doi.org/10.1098/rsif.2007.1229, https://arxiv.org/abs/http:
+//rsif.royalsocietypublishing.org/content/5/20/259.full.pdf+html.
+[19] A. Gushchin, E. Mallada, and A. Tang , Synchronization of phase-coupled oscillators
+with plastic coupling strength, in Information Theory and Applications Workshop, 2015,
+pp. 291–300, https://doi.org/10.1109/ita.2015.7309003.
+[20] A. M. Hagerstrom, T. E. Murphy, R. Roy, P. Hövel, I. Omelchenko, and E. Schöll ,
+Experimental observation of chimeras in coupled-map lattices, Nature Phys., 8 (2012),
+pp. 658–661, https://doi.org/10.1038/nphys2372.
+[21] C. Hammond, H. Bergman, and P. Brown , Pathological synchronization in Parkinson’s
+disease: networks, models and treatments, Trends Neurosci., 30 (2007), pp. 357–364.
+[22] D. Hebb, The Organization of Behavior: A Neuropsychological Theory, Wiley, New York, new
+edition ed., 1949.
+[23] F. C. Hoppensteadt and E. M. Izhikevich , Synaptic organizations and dynamical proper-
+ties of weakly connected neural oscillators II. Learning phase information, Biol. Cybern.,
+75 (1996), pp. 129 –135, https://doi.org/10.1007/s004220050280.
+[24] S. Jain and S. Krishna , A model for the emergence of cooperation, interdependence, and
+structure in evolving networks, Proc. Natl. Acad. Sci., 98 (2001), pp. 543–547, https://doi.
+org/10.1073/pnas.98.2.543.
+[25] D. V. Kasatkin and V. I. Nekorkin , Dynamics of the phase oscillators with plastic cou-
+plings, Radiophysics and Quantum Electronics, 58 (2016), pp. 877–891, https://doi.org/
+10.1007/s11141-016-9662-1.
+[26] D. V. Kasatkin, S. Yanchuk, E. Schöll, and V. I. Nekorkin , Self-organized emergence
+of multi-layer structure and chimera states in dynamical networks with adaptive couplings,
+Phys. Rev. E, 96 (2017), 062211 (5 pages), https://doi.org/10.1103/physreve.96.062211.
+[27] P. E. Kloeden and M. Rasmussen , Nonautonomous Dynamical Systems, American Math-
+emaical Society, Providence, Rhode Island, 2011.
+[28] Y. Kuramoto, Chemical Oscillations, Waves and Turbulence, Springer-Verlag, Berlin, 1984.
+[29] Y. Kuramoto and D. Battogtokh , Coexistence of Coherence and Incoherence in Nonlocally
+Coupled Phase Oscillators., Nonlin. Phen. in Complex Sys., 5 (2002), pp. 380–385.
+[30] J. Lehnert, P. Hövel, A. A. Seliv anov, A. L. Fradkov, and E. Schöll , Controlling
+cluster synchronization by adapting the topology, Phys. Rev. E, 90 (2014), 042914 (8 pages),
+https://doi.org/10.1103/physreve.90.042914.
+[31] L. Lücken, O. Popovych, P. Tass, and S. Yanchuk , Noise-enhanced coupling between two
+oscillators with long-term plasticity, Phys. Rev. E, 93 (2016), 032210 (15 pages).
+[32] L. Lücken and S. Yanchuk , Two-cluster bifurcations in systems of globally pulse-coupled
+oscillators, Physica D, 241 (2012), pp. 350–359, https://doi.org/10.1016/j.physd.2011.10.
+017.
+[33] Y. Maistrenko, B. Lysyansky, C. Hauptmann, O. Burylko, and P. A. Tass , Multi-
+stability in the kuramoto model with synaptic plasticity, Phys. Rev. E, 75 (2007), 066207
+(8 pages), https://doi.org/10.1103/physreve.75.066207.
+[34] H. Markram, J. Lübke, and B. Sakmann , Regulation of synaptic eﬃcacy by coincidence
+38 RICO BERNER, ECKEHARD SCHÖLL, AND SERHIY YANCHUK
+of postsynaptic aps and epsps., Science, 275 (1997), pp. 213–215, https://doi.org/10.1126/
+science.275.5297.213.
+[35] V. I. Nekorkin and D. V. Kasatkin , Dynamics of a network of phase oscillators with plastic
+couplings, AIP Conference Proceedings, 1738 (2016), 210010 (4 pages), https://doi.org/10.
+1063/1.4951993.
+[36] I. Omelchenko, Y. Maistrenko, P. Hövel, and E. Schöll ,Loss of coherence in dynamical
+networks: spatial chaos and chimera states, Phys. Rev. Lett., 106 (2011), 234102 (4 pages),
+https://doi.org/10.1103/physrevlett.106.234102.
+[37] O. E. Omel’chenko and M. Wolfrum , Nonuniversal transitions to synchrony in the
+sakaguchi-kuramoto model, Phys. Rev. Lett., 109 (2012), 164101 (4 pages), https://doi.
+org/10.1103/physrevlett.109.164101.
+[38] P. Perlikowski, S. Yanchuk, O. Popovych, and P. Tass , Periodic patterns in a ring of
+delay-coupled oscillators, Phys. Rev. E, 82 (2010), 036208 (12 pages), https://doi.org/10.
+1103/physreve.82.036208.
+[39] C. B. Picallo and H. Riecke , Adaptive oscillator networks with conserved overall coupling:
+Sequential ﬁring and near-synchronized states, Phys. Rev. E, 83 (2011), 036206 (12 pages),
+https://doi.org/10.1103/physreve.83.036206.
+[40] A. Pikovsky and M. G. Rosenblum , Partially integrable dynamics of hierarchical pop-
+ulations of coupled oscillators, Phys. Rev. Lett., 101 (2008), 264103 (4 pages), https:
+//doi.org/10.1103/physrevlett.101.264103.
+[41] A. Pikovsky, M. G. Rosenblum, and J. Kurths , Synchronization: a universal concept in
+nonlinear sciences, Cambridge University Press, Cambridge, 2001.
+[42] O. Popovych, S. Yanchuk, and P. Tass ,Self-organized noise resistance of oscillatory neural
+networks with spike timing-dependent plasticity, Sci. Rep., 3 (2013), 2926 (6 pages).
+[43] O. V. Popovych, M. N. Xenakis, and P. A. Tass , The spacing principle for unlearning
+abnormal neuronal synchrony, PLOS ONE, 10 (2015), https://doi.org/10.1371/journal.
+pone.0117205.
+[44] C. Pötzsche and M. Rasmussen , Taylor approximation of integral manifolds, Journal of
+Dynamics and Diﬀerential Equations, 18 (2006), pp. 427–460, https://doi.org/10.1007/
+s10884-006-9011-8.
+[45] Q. Ren and J. Zhao , Adaptive coupling and enhanced synchronization in coupled phase
+oscillators, Phys. Rev. E, 76 (2007), 016207 (6 pages), https://doi.org/10.1103/physreve.
+76.016207.
+[46] H. Sakaguchi and Y. Kuramoto , A soluble active rotater model showing phase transitions
+via mutual entertainment, Prog. Theor. Phys, 76 (1986), pp. 576–581.
+[47] P. Seliger, S. C. Young, and L. S. Tsimring , Plasticity and learning in a network of
+coupled phase oscillators, Phys. Rev. E, 65 (2002), 041906 (7 pages), https://doi.org/10.
+1103/physreve.65.041906.
+[48] M. C. Soriano, J. García-Ojal vo, C. R. Mirasso, and I. Fischer , Complex photonics:
+Dynamics and applications of delay-coupled semiconductors lasers, Rev. Mod. Phys., 85
+(2013), pp. 421–470.
+[49] S. H. Strogatz , From Kuramoto to Crawford: exploring the onset of synchronization in
+populations of coupled oscillators, Physica D, 143 (2000), pp. 1–20.
+[50] L. Timms and L. Q. English ,Synchronization in phase-coupled Kuramoto oscillator networks
+with axonal delay and synaptic plasticity, Phys. Rev. E, 89 (2014), 032906 (9 pages),
+https://doi.org/10.1103/physreve.89.032906.
+[51] M. R. Tinsley, S. Nkomo, and K. Show alter , Chimera and phase cluster states in
+populations of coupled chemical oscillators, Nat. Phys., 8 (2012), pp. 662–665, https:
+//doi.org/10.1038/nphys2371.
+[52] V. K. V anag, L. Yang, M. Dolnik, A. M. Zhabotinsky, and I. R. Epstein , Oscillatory
+cluster patterns in a homogeneous chemical system with global feedback, Nature, 406(2000),
+pp. 389–391, https://doi.org/10.1038/3501903810.1038/35019038.
+[53] F. Verhulst, Methods and applications of singular perturbations: boundary layers and mul-
+tiple timescale dynamics, Springer, 2006.
+[54] D. A. Wiley, S. H. Strogatz, and M. Gir v an , The size of the sync basin, Chaos, 16 (2006),
+015103 (8 pages), https://doi.org/10.1063/1.2165594.

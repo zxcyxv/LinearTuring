@@ -1,0 +1,5 @@
+step=212650  weights=ema  loops=257  bs=256  N=2048
+  cfg: d=832 H=8 blocks=8 layers=2 order=post stdp=addr/psi
+  layer0: λ=0.2500  δ=0.0617  G=1.0000
+  layer1: λ=0.2500  δ=0.1950  G=1.0000
+  batch 1/8  65s  (seg16 누적 exact 147, seg256 166)

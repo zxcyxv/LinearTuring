@@ -1,0 +1,39 @@
+  [base] 64/512  24s  누적 seg16 39 seg128 49
+  [base] 128/512  49s  누적 seg16 77 seg128 96
+  [base] 192/512  73s  누적 seg16 111 seg128 142
+  [base] 256/512  97s  누적 seg16 145 seg128 186
+  [base] 320/512  121s  누적 seg16 173 seg128 225
+  [base] 384/512  145s  누적 seg16 205 seg128 272
+  [base] 448/512  169s  누적 seg16 238 seg128 315
+  [base] 512/512  192s  누적 seg16 256 seg128 341
+  [freeze] 64/512  24s  누적 seg16 39 seg128 40
+  [freeze] 128/512  48s  누적 seg16 77 seg128 86
+  [freeze] 192/512  72s  누적 seg16 111 seg128 124
+  [freeze] 256/512  96s  누적 seg16 145 seg128 166
+  [freeze] 320/512  120s  누적 seg16 173 seg128 202
+  [freeze] 384/512  144s  누적 seg16 205 seg128 243
+  [freeze] 448/512  168s  누적 seg16 238 seg128 279
+  [freeze] 512/512  192s  누적 seg16 256 seg128 299
+  [seg_reset] 64/512  24s  누적 seg16 39 seg128 49
+  [seg_reset] 128/512  48s  누적 seg16 77 seg128 96
+  [seg_reset] 192/512  72s  누적 seg16 111 seg128 142
+  [seg_reset] 256/512  96s  누적 seg16 145 seg128 186
+  [seg_reset] 320/512  120s  누적 seg16 173 seg128 225
+  [seg_reset] 384/512  144s  누적 seg16 205 seg128 272
+  [seg_reset] 448/512  168s  누적 seg16 238 seg128 315
+  [seg_reset] 512/512  192s  누적 seg16 256 seg128 341
+  [block_reset] 64/512  29s  누적 seg16 1 seg128 1
+  [block_reset] 128/512  63s  누적 seg16 2 seg128 2
+  [block_reset] 192/512  98s  누적 seg16 4 seg128 4
+  [block_reset] 256/512  132s  누적 seg16 6 seg128 6
+  [block_reset] 320/512  163s  누적 seg16 8 seg128 8
+  [block_reset] 384/512  186s  누적 seg16 9 seg128 9
+  [block_reset] 448/512  209s  누적 seg16 10 seg128 10
+  [block_reset] 512/512  232s  누적 seg16 13 seg128 13
+
+            변형 | seg16 | seg32 | seg64 | seg128 | 이득(16→128)
+          base |   256 |   295 |   321 |    341 | +85
+        freeze |   256 |   285 |   295 |    299 | +43
+     seg_reset |   256 |   295 |   321 |    341 | +85
+   block_reset |    13 |    13 |    13 |     13 | +0
+EXIT 0

@@ -1,0 +1,1693 @@
+
+===== PAGE 1 =====
+Generalization of Equilibrium Propagation to Vector Field Dynamics
+Benjamin Scellier1, Anirudh Goyal1, Jonathan Binas1, Thomas Mesnard2, Yoshua Bengio1†
+1 Mila, Université de Montréal
+2 École Normale Supérieure de Paris
+†CIFAR Senior Fellow
+August 16, 2018
+Abstract
+The biological plausibility of the backpropagation algo-
+rithm has long been doubted by neuroscientists. Two major
+reasons are that neurons would need to send two different
+types of signal in the forward and backward phases, and
+that pairs of neurons would need to communicate through
+symmetric bidirectional connections. We present a simple
+two-phase learning procedure for ﬁxed point recurrent net-
+works that addresses both these issues. In our model, neu-
+rons perform leaky integration and synaptic weights are up-
+dated through a local mechanism. Our learning method gen-
+eralizes Equilibrium Propagation to vector ﬁeld dynamics,
+relaxing the requirement of an energy function. As a conse-
+quence of this generalization, the algorithm does not com-
+pute the true gradient of the objective function, but rather
+approximates it at a precision which is proven to be directly
+related to the degree of symmetry of the feedforward and
+feedback weights. We show experimentally that our algo-
+rithm optimizes the objective function.
+1 Introduction
+Deep learning [LeCun et al., 2015] is the de-facto standard
+in areas such as computer vision [Krizhevsky et al., 2012],
+speech recognition [Hinton et al., 2012] and machine trans-
+lation [Bahdanau et al., 2014]. These applications deal with
+different types of data and have little in common at ﬁrst
+glance. Remarkably, all these models typically rely on the
+same basic principle: optimization of objective functions
+using the backpropagation algorithm. Hence the question:
+does the cortex in the brain implement a mechanism similar
+to backpropagation, which optimizes objective functions?
+The backpropagation algorithm used to train neural net-
+works requires a side network for the propagation of error
+derivatives, which is vastly seen as biologically implausible
+[Crick, 1989]. One hypothesis, ﬁrst formulated by Hinton
+and McClelland [1988], is that error signals in biological
+networks could be encoded in the temporal derivatives of
+the neural activity and propagated through the network via
+the neuronal dynamics itself, without the need for a side
+network. Neural computation would correspond to both in-
+ference and error back-propagation. The present work also
+explores this idea.
+Equilibrium Propagation [Scellier and Bengio, 2017a] re-
+quires the network dynamics to be derived from an energy
+function, enabling computation of an exact gradient of an
+objective function. However, in terms of biological real-
+ism, the requirement of symmetric weights between neu-
+rons arising from the energy function (the Hopﬁeld energy)
+is not desirable. The work presented here is a generaliza-
+tion of Equilibrium Propagation to vector ﬁeld dynamics,
+without the need for energy functions, gradient dynamics,
+or symmetric connections.
+Our approach is the following.
+1. We start from standard models in neuroscience for the
+dynamics of the neuron’s membrane voltage and for
+the synaptic plasticity (section 2). In particular, unlike
+in the Hopﬁeld model [Hopﬁeld, 1984], we do not as-
+sume pairs of neurons to have symmetric connections.
+2. We then describe a supervised learning algorithm for
+ﬁxed point recurrent neural networks, based on these
+models (sections 3-4) and with few extra assumptions.
+Our model assumes two phases: at prediction time
+(ﬁrst phase), no synaptic changes occur, whereas a lo-
+cal update rule becomes effective when the targets are
+observed (second phase).
+3. Finally, we attempt to show that the proposed algo-
+rithm optimizes an objective function (section 5) – a
+highly desirable property from the point of view of
+machine learning. We show this experimentally and
+we attempt to understand this theoretically, too.
+2 Neuronal Dynamics
+We denote bysi the membrane voltage of neuron i, which
+is continuous-valued and plays the role of a state variable
+for neuroni. We suppose that ρ is a deterministic function
+1
+arXiv:1808.04873v1  [cs.LG]  14 Aug 2018
+
+===== PAGE 2 =====
+(a) The network model studied here is best represented
+by a directed graph.
+(b) The Hopﬁeld model is best represented by an undi-
+rected graph.
+Figure 1: From the point of view of biological plausibility, the symmetry of
+connections in the Hopﬁeld model is a major drawback (1b). The model that
+we study here is, like a biological neural network, a directed graph (1a).
+(nonlinear activation) that takes a scalarsi as input and out-
+puts a scalar ρ(si). The scalar ρ(si) represents the ﬁring
+rate of neuron i. The synaptic strength from neuron j to
+neuroni is denoted byWij.
+2.1 Neuron Model
+We consider the following time evolution for the membrane
+voltagesi:
+dsi
+dt =
+∑
+j
+Wijρ(sj)−si. (1)
+Eq. 1 is a standard point neuron model (see e.g. Dayan
+and Abbott [2001]) in which neurons are seen as performing
+leaky temporal integration of their inputs. We will refer to
+Eq. 1 as the rate-based leaky integrator neuron model.
+Unlike energy-based models such as the Hopﬁeld model
+[Hopﬁeld, 1984] that assume symmetric connections be-
+tween neurons, in the model studied here the connections
+between neurons are not tied. Our model is represented by a
+directed graph, whereas the Hopﬁeld model is best regarded
+as an undirected graph (Figure 1).
+2.2 Plasticity Model
+We consider a simpliﬁed Hebbian update rule based on pre-
+and post-synaptic activity, in which a change dsi in the
+post-synaptic activity causes a change dWij in the synap-
+tic strength given by
+dWij∝ρ(sj)dsi. (2)
+Bengio et al. [2017] have shown in simulations that this
+update rule can functionally reproduce Spike-Timing De-
+pendent Plasticity (STDP). STDP is considered a key mech-
+anism of synaptic change in biological neurons [Markram
+and Sakmann, 1995, Gerstner et al., 1996, Markram et al.,
+2012]. STDP is often conceived of as a spike-based pro-
+cess which relates the change in the synaptic weightWij to
+the timing difference between postsynaptic spikes (in neu-
+ron i) and presynaptic spikes (in neuron j) [Bi and Poo,
+2001]. In fact, both experimental and computational work
+suggest that postsynaptic voltage, not postsynaptic spiking,
+is more important for driving LTP (Long Term Potentiation)
+and LTD (Long Term Depression) [Clopath and Gerstner,
+2010, Lisman and Spruston, 2010].
+Throughout this paper we will refer to Eq. 2 as STDP-
+compatible weight change and propose a machine learning
+justiﬁcation for such an update rule.
+2.3 V ector Field µ in the State Space
+In this subsection we rewrite Eq. 1 and Eq. 2 at a higher
+level of abstraction. Lets = (s1,s 2,... ) be the global state
+variable and let θ = (Wij)i,j be the parameter variable
+consisting of the set of synaptic weights. We write µθ(s)
+the vector whose componentsµθ,i(s) are deﬁned as
+µθ,i(s) :=
+∑
+j
+Wijρ(sj)−si. (3)
+The vectorµθ(s) has the same dimension as the state vari-
+ables. For ﬁxed θ, the mappings↦→µθ(s) is a vector ﬁeld
+in the state space, which indicates in which direction each
+neuron’s activity changes. Eq. 1 rewrites
+ds
+dt =µθ(s). (4)
+2
+
+===== PAGE 3 =====
+Let us move on to the weight change of Eq. 2. Since
+ρ(sj) = ∂µθ,i
+∂Wij
+(s), the weight change can be expressed as
+dWij ∝ ∂µθ,i
+∂Wij
+(s)dsi. Note that for all i′ ⁄= i we have
+∂µi′
+∂Wij
+= 0 since to each synapse Wij corresponds a unique
+post-synaptic neuronsi. Hence dWij∝ ∂µθ
+∂Wij
+(s)·ds. We
+rewrite the STDP-compatible weight change (Eq. 2) in the
+concise form
+dθ∝ ∂µθ
+∂θ (s)T·ds. (5)
+3 Fixed Point Recurrent Neural Net-
+works for Supervised Learning
+We consider the supervised setting in which we want to pre-
+dict a target y given an input x. The units of the network
+are split in two sets: the ‘input’ units x whose values are
+always clamped, and the dynamically evolving units s (the
+neurons activity, indicating the state of the network), which
+themselves include the hidden layers ( s1 ands2 here) and
+an output layer (s0 here), as in Figure 3. In this context the
+vector ﬁeld µθ is deﬁned by its components µθ,0,µθ,1 and
+µθ,2 ons0,s1 ands2 respectively, as follows:
+µθ,0(x,s ) =W01·ρ(s1)−s0, (6)
+µθ,1(x,s ) =W12·ρ(s2) +W10·ρ(s0)−s1, (7)
+µθ,2(x,s ) =W23·ρ(x) +W21·ρ(s1)−s2. (8)
+In its original deﬁnition,ρ takes a scalar as input and outputs
+a scalar, but here we generalize the deﬁnition of ρ to act on
+a vector (i.e. a layer of neurons), in which case it returns
+a vector of the same dimension, operating element-wise on
+the coordinates of the input vector.
+The neuronss follow the dynamics
+ds
+dt =µθ(x,s ). (9)
+Unlike in the continuous Hopﬁeld model, here the feedfor-
+ward and feedback weights are not tied, and in general the
+dynamics of Eq. 9 is not guaranteed to converge to a ﬁxed
+point. However, for simplicity of presentation we assume
+here that the dynamics of the neurons converge to a ﬁxed
+point which we denote by sx
+θ. The ﬁxed point sx
+θ implicitly
+depends onθ and x through the relationship
+µθ (x,s x
+θ) = 0. (10)
+In addition to the vector ﬁeld µθ(x,s ), a cost function
+C(y,s ) measures how good or bad a state s is with respect
+to the target y. In our model, the layer s0 has the same
+dimension as the target y and plays the role of the ‘out-
+put’ layer where the prediction is read. The discrepancy
+between the output layers0 and the target y is measured by
+the quadratic cost function
+C(y,s ) = 1
+2‖y−s0‖2. (11)
+The prediction is then read out on the output layer at the
+ﬁxed point and compared to the target y. The objective
+function that we aim to minimize (with respect to θ) is the
+cost at the ﬁxed pointsx
+θ, which we write 1
+J(x, y,θ ) :=C (y,s x
+θ). (12)
+Almeida [1987] and Pineda [1987] proposed an algorithm
+known as Recurrent Backpropagation 2 to optimize J by
+computing the gradient ∂J
+∂θ (x, y,θ ). This algorithm, pre-
+sented in Appendix B, is based on extra assumptions on the
+neuronal dynamics which make it biologically implausible.
+In this paper, our approach to optimizeJ is to give up on
+computing the true gradient of J and, instead, we propose
+a simple algorithm based on the leaky integrator dynamics
+(Eq. 4) and the STDP-compatible weight change (Eq. 5).
+We will show in section 5 that our algorithm computes a
+proxy to the gradient ofJ.
+Also, note that in its general formulation, our algo-
+rithm applies to any vector ﬁeld µθ(x,s ) and cost function
+Cθ(y,s ), even whenC depends onθ (Appendix A).
+4 Equilibrium Propagation in the
+V ector Field Setting
+We describe a simple two-phase learning procedure based
+on the state dynamics (Eq. 4) and the parameter change
+(Eq. 5). This algorithm generalizes the one proposed in
+Scellier and Bengio [2017a].
+4.1 Augmented V ector Field
+In its original (energy-based) version, the central idea of
+Equilibrium Propagation [Scellier and Bengio, 2017a] is to
+see the cost functionC (Eq. 11) as an ‘external potential en-
+ergy’ for the output layers0, which can drive it towards the
+target y. Following the same idea we deﬁne the augmented
+vector ﬁeld
+µβ
+θ (x, y,s ) :=µθ(x,s )−β∂C
+∂s (y,s ), (13)
+whereβ≥ 0 is a real-valued scalar which we call the inﬂu-
+ence parameter (or clamping factor). Rather than Eq. 9, the
+1More generally, in order to take into account cases when the dynamics
+of Eq. 9 does not converge to a ﬁxed point, we can deﬁne the objective
+function as the average cost of the state along the trajectory (over inﬁnite
+duration).
+2‘Recurrent backprop’ is a special case of ‘backprop through time’,
+specialized to a ﬁxed point recurrent network (i.e. an RNN whose dynam-
+ics converges to a ﬁxed point, like those studied here).
+3
+
+===== PAGE 4 =====
+dynamics ofs is more generally
+ds
+dt =µβ
+θ (x, y,s ) (14)
+for some value ofβ. The parameter β controls whether the
+output layers0 is pushed towards the targety or not, and by
+how much. In particular, the dynamics of Eq. 9 corresponds
+to the caseβ = 0.
+The augmented vector ﬁeld can be seen as a sum of two
+‘forces’ that act on the temporal derivative of the state vari-
+able s. Apart from the vector ﬁeld µθ that models the in-
+teractions between neurons within the network, an ‘external
+force’−β∂C
+∂s is induced by the ‘external potential’βC and
+acts on the output layer:
+−β∂C
+∂s0
+(y,s ) =β(y−s0), (15)
+−β∂C
+∂si
+(y,s ) = 0, ∀i≥ 1. (16)
+The form of Eq. 15 suggests that when β = 0 , the output
+layers0 is not sensitive to the target y. When β > 0, the
+‘external force’ drives the output layer s0 towards the tar-
+get y. The case β→∞ (not studied in this paper) would
+correspond to fully clamped output units.
+Following the dynamics of Eq. 14, the state variable s
+eventually settles to a ﬁxed pointsβ
+θ characterized by
+µβ
+θ
+(
+x, y,sβ
+θ
+)
+= 0. (17)
+Note that the ﬁxed pointsβ
+θ also depends on x and y but we
+omit to write the dependence to keep readable notations. In
+particular forβ = 0 we haves0
+θ =sx
+θ.
+4.2 Algorithm
+We propose the following two-phase learning procedure.
+At prediction time (the ﬁrst phase), the input units are set
+(clamped) to the input values x, and the inﬂuence parame-
+terβ is set to 0. The state variable s (all the other neurons)
+follows the dynamics of Eq. 14 and settles to the ﬁrst ﬁxed
+point s0
+θ. During this phase, we assume that the synaptic
+weights are unchanged.
+At training time (the second phase), the input units are
+still clamped and the inﬂuence parameterβ takes on a small
+positive value β & 0. The state variable follows the dy-
+namics of Eq. 14 for that new value of β, and the synaptic
+weights are assumed to follow the STDP-compatible weight
+change of Eq. 5. The network eventually settles to a new
+nearby ﬁxed point, denoted sβ
+θ , corresponding to the new
+valueβ & 0.
+4.3 Backpropagation of Error Signals
+In the ﬁrst phase, the inﬂuence parameter β is equal to 0.
+The output units are ‘free’, in the sense that they are not
+Figure 2: Graph of the network. Input x is
+clamped. Neurons s include hidden layers s2
+ands1, and output layer s0 that corresponds to
+the layer where the prediction is read. Target
+y has the same dimension as s0. The clamping
+factorβ scales the ‘external force’−β∂C
+∂s that
+attracts the output layer’s state s0 towards the
+target y.
+inﬂuenced by the target y.
+In the second phase, the inﬂuence parameter takes on
+a positive value β & 0. The novel ‘external force’
+−β∂C
+∂s (y,s ) in the dynamics of Eq. 14 acts on the output
+units and drives them towards their targets (Eq. 15). This
+force models the observation of the target y: it nudges the
+output units s0 from their value at the ﬁrst ﬁxed point in
+the direction of their targets. Since this force only acts on
+the output layer s0, the other hidden layers (si withi >0)
+are initially at equilibrium at the beginning of the second
+phase. The perturbation caused at the output layer (s0) will
+then propagate backwards along the layers of the network
+(s1 ands2), giving rise to ‘back-propagating’ error signals.
+A more detailed analysis of the second phase is car-
+ried out in Appendix B and a connection to the recurrent
+backpropagation algorithm [Almeida, 1987, Pineda, 1987]
+is established, following the ideas of Scellier and Bengio
+[2017b].
+5 Optimization of the Objective
+Function
+The proposed algorithm (section 4.2) is experimentally
+found to optimize the objective function J(θ) (see Ap-
+pendix C). In this section, we attempt to understand why.
+4
+
+===== PAGE 5 =====
+5.1 V ector Field ν in the Parameter Space
+Our model assumes that the STDP-compatible weight
+change occurs during the second phase of training, when
+the network’s state moves from the ﬁrst ﬁxed point s0
+θ to
+the second ﬁxed point sβ
+θ . Integrating Eq. 5 from s0
+θ tosβ
+θ ,
+normalizing it by a factor β and letting β→ 0, we get the
+update rule
+∆θ∝ν(x, y,θ ), (18)
+whereν(x, y,θ ) is the vector deﬁned as 3
+ν(x, y,θ ) := ∂µθ
+∂θ
+(
+x,s 0
+θ
+)T
+· ∂sβ
+θ
+∂β
+⏐⏐⏐⏐⏐
+β=0
+. (19)
+The vectorν(x, y,θ ) has the same dimension asθ. Thus, for
+ﬁxed x and y, the mapping θ↦→ ν(x, y,θ ) deﬁnes a vector
+ﬁeld in the parameter space. We show next thatν(x, y,θ ) is
+a proxy to the gradient−∂J
+∂θ (x, y,θ ).
+5.2 The V ector Field ν As A Proxy For The
+Gradient
+Theorem 1. The gradient ∂J
+∂θ (x, y,θ ) and the vector ﬁeld
+ν(x, y,θ ) can be expressed explicitly in terms ofµθ andC:
+∂J
+∂θ (x, y,θ ) =−∂C
+∂s (y,s x
+θ)·
+(∂µθ
+∂s (x,s x
+θ)
+)−1
+· ∂µθ
+∂θ (x,s x
+θ),
+ν(x, y,θ ) = ∂C
+∂s (y,s x
+θ)·
+(∂µθ
+∂s (x,s x
+θ)T
+)−1
+· ∂µθ
+∂θ (x,s x
+θ).
+Theorem 1 is proved in Appendix A. The formulae show
+that ν(x, y,θ ) is related to ∂J
+∂θ (x, y,θ ) and that the angle
+between these two vectors is directly linked to the ‘degree
+of symmetry’ of the Jacobian ofµθ at the ﬁxed pointsx
+θ.
+5.3 Energy Based Setting as an Idealization
+of the V ector Field Setting
+We say thatθ is a ‘good parameter’ if:
+1. for any initial state for the neurons, the state dynamics
+ds
+dt =µθ (x,s ) converges to a ﬁxed point - a condition
+required for the algorithm to be correctly deﬁned,
+2. the scalar product ∂J
+∂θ (x, y,θ )·ν(x, y,θ ) at the pointθ
+is negative - a desirable condition for the algorithm to
+optimize the objective functionJ.
+An important particular case is the energy-based setting
+studied in Scellier and Bengio [2017a], in which the vector
+ﬁeld µθ is a gradient ﬁeld, i.e. µθ(x,s ) =−∂Eθ
+∂s (x,s ) for
+3Recall that sβ
+θ depends on x and y. Hence ν depends on x and y
+through
+∂sβ
+θ
+∂β
+⏐⏐⏐⏐
+β=0
+.
+some scalar functionEθ(x,s ). In this case, the Jacobian of
+µθ is symmetric since ∂µθ
+∂s =−∂2Eθ
+∂s2 =
+(
+∂µθ
+∂s
+)T
+, and by
+Theorem 1 we get ν(x, y,θ ) = −∂J
+∂θ (x, y,θ ). Therefore,
+in this setting the set of ‘good parameters’ is the entire pa-
+rameter space – for all θ, the dynamics ds
+dt =−∂Eθ
+∂s (x,s )
+converges to a ﬁxed point (a minimum of Eθ(x,s )), and
+ν(x, y,θ )· ∂J
+∂θ (x, y,θ )≤ 0.
+However, for the ‘set of good parameters’ to cover a large
+proportion of the parameter space, it is not required that the
+vector ﬁeld µθ derives from an energy function Eθ. In-
+deed, experiments run on the MNIST dataset show that,
+whenµθ(x,s ) is deﬁned as in Eq. 6-8, the objective function
+J consistently decreases (Appendix C). This means that,
+during training, as the parameter θ follows the update rule
+∆θ∝ ν(x, y,θ ), all values of θ that the network takes are
+‘good parameters’.
+6 Possible Implementation on Analog
+Hardware
+Our model is a continuous-time dynamical system (de-
+scribed by differential equations). Digital computers are not
+well suited to implement such models because they do in-
+trinsically discrete-time computations, not continuous-time
+ones. The basic way to simulate a differential equation on
+a digital computer is the Euler method in which time is dis-
+cretized. However the discretized dynamics is only an ap-
+proximation of the true continuous-time dynamics. The ac-
+curacy depends on the size of the discretization step. The
+bigger the step size, the less acurate the simulation. The
+smaller the step size, the slower the computations.
+By contrast, analog hardware is ideal for implementing
+continuous-time dynamics such as those of leaky integrator
+neurons. Previous work have proposed such implementa-
+tions [Hertz et al., 1997].
+7 Related Work
+Other alternatives to recurrent back-propagation in the
+framework of ﬁxed point recurrent networks were proposed
+by O’Reilly [1996] and Hertz et al. [1997]. Their algo-
+rithms are called ‘Generalized Recirculation algorithm’ (or
+‘GeneRec’ for short) and ‘Non-Linear Back-propagation’,
+respectively.
+More recently, Mesnard et al. [2016] have adapted Equi-
+librium Propagation to spiking networks, bringing the
+model closer to real neural networks. Zenke and Gan-
+guli [2017] also proposed a backprop-like algorithm for su-
+pervised learning in spiking networks called ‘SuperSpike’.
+Guerguiev et al. [2017] proposed a mechanism for back-
+propagating error signals in a multilayer network with com-
+5
+
+===== PAGE 6 =====
+partment neurons, experimentally shown to learn useful rep-
+resentations.
+8 Conclusion
+Among others, two key features of the backpropagation al-
+gorithm make it biologically implausible – the two different
+kinds of signals sent in the forward and backward phases
+and the ‘weight transport problem’. In this work, we have
+proposed a backprop-like algorithm for ﬁxed-point recur-
+rent networks, which addresses both these issues. As a
+key contribution, in contrast to energy-based approaches
+such as the Hopﬁeld model, we do not impose any sym-
+metry constraints on the neural connections. Our algo-
+rithm assumes two phases, the difference between them
+being whether synaptic changes occur or not. Although
+this assumption begs for an explanation, neurophysiological
+ﬁndings suggest that phase-dependent mechanisms are in-
+volved in learning and memory consolidation in biological
+systems. Synaptic plasticity, and neural dynamics in gen-
+eral, are known to be modulated by inhibitory neurons and
+dopamine release, depending on the presence or absence of
+a target signal [Frémaux and Gerstner, 2016, Pawlak et al.,
+2010].
+In its general formulation (Appendix A), the work pre-
+sented in this paper is a generalization of Equilibrium Prop-
+agation [Scellier and Bengio, 2017a] to vector ﬁeld dynam-
+ics. This is achieved by relaxing the requirement of an en-
+ergy function. This generalization comes at the cost of not
+being able to compute the (true) gradient of the objective
+function but, rather a direction in the parameter space which
+is related to it. Thereby, precision of the approximation of
+the gradient is directly related to the degree of symmetry of
+the Jacobian of the vector ﬁeld.
+Our work shows that optimization of an objective func-
+tion can be achieved without ever computing the (true) gra-
+dient. More thorough theoretical analysis needs to be car-
+ried out to understand and characterize the dynamics in the
+parameter space that optimize objective functions. Natu-
+rally, the set of all such dynamics is much larger than the
+tiny subset of gradient-based dynamics.
+Our framework provides a means of implementing learn-
+ing in a variety of physical substrates, whose precise dy-
+namics might not even be known exactly, but which simply
+have to be in the set of supported dynamics. In particular,
+this applies to analog electronic circuits, potentially lead-
+ing to faster, more efﬁcient, and more compact implemen-
+tations.
+Acknowledgments
+The authors would like to thank Blake Richards and Alexan-
+dre Thiery for feedback and discussions, as well as NSERC,
+CIFAR, Samsung, SNSF, and Canada Research Chairs for
+funding, and Compute Canada for computing resources.
+References
+L. B. Almeida. A learning rule for asynchronous percep-
+trons with feedback in a combinatorial environment. vol-
+ume 2, pages 609–618, San Diego 1987, 1987. IEEE,
+New York.
+D. Bahdanau, K. Cho, and Y . Bengio. Neural machine trans-
+lation by jointly learning to align and translate. arXiv
+preprint arXiv:1409.0473, 2014.
+Y . Bengio, T. Mesnard, A. Fischer, S. Zhang, and Y . Wu.
+Stdp-compatible approximation of backpropagation in an
+energy-based model. Neural computation , 29(3):555–
+577, 2017.
+G.-q. Bi and M.-m. Poo. Synaptic modiﬁcation by corre-
+lated activity: Hebb’s postulate revisited. Annual review
+of neuroscience, 24(1):139–166, 2001.
+C. Clopath and W. Gerstner. V oltage and spike timing inter-
+act in stdp–a uniﬁed model. Frontiers in synaptic neuro-
+science, 2:25, 2010.
+F. Crick. The recent excitement about neural networks. Na-
+ture, 337(6203):129–132, 1989.
+P. Dayan and L. F. Abbott. Theoretical Neuroscience. The
+MIT Press, 2001.
+N. Frémaux and W. Gerstner. Neuromodulated spike-
+timing-dependent plasticity, and theory of three-factor
+learning rules. Frontiers in neural circuits, 9:85, 2016.
+W. Gerstner, R. Kempter, J. L. van Hemmen, and H. Wag-
+ner. A neuronal learning rule for sub-millisecond tempo-
+ral coding. Nature, 383(6595):76, 1996.
+X. Glorot and Y . Bengio. Understanding the difﬁculty
+of training deep feedforward neural networks. In AIS-
+TATS’2010, 2010.
+J. Guerguiev, T. P. Lillicrap, and B. A. Richards. Towards
+deep learning with segregated dendrites.ELife, 6:e22901,
+2017.
+J. Hertz, A. Krogh, B. Lautrup, and T. Lehmann. Nonlinear
+backpropagation: doing backpropagation without deriva-
+tives of the activation function. IEEE Transactions on
+neural networks, 8(6):1321–1327, 1997.
+G. Hinton, L. Deng, D. Yu, G. E. Dahl, A.-r. Mohamed,
+N. Jaitly, A. Senior, V . Vanhoucke, P. Nguyen, T. N.
+6
+
+===== PAGE 7 =====
+Sainath, et al. Deep neural networks for acoustic mod-
+eling in speech recognition: The shared views of four re-
+search groups. IEEE Signal Processing Magazine, 29(6):
+82–97, 2012.
+G. E. Hinton and J. L. McClelland. Learning representa-
+tions by recirculation. In Neural information processing
+systems, pages 358–366, 1988.
+J. J. Hopﬁeld. Neurons with graded response have collective
+computational properties like those of two-state neurons.
+Proceedings of the national academy of sciences, 81(10):
+3088–3092, 1984.
+A. Krizhevsky, I. Sutskever, and G. E. Hinton. Imagenet
+classiﬁcation with deep convolutional neural networks.
+In Advances in neural information processing systems ,
+pages 1097–1105, 2012.
+Y . LeCun, Y . Bengio, and G. Hinton. Deep learning.Nature,
+521(7553):436, 2015.
+J. Lisman and N. Spruston. Questions about stdp as a gen-
+eral model of synaptic plasticity. Frontiers in synaptic
+neuroscience, 2:140, 2010.
+H. Markram and B. Sakmann. Action potentials propagat-
+ing back into dendrites triggers changes in efﬁcacy. Soc.
+Neurosci. Abs, 21, 1995.
+H. Markram, W. Gerstner, and P. J. Sjöström. Spike-timing-
+dependent plasticity: a comprehensive overview. Fron-
+tiers in synaptic neuroscience, 4:2, 2012.
+T. Mesnard, W. Gerstner, and J. Brea. Towards deep
+learning with spiking neurons in energy based mod-
+els with contrastive hebbian plasticity. arXiv preprint
+arXiv:1612.03214, 2016.
+R. C. O’Reilly. Biologically plausible error-driven learning
+using local activation differences: The generalized recir-
+culation algorithm. Neural computation, 8(5):895–938,
+1996.
+V . Pawlak, J. R. Wickens, A. Kirkwood, and J. N. Kerr.
+Timing is not everything: neuromodulation opens the
+stdp gate. Frontiers in synaptic neuroscience , 2:146,
+2010.
+F. J. Pineda. Generalization of back-propagation to recur-
+rent neural networks. Physical review letters , 59(19):
+2229, 1987.
+B. Scellier and Y . Bengio. Equilibrium propagation: Bridg-
+ing the gap between energy-based models and backprop-
+agation. Frontiers in computational neuroscience, 11:24,
+2017a.
+B. Scellier and Y . Bengio. Equivalence of equilibrium prop-
+agation and recurrent backpropagation. arXiv preprint
+arXiv:1711.08416, 2017b.
+F. Zenke and S. Ganguli. Superspike: Supervised learning
+in multi-layer spiking neural networks. arXiv preprint
+arXiv:1705.11146, 2017.
+Appendix
+A Theorem 1 - General Formulation
+and Proof
+In this appendix, before proving Theorem 1, we ﬁrst gen-
+eralize the setting of sections 3 and 4 to the case where the
+cost functionC also depends on the parameterθ. This is the
+case e.g. if the cost function includes a regularization term
+such as 1
+2λ‖θ‖2.
+A.1 General Formulation
+Recall that we consider the supervised setting in which we
+want to predict a target y given an input x. The model is
+speciﬁed by a state variable s, a parameter variable θ, a
+vector ﬁeld in the state space µθ(x,s ) and a cost function
+Cθ(s, y). 4 The stable ﬁxed point sx
+θ corresponding to the
+’prediction’ from the model is characterized by
+µθ (x,s x
+θ) = 0. (20)
+The objective function to be minimized is the cost at the
+ﬁxed point, i.e.
+J(x, y,θ ) :=Cθ (y,s x
+θ). (21)
+Traditional methods to compute the gradient of J such as
+Recurrent Backpropagation are thought to be biologically
+implausible (see Appendix B). Our approach is to give up
+on computing the gradient of J and let the parameter vari-
+ableθ follow a vector ﬁeld ν in the parameter space which
+approximates the gradient ofJ.
+To this end we ﬁrst deﬁne the augmented vector ﬁeld
+µβ
+θ (x, y,s ) :=µθ(x,s )−β ∂Cθ
+∂s (y,s ). (22)
+Hereβ is a real-valued scalar which we call inﬂuence pa-
+rameter. The corresponding ﬁxed point sβ
+θ is a state at
+which the augmented vector ﬁeld vanishes, i.e.
+µβ
+θ
+(
+x, y,sβ
+θ
+)
+= 0. (23)
+4In the setting described in section 3, the cost functionC(s, y) did not
+depend onθ.
+7
+
+===== PAGE 8 =====
+Under mild regularity conditions onµθ andCθ, the implicit
+function theorem ensures that, for a ﬁxed data sample(x, y),
+the function (θ,β )↦→sβ
+θ is differentiable.
+Then for every θ we deﬁne the vector ν(x, y,θ ) in the
+parameter space as
+ν(x, y,θ ) :=−∂Cθ
+∂θ (y,s x
+θ) +∂µθ
+∂θ (x,s x
+θ)T· ∂sβ
+θ
+β
+⏐⏐⏐⏐⏐
+β=0
+.
+(24)
+In section 4 we showed how the second term on the right-
+hand side of Eq. 24 can be estimated with a two-phase train-
+ing procedure. In the general case where the cost function
+also depends on the parameterθ, the deﬁnition of the vector
+ν(x, y,θ ) contains the new term −∂Cθ
+∂θ (y,s x
+θ). This extra
+term can also be measured in a biologically realistic way
+at the ﬁrst ﬁxed point s0
+θ at the end of the ﬁrst phase. For
+example if Cθ(y,s ) includes a regularization term such as
+1
+2λ‖θ‖2, then ν(x, y,θ ) will include a backmoving force
+−λθ, modeling a form of synaptic depression.
+We can now reformulate Theorem 1 in a slightly more
+general form, when the cost function depends on θ. The
+gradient of the objective function and the vector ﬁeld ν are
+equal to
+∂J
+∂θ (θ) = ∂Cθ
+∂θ − ∂Cθ
+∂s ·
+(∂µθ
+∂s
+)−1
+· ∂µθ
+∂θ , (25)
+ν(θ) =−∂Cθ
+∂θ + ∂Cθ
+∂s ·
+((∂µθ
+∂s
+)T)−1
+· ∂µθ
+∂θ . (26)
+All the factors on the right-hand sides of Eq. 25-26 are eval-
+uated at the ﬁxed point s0
+θ. We prove Eq. 25-26 in the next
+subsection.
+A.2 Proof
+In order to prove Eq. 25 and Eq. 26 (i.e. Theorem 1 in
+a slightly more general form), we ﬁrst state and prove a
+lemma.
+Lemma 2. Lets↦→ µβ
+θ (s) be a differentiable vector ﬁeld,
+andsβ
+θ a ﬁxed point characterized by
+µβ
+θ
+(
+sβ
+θ
+)
+= 0. (27)
+Then the partial derivatives of the ﬁxed point are given by
+∂sβ
+θ
+∂θ =−
+(
+∂µβ
+θ
+∂s
+(
+sβ
+θ
+))−1
+· ∂µβ
+θ
+∂θ
+(
+sβ
+θ
+)
+(28)
+and
+∂sβ
+θ
+∂β =−
+(
+∂µβ
+θ
+∂s
+(
+sβ
+θ
+))−1
+· ∂µβ
+θ
+∂β
+(
+sβ
+θ
+)
+. (29)
+Proof of Lemma 2. First we differentiate the ﬁxed point
+equation Eq. 27 with respect toθ:
+d
+dθ (27) ⇒ ∂µβ
+θ
+∂θ
+(
+sβ
+θ
+)
++ ∂µβ
+θ
+∂s
+(
+sβ
+θ
+)
+· ∂sβ
+θ
+∂θ = 0. (30)
+Rearranging the terms we get Eq. 28. Similarly we differ-
+entiate the ﬁxed point equation Eq. 27 with respect toβ:
+d
+dβ (27) ⇒ ∂µβ
+θ
+∂β
+(
+sβ
+θ
+)
++ ∂µβ
+θ
+∂s
+(
+sβ
+θ
+)
+· ∂sβ
+θ
+∂β = 0. (31)
+Rearranging the terms we get Eq. 29.
+Now we are ready to prove prove Eq. 25 and Eq. 26.
+Proof of Theorem 1 in its general formulation. Let us com-
+pute the gradient of the objective function with respect toθ.
+Using the chain rule of differentiation we get
+∂J
+∂θ = ∂Cθ
+∂θ + ∂Cθ
+∂s · ∂s0
+θ
+∂θ . (32)
+Hence Eq. 25 follows from Eq. 28 evaluated atβ = 0. Sim-
+ilarly, the expression for the vector ﬁeld ν (Eq. 26) follows
+from its deﬁnition (Eq. 24), the identity Eq. 29 evaluated at
+β = 0 and, using Eq. 13, the fact that ∂µβ
+∂β =−∂C
+∂s .
+B Link to Recurrent Backpropaga-
+tion
+Earlier work have proposed various methods to compute the
+gradient of the objective function J (Eq. 21). One of them
+is Recurrent Backpropagation, an algorithm discovered in-
+dependently by Almeida [1987] and Pineda [1987]. This
+algorithm assumes that neurons send a different kind of sig-
+nals through a different computational path in the second
+phase, which seems less biologically plausible than our al-
+gorithm.
+Our approach is to give up on the idea of computing the
+true gradient of the objective function. Instead our algo-
+rithm relies only on the leaky integrator neuron dynamics
+(Eq. 1) and the STDP-compatible weight change (Eq. 2) and
+we have shown that it computes a proxy to the true gradient
+(Theorem 1).
+Up to now, we have described our algorithm in terms of
+ﬁxed points only. In this appendix we study the dynam-
+ics itself in the second phase when the state of the network
+moves from the free ﬁxed point s0
+θ to the weakly clamped
+ﬁxed pointsβ
+θ .
+The result established in this section is a straightforward
+generalization of the result proved in Scellier and Bengio
+[2017b].
+8
+
+===== PAGE 9 =====
+B.1 Preliminary Notations
+We denote bySx
+θ (s,t ) the state of the network at timet≥ 0
+when it starts from an initial states at timet = 0 and follows
+the dynamics of Eq. 9. In the theory of dynamical systems,
+Sx
+θ (s,t ) is called the ﬂow map. Note that as t→ ∞the
+dynamics converges to the ﬁxed pointSx
+θ (s,t )→sx
+θ.
+Next we deﬁne the projected cost function
+Lθ(x, y, s,t ) :=Cθ (y,S x
+θ (s,t )). (33)
+This is the cost of the state projected a duration t in
+the future, when the networks starts from s and follows
+the dynamics of Eq. 9. For ﬁxed θ, x, y and s, the pro-
+cess (Lθ(x, y, s,t ))t≥0 represents the successive cost val-
+ues taken by the state of the network along the dynam-
+ics when it starts from the initial state s. For t = 0 ,
+the projected cost is simply the cost of the current state:
+Lθ(x, y, s, 0) = Cθ (y, s). As t→∞ the dynamics con-
+verges to the ﬁxed point, i.e.Sx
+θ (s,t )→sx
+θ, so the projected
+cost converges to the objective Lθ(x, y, s,t )→ J(x, y,θ ).
+Under mild regularity conditions on µθ(x,s ) andCθ(y,s ),
+the gradient of the projected cost function converges to the
+gradient of the objective function ast→∞ , i.e.
+∂Lθ
+∂θ (x, y, s,t )→ ∂J
+∂θ (x, y,θ ). (34)
+Therefore, if we can compute ∂Lθ
+∂θ (x, y, s,t ) for a particular
+value ofs and for anyt≥ 0, the desired gradient∂J
+∂θ (x, y,θ )
+can be obtained by lettingt→∞ . We show next that this is
+what the Recurrent Backpropagation algorithm does in the
+case where the initial state s is the ﬁxed pointsx
+θ.
+B.2 Recurrent Back-Propagation
+In order to compute the gradient ofJ (Eq. 12), the approach
+of Recurrent Backpropagation [Almeida, 1987, Pineda,
+1987] is to compute ∂Lθ
+∂θ (x, y,s x
+θ,t ) for t≥ 0 iteratively.
+We get the gradient in the limitt→∞ as a consequence of
+Eq. 34, when the initial state s is the ﬁxed pointsx
+θ. 5
+Theorem 3 (Recurrent Backpropagation) . Consider the
+process
+St := ∂Lθ
+∂s (x, y,s x
+θ,t ), t ≥ 0, (35)
+Θt := ∂Lθ
+∂θ (x, y,s x
+θ,t ), t ≥ 0. (36)
+We call (St, Θt) the process of error derivatives. It is the
+5The gradient ∂Lθ
+∂θ
+(
+x, y,s x
+θ,t
+)
+represents the partial derivative of the
+functionL with respect to its ﬁrst argument, evaluated at the ﬁxed point
+sx
+θ.
+solution of the linear differential equation
+S0 = ∂Cθ
+∂s (y,s x
+θ), (37)
+Θ0 = ∂Cθ
+∂θ (y,s x
+θ), (38)
+d
+dtSt = ∂µθ
+∂s (x,s x
+θ)T·St, (39)
+d
+dtΘt = ∂µθ
+∂θ (x,s x
+θ)T·St. (40)
+Moreover, ast→∞
+Θt→ ∂J
+∂θ (x, y,θ ). (41)
+Note thatSt takes values in the state space (space of the
+state variables) and Θt takes values in the parameter space
+(space of the parameter variableθ).
+Theorem 3 offers a way to compute the gradient
+∂J
+∂θ (x, y,θ ). In the ﬁrst phase, the state variable s fol-
+lows the dynamics of Eq. 9 and relaxes to the ﬁxed point
+sx
+θ. Reaching this ﬁxed point is necessary for the compu-
+tation of the transpose of the Jacobian ∂µθ
+∂s (x,s x
+θ)T which
+is required in the second phase. In the second phase, the
+processes St and Θt follow the dynamics determined by
+Eq. 37-40. As t→∞ , we have that Θt converges to the
+desired gradient ∂J
+∂θ (x, y,θ ).
+B.3 Temporal Derivatives of Neural Activi-
+ties in Equilibrium Propagation Approx-
+imate Error Derivatives
+Two major objections against the biological plausibility of
+the recurrent backpropagation algorithm are that:
+1. it is not clear what the quantities St and Θt would rep-
+resent in a biological network, and
+2. it is not clear how dynamics such as those of Eq. 37-40
+forSt and Θt could emerge.
+By contrast, Equilibrium Propagation (section 4) does not
+require specialized dynamics in the second phase. Theorem
+1 shows that the gradient ∂J
+∂θ (x, y,θ ) can be approximated
+by ν(x, y,θ ), which can be itself estimated based on the
+ﬁrst and second ﬁxed points. In this section we study the
+dynamics of the network in the second phase, from the ﬁrst
+ﬁxed point to the second ﬁxed point. Although Equilibrium
+Propagation does not compute explicit error derivatives, we
+are going to deﬁne a process
+(
+~St,~Θt
+)
+t≥0
+as a function of
+the dynamics, and show that this process approximates the
+error derivatives
+(
+St, Θt
+)
+t≥0.
+Let us denote bySβ
+θ (s,t ) the state of the network at time
+t≥ 0 when it starts from an initial state s at timet = 0 and
+9
+
+===== PAGE 10 =====
+follows the dynamics of Eq. 14. In particular, forβ = 0 we
+haveS0
+θ(s,t ) =Sx
+θ (s,t ).
+The state of the network at the beginning of the second
+phase is the ﬁrst ﬁxed point s0
+θ. We choose as origin of
+timet = 0 the moment when the second phase starts: the
+network is in the states0
+θ and the inﬂuence parameter takes
+on a small positive value β & 0. With our notations, the
+state of the network at time t≥ 0 in the second phase is
+Sβ
+θ
+(
+s0
+θ,t
+)
+. At time t = 0 the network is at the ﬁrst ﬁxed
+point, i.e. Sβ
+θ
+(
+s0
+θ, 0
+)
+= s0
+θ, and as t→∞ the network’s
+state converges to the second ﬁxed point, i.e. Sβ
+θ (s,t )→
+sβ
+θ .
+Now let us deﬁne
+~St :=− lim
+β→0
+1
+β
+∂Sβ
+θ
+∂t
+(
+s0
+θ,t
+)
+, (42)
+~Θt :=∂Cθ
+∂θ
+(
+y,s 0
+θ
+)
+− lim
+β→0
+1
+β
+∂µθ
+∂θ
+(
+x,s 0
+θ
+)T
+·
+(
+Sβ
+θ
+(
+s0
+θ,t
+)
+−s0
+θ
+)
+. (43)
+First of all note that ~St takes values in the state space and
+~Θt takes values in the parameter space. From the point of
+view of biological plausibility, unlike
+(
+St, Θt
+)
+in Recur-
+rent Backpropagation, the process
+(
+~St,~Θt
+)
+in Equilibrium
+Propagation has a physiological interpretation. Indeed ~St
+is simply the temporal derivative of the neural activity at
+timet in the second phase (rescaled by a factor 1
+β ). As for
+~Θt, the ﬁrst term is zero in the case of the quadratic cost
+(Eq. 11) 6 and the second term corresponds to the STDP-
+compatible weights change (Eq. 5) integrated between the
+initial state (the ﬁrst ﬁxed point) and the state at time t in
+the second phase (and rescaled by a factor 1
+β ). For short, we
+call (~St,~Θt) the process of temporal derivatives.
+Theorem 4. The process of temporal derivatives (~St,~Θt)
+satisﬁes
+~S0 = ∂Cθ
+∂s (y,s x
+θ), (44)
+~Θ0 = ∂Cθ
+∂θ (y,s x
+θ), (45)
+d
+dt
+~St = ∂µθ
+∂s (x,s x
+θ)·~St, (46)
+d
+dt
+~Θt = ∂µθ
+∂θ (x,s x
+θ)T·~St. (47)
+Furthermore, ast→∞
+~Θt→ν(x, y,θ ). (48)
+6If the cost function includes a regularization term of the form 1
+2‖θ‖2,
+the ﬁrst term is a backmoving force −λθ modeling a form of synaptic
+depression.
+Theorem 3 and Theorem 4 show that the processes
+(St, Θt) and (~St,~Θt) satisfy related differential equations.
+The difference between the dynamics of Theorem 3 and
+Theorem 4 lies in Eq. 39 and Eq. 46.
+As in Theorem 1, the discrepancy between these pro-
+cesses is directly linked to the ‘degree of symmetry’ of the
+Jacobian of µθ. Again, an important particular case is the
+energy-based setting in which µθ =−∂Eθ
+∂s for some scalar
+functionEθ(x,s ). In this case ∂µθ
+∂s =−∂2Eθ
+∂s2 =
+(
+∂µθ
+∂s
+)T
+,
+and by Theorems 3 and 4 we get ~St = St and ~Θt = Θt.
+This result was stated and proved in Scellier and Bengio
+[2017b].
+B.4 Proofs of Theorems 3 and 4
+Proof of Theorem 3. First of all, by deﬁnition ofL (Eq. 33)
+we haveLθ(s, 0) = Cθ(s). Therefore the initial conditions
+(Eq. 37 and Eq. 38) are satisﬁed:
+∂Lθ
+∂s
+(
+s0
+θ, 0
+)
+= ∂Cθ
+∂s
+(
+s0
+θ
+)
+(49)
+and
+∂Lθ
+∂θ
+(
+s0
+θ, 0
+)
+= ∂Cθ
+∂θ
+(
+s0
+θ
+)
+. (50)
+Now we show thatSt = ∂L
+∂s
+(
+s0,t
+)
+satisﬁes the differen-
+tial equation (Eq. 39). We omit to write the dependence inθ
+to keep notations simple. As a preliminary result, we show
+that for all initial state s and timet we have 7
+∂L
+∂t (s,t ) = ∂L
+∂s (s,t )·µ(s). (51)
+To this end note that (by deﬁnition of L and S0) we have
+for allt andu
+L
+(
+S0(s,u ),t
+)
+=L(s,t +u). (52)
+The derivatives of the right-hand side of Eq. 52 with respect
+tot andu are clearly equal:
+d
+dtL(s,t +u) = d
+duL(s,t +u). (53)
+Therefore the derivatives of the left-hand side of Eq. 52 are
+equal too:
+∂L
+∂t
+(
+S0(s,u ),t
+)
+= d
+duL
+(
+S0(s,u ),t
+)
+(54)
+= ∂L
+∂s
+(
+S0(s,u ),t
+)
+·µ
+(
+S0(s,u ),t
+)
+.
+(55)
+7Eq. 51 is the Kolmogorov backward equation for a deterministic pro-
+cess.
+10
+
+===== PAGE 11 =====
+Here we have used the differential equation of motion
+(Eq. 9). Evaluating this expression foru = 0 we get Eq. 51.
+Then, differentiating Eq. 51 with respect tos, we get
+∂2L
+∂t∂s (s,t ) = ∂2L
+∂s2 (s,t )·µ(s) +
+(∂µ
+∂s (s)
+)T
+· ∂L
+∂s (s,t ).
+(56)
+Evaluating this expression at the ﬁxed point s = s0 and
+using the ﬁxed point conditionµ
+(
+s0)
+= 0 we get
+d
+dt
+∂L
+∂s
+(
+s0,t
+)
+=
+(∂µ
+∂s
+(
+s0))T
+· ∂L
+∂s
+(
+s0,t
+)
+. (57)
+Therefore ∂L
+∂s
+(
+s0,t
+)
+satisﬁes Eq. 39.
+Finally we prove Eq. 40. Differentiating Eq. 51 with re-
+spect toθ, we get
+∂2Lθ
+∂t∂θ (s,t ) = ∂2Lθ
+∂s∂θ (s,t )·µθ(s) (58)
++
+(∂µθ
+∂θ (s)
+)T
+· ∂Lθ
+∂s (s,t ). (59)
+Evaluating this expression at the ﬁxed point s =s0
+θ we get
+d
+dt
+∂Lθ
+∂θ
+(
+s0
+θ,t
+)
+=
+(∂µθ
+∂θ
+(
+s0
+θ
+))T
+· ∂Lθ
+∂s
+(
+s0
+θ,t
+)
+. (60)
+Hence the result.
+Proof of Theorem 4. First of all, note that
+∂2Sβ
+θ
+∂β∂t
+⏐⏐⏐⏐⏐
+β=0
+(
+s0
+θ,t
+)
+= lim
+β→0
+1
+β
+(
+∂Sβ
+θ
+∂t
+(
+s0
+θ,t
+)
+− ∂S 0
+θ
+∂t
+(
+s0
+θ,t
+)
+)
+(61)
+= lim
+β→0
+1
+β
+∂Sβ
+θ
+∂t
+(
+s0
+θ,t
+)
+. (62)
+This is because S0
+θ
+(
+s0
+θ,t
+)
+= s0
+θ for every t≥ 0, so that
+∂S 0
+θ
+∂t
+(
+s0
+θ,t
+)
+= 0 at every momentt≥ 0. Furthermore
+∂Cθ
+∂θ
+(
+s0
+θ
+)
+− ∂µθ
+∂θ
+(
+s0
+θ
+)T
+· ∂Sβ
+θ
+∂β
+⏐⏐⏐⏐⏐
+β=0
+(
+s0
+θ,t
+)
+(63)
+=∂Cθ
+∂θ
+(
+s0
+θ
+)
+− lim
+β→0
+1
+β
+(∂µθ
+∂θ
+(
+s0
+θ
+)T
+·
+(
+Sβ
+θ
+(
+s0
+θ,t
+)
+−s0
+θ
+))
+(64)
+Thus, we have to show that the process (~St,~Θt) deﬁned as
+~St :=− ∂2Sβ
+θ
+∂β∂t
+⏐⏐⏐⏐⏐
+β=0
+(
+s0
+θ,t
+)
+, (65)
+~Θt := ∂Cθ
+∂θ
+(
+s0
+θ
+)
++ ∂µθ
+∂θ
+(
+s0
+θ
+)T
+· ∂Sβ
+θ
+∂β
+⏐⏐⏐⏐⏐
+β=0
+(
+s0
+θ,t
+)
+(66)
+satisﬁes Eq. 44, Eq. 45, Eq. 46 and Eq. 47.
+First we prove the result for ~St. We omit to write the
+dependence in θ to keep notations simple. The process(
+Sβ(s,t )
+)
+t≥0 is solution of the differential equation
+∂Sβ
+∂t (s,t ) =µβ(
+Sβ(s,t )
+)
+. (67)
+with initial condition Sβ(s, 0) = s . Differentiating Eq. 67
+with respect toβ, we get the following equation for the pro-
+cess ∂Sβ
+∂β (s,t ):
+d
+dt
+∂Sβ
+∂β (s,t ) = ∂µβ
+∂β
+(
+Sβ(s,t )
+)
++∂µβ
+∂s
+(
+Sβ(s,t )
+)
+·∂Sβ
+∂β (s,t ).
+(68)
+Evaluating at β = 0 , taking s = s0 as an initial state and
+using the fact thatS0(
+s0,t
+)
+=s0, we get
+d
+dt
+∂Sβ
+∂β
+⏐⏐⏐⏐
+β=0
+(
+s0,t
+)
+=−∂C
+∂s
+(
+s0)
++∂µ
+∂s
+(
+s0)
+·∂Sβ
+∂β
+⏐⏐⏐⏐
+β=0
+(
+s0,t
+)
+.
+(69)
+Since Sβ (s, 0) = s is independent of β, we have
+∂Sβ
+∂β (s, 0) = 0 . Therefore, evaluating Eq. 69 at t = 0 ,
+we get the initial condition (Eq. 44):
+∂2Sβ
+∂t∂β
+⏐⏐⏐⏐
+β=0
+(
+s0, 0
+)
+=−∂C
+∂s
+(
+s0)
+. (70)
+Moreover, differentiating Eq. 69 with respect to time we get
+Eq. 46:
+d
+dt
+∂2Sβ
+∂t∂β
+⏐⏐⏐⏐
+β=0
+(
+s0,t
+)
+= ∂µ
+∂s
+(
+s0)
+· ∂2Sβ
+∂t∂β
+⏐⏐⏐⏐
+β=0
+(
+s0,t
+)
+.
+(71)
+Now we prove the result for ~Θt. Evaluating Eq. 66 at
+timet = 0 we get the initial condition (Eq. 45)
+~Θ0 = ∂Cθ
+∂θ
+(
+s0
+θ
+)
+. (72)
+Moreover, differentiating Eq. 66 with respect to time we get
+Eq. 47:
+d
+dt
+~Θt =−∂µθ
+∂θ
+(
+s0
+θ
+)T
+· ∂2Sβ
+θ
+∂t∂β
+⏐⏐⏐⏐⏐
+β=0
+(
+s0
+θ,t
+)
+. (73)
+Hence the result.
+C Experiments and Implementation
+of the Model
+Our model is a recurrently connected neural network with-
+out any constraint on the feedback weight values (unlike
+models such as the Hopﬁeld network). We train multi-
+layered networks with 2 or 3 hidden layers on the MNIST
+11
+
+===== PAGE 12 =====
+Architecture Iterations Iterations ϵ β α1 α2 α3 α4
+(ﬁrst phase) ( second phase)
+784− 512− 512− 10 200 100 0.001 1.0 0.4 0 .1 0 .01 −−
+784− 512− 512− 512− 10 200 100 0.001 1.0 1.0 0 .1 0 .04 0 .002
+Table 1: Hyperparameters for both the 2- and 3-layer networks trained on the
+MNIST dataset, as described in Appendix C. The objective function is opti-
+mized: the training error decreases to 0.00%. The generalization error lies
+between 2% and 3% depending on the architecture. The learning rateϵ is used
+for iterative inference (Eq. 77).β is the value of the inﬂuence parameter in the
+second phase.αk is the learning rate for updating the parameters in layerk.
+Operation Kernel Strides Feature Maps Non Linearity
+Convolution 5 x 5 1 32 Relu
+Convolution 5 x 5 1 64 Relu
+Table 2: Hyperparameters for MNIST CNN experiments.
+task, with no skip-layer connections and no lateral connec-
+tions within layers, as in Figure 3 (though the theory pre-
+sented in this paper applies to any network architecture).
+Rather than performing weight updates at all time steps
+in the second phase, we perform a single update at the end
+of the second phase:
+∆Wij∝ ∂µθ
+∂Wij
+(
+x,s 0
+θ
+)T
+· sβ
+θ−s0
+θ
+β . (74)
+The predicted value (given the inputx) is read on the last
+layer at the ﬁrst ﬁxed point s0
+0 at the end of the ﬁrst phase.
+The predicted valueˆy is the index of the output unit whose
+activation is maximal among the 10 output units:
+ˆy := arg max
+i
+s0
+0,i. (75)
+Implementation of the neuronal dynamics. We start
+by clamping x to the data values. Then we use the Eu-
+ler method to implement Eq. 14. The naive method is to
+discretize time into short time lapses of duration ϵ and to
+update the state variables iteratively thanks to
+s←s−ϵµ β
+θ (x, y,s ). (76)
+For our experiments, we choose the hard sigmoid activation
+functionρ(si) = 0∨si∧1, where∨ denotes the max and∧
+the min. To address stability issues, we restrict the range of
+values for the neurons’ states and clip them between 0 and
+1. Thus, rather than the standard Euler method (Eq. 76), we
+use a slightly different update rule for the state variables:
+s← 0∨
+(
+s−ϵµ β
+θ (x, y,s )
+)
+∧ 1. (77)
+We use different learning rates for different layers in our
+experiments. The hyperparameters chosen for each model
+are shown in Table 1. We initialize the weights according to
+the Glorot-Bengio initialization [Glorot and Bengio, 2010].
+For efﬁciency of the experiments, we use minibatches of 20
+training examples.
+We were also able to train on MNIST using a Convo-
+lutional Neural Network (CNN). We got around 2% gen-
+eralization error. The hyperparameters chosen to train this
+Convolutional Neural Network are shown in Table 2.
+Figure 3: Experiments on the MNIST dataset.
+12

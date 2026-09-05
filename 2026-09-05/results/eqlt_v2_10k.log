@@ -1,0 +1,16 @@
+[LT] accelerate 사용 불가 (ModuleNotFoundError: No module named 'accelerate') — torch.distributed 폴백
+[LT] out_dir = /tmp/claude-0/-workspace/08bc710b-d194-40cc-8cfb-cb09bdc9e744/scratchpad/eqlt3  (쓰기 가능)
+[LT] ※ 체크포인트 없음 — step 0 부터 시작한다. 이어서 돌릴 의도였다면 CFG['resume_from'] 에 이전 세션 output 경로를 지정하라 (예외사항.md §4).
+[LT] world_size=1 local_bs=128 params=7,074,099 total_steps=390625 total_iters=200 out=/tmp/claude-0/-workspace/08bc710b-d194-40cc-8cfb-cb09bdc9e744/scratchpad/eqlt3
+[LT] 시작 step=0 iter=0 batch_in_iter=0
+[LT] step 200  lm_loss 1.8442  acc 0.3937  exact 0.0000 (~0/128) [halt step 192]
+[LT] step 400  lm_loss 1.5176  acc 0.4393  exact 0.0000 (~0/128) [halt step 400]
+[LT] step 600  lm_loss 1.4286  acc 0.4615  exact 0.0000 (~0/128) [halt step 592]
+[LT] step 800  lm_loss 1.3734  acc 0.4741  exact 0.0000 (~0/128) [halt step 800]
+[LT] step 1000  lm_loss 1.3363  acc 0.4762  exact 0.0000 (~0/128) [halt step 992]
+[LT] step 1200  lm_loss 1.3057  acc 0.4715  exact 0.0000 (~0/128) [halt step 1200]
+[LT] step 1400  lm_loss 1.2885  acc 0.4849  exact 0.0000 (~0/128) [halt step 1392]
+[LT] step 1600  lm_loss 1.2459  acc 0.4816  exact 0.0000 (~0/128) [halt step 1600]
+[LT] step 1800  lm_loss 1.2727  acc 0.4749  exact 0.0000 (~0/128) [halt step 1792]
+[EVAL] step 1953  acc 0.4734  exact 0/2048
+[LT] step 2000  lm_loss 1.2198  acc 0.4870  exact 0.0000 (~0/128) [halt step 2000]

@@ -9,3 +9,9 @@ results/json/*.npz
 *.npy
 results/logs/R1B8_min_faith.log
 refs/ckpt_hrm/
+
+# [2026-09-05] 체크포인트는 커밋하지 않는다 (GitHub 100MB 제한). 로컬 보관: step_182450.zip(이전 규칙 182k), kaggle/pull/checkpoints/milestones/step_180000.pt(λ=1 런 180k)
+*.pt
+*.zip
+kaggle/pull/*.log
+2026-09-05/results/json/*.npz

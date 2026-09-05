@@ -1,0 +1,2224 @@
+1
+Phase-coupled Oscillators with Plastic Coupling:
+Synchronization and Stability
+Andrey Gushchin, Enrique Mallada, and Ao Tang
+Abstract—In this article we study synchronization of systems of homogeneous phase-coupled oscillators with plastic coupling
+strengths and arbitrary underlying topology. The dynamics of the coupling strength between two oscillators is governed by the phase
+difference between these oscillators. We show that, under mild assumptions, such systems are gradient systems, and always achieve
+frequency synchronization. Furthermore, we provide sufﬁcient stability and instability conditions that are based on results from
+algebraic graph theory. For a special case when underlying topology is a tree, we formulate a criterion (necessary and sufﬁcient
+condition) of stability of equilibria. For both, tree and arbitrary topologies, we provide sufﬁcient conditions for phase-locking, i.e.
+convergence to a stable equilibrium almost surely. We additionally ﬁnd conditions when the system possesses a unique stable
+equilibrium, and thus, almost global stability follows. Several examples are used to demonstrate variety of equilibria the system has,
+their dependence on system’s parameters, and to illustrate differences in behavior of systems with constant and plastic coupling
+strengths.
+Index Terms—Phase-coupled oscillators, synchronization, plastic coupling, stability, Kuramoto model.
+!
+1 I NTRODUCTION
+S
+YNCHRONIZATION of phase-coupled oscillators is an
+extensive topic of research that ﬁnds applications in a
+variety of disciplines including neuroscience [25], [34], [43],
+[44], physics [34], [5], mathematics [16] and engineering [10],
+[32]. The dynamic behavior of these systems can be quite
+rich. For example, the intrinsic symmetry of the network can
+produce multiple limit cycles or equilibria with relatively
+ﬁxed phases (phase-locked) [3], and the heterogeneity in the
+natural oscillation frequency can lead to incoherence [11] or
+even chaos [38].
+One of the most important properties of a system of
+phase-coupled oscillators is how coupling (or interaction)
+between oscillators is deﬁned. The Kuramoto model [26] –
+a canonical model for studying synchronization phenomena
+– uses a trigonometric sin() coupling function that depends
+on the phase difference of the two interacting oscillators.
+However, broader classes of coupling functions have been
+considered – specially in applications to biological systems
+– and have proven to lead to richer varieties of dynamic
+behaviors [30], [20], [6], [31], [13].
+Besides the coupling function, there are two additional
+elements that also affect the systems behavior: the coupling
+strength (the gain that multiplies the coupling function)
+and the interconnection topology (that describes who af-
+fects whom). There is a vast body of literature devoted
+to understanding the effect of these elements, including
+studies of networks with complete graph [36], graph of
+diameter two [15] or arbitrary topology [16], [14], [9], [11].
+In general, larger (positive) coupling strength and more
+• A. Gushchin is with the Center for Applied Mathematics, Cornell Univer-
+sity, Ithaca, NY, 14850.
+E-mail: avg36@cornell.edu
+• E. Mallada is with the Electrical and Computer Engineering Department,
+Johns Hopkins University, Baltimore, MD, 21218
+• A. Tang is with the School of Electrical and Computer Engineering,
+Cornell University, Ithaca, NY, 14850.
+connected topologies tend to promote synchronization and
+lead to tightly grouped phase-locked solutions [14], [11].
+However, when negative coupling strengths are allowed
+among oscillators, new stable phase-locked solutions and
+even non-synchronizing traveling waves can appear [19].
+Interestingly, a common feature of all these studies is
+that the coupling strength is assumed to be ﬁxed. Having
+constant coupling strengths generally simpliﬁes the analysis
+and allows the theory to provide profound insights on the
+behavior of these systems. However, considering varying or
+plastic coupling strengths is more suitable for studying os-
+cillations in neuroscience, since synaptic neural connections
+undergo modiﬁcations due to learning or forgetting pro-
+cesses [20], [41], [37]. This have motivated some recent em-
+pirical studies [8], [35], [39] that seek to understand the effect
+of dynamic coupling strength. However, with the exception
+of a few studies that consider plastic coupling strength for
+complete graph topologies and sinusoidal coupling, there
+has not been a systematic study of the dynamical properties
+of plastic phase-coupled oscillators.
+The goal of this work is to develop a general ana-
+lytical framework for studying systems of phase-coupled
+homogeneous oscillators with non-constant coupling and
+arbitrary underlying topology. We show by providing a
+Lyapunov function, that under mild conditions these sys-
+tems always achieve frequency synchronization, and de-
+rive two sufﬁcient conditions: one for showing stability,
+and another one for showing instability of an equilibrium.
+Moreover, these conditions characterize all equilibria when
+underlying topology is a tree graph. We further characterize
+the relationship between the system parameters and its
+behavior, as well as the range of admissible asymptotic
+coupling strengths. In particular, we show that for almost
+all choices of these parameters, the system converges to a
+stable equilibrium almost surely.
+The structure of the article is the following. Section 2
+arXiv:1602.07012v1  [math.DS]  23 Feb 2016
+2
+formally describes the model, introduces necessary notation
+(Subsection 2.1), discusses related work and summarizes
+our results (Subsection 2.2). Section 3 provides several ex-
+amples that motivate our study. Section 4 contains general
+theoretical results: in Subsection 4.1 a Lyapunov function is
+introduced and frequency synchronization of oscillators is
+shown. Then, in Subsection 4.2 we formulate stability and
+instability sufﬁcient conditions. We apply these conditions
+in Subsection 4.3 to analyze stability of the in-phase and
+anti-phase equilibria. The results presented in Section 4 can
+be strengthen when the underlying network topology is a
+tree graph as shown in Section 5. In particular, we prove
+convergence to a stable equilibrium almost surely in the case
+of a general coupling (Subsection 5.1), and almost global
+stability in the case of strictly attractive or repulsive con-
+nections (Subsection 5.2). Section 6 considers the arbitrary
+topology case. More precisely, we show convergence to a
+stable equilibrium almost surely using additional assump-
+tions on the choice of system’s parameters. Finally, we apply
+our stability results to several examples in Section 7, and
+conclude in Section 8.
+2 P LASTIC PHASE -C OUPLED OSCILLATORS
+In this section we ﬁrst formally describe the model, discuss
+the meaning of its parameters and deﬁne the assumptions
+that we will use. We then brieﬂy list related works and
+summarize our results.
+2.1 Model Description
+We study a network of phase-coupled oscillators with plas-
+tic coupling strengths whose dynamics are governed by the
+following two equations:
+˙φi =ωi +
+∑
+j∈Ni
+Kij·fij(φj−φi), i∈V (1a)
+˙Kij =sij
+(
+αij· (Fij(φj−φi) +qij)−Kij
+)
+, ij∈E, (1b)
+where E is the set of edges and V the set of vertices.
+Equation (1a) deﬁnes behavior of an oscillator, and equation
+(1b) determines dynamics of the coupling strength. Here φi
+is a phase of oscillator i deﬁned on a unit circle S1 so that
+all n phase variables are deﬁned on a n-dimensional torus
+Tn; ωi is its intrinsic frequency; Ni is a set of oscillators
+connected to oscillator i, i.e. the set of its neighbors; Kij
+and fij are a coupling strength and a coupling function,
+respectively, between connected oscillatorsi andj.
+The positive constants sij in equation (1b) deﬁne the
+rate of change of the coupling strengths, and Fij(x) ≜
+−
+∫x
+0 fij(t)dt + Cij with a choice of integration constant
+Cij that makes
+∫π
+0 Fij(t)dt = 0 . The parameters qij ∈
+(−∞, +∞) and αij > 0 determine the interval of values
+that the coupling strength Kij can take. More precisely,
+Kij∈ [αij·(Fmin
+ij +qij), αij·(Fmax
+ij +qij)] whereFmin
+ij ≤ 0
+and Fmax
+ij ≥ 0 are the minimum and maximum values of
+the function Fij, respectively. Two values of qij are of a
+special interest: q+
+ij ≜−Fmin
+ij ≥ 0 and q−
+ij ≜−Fmax
+ij ≤ 0.
+Ifqij≥q+
+ij, then the coupling between oscillators i andj is
+positive (Kij≥ 0), while the coupling is negative (Kij≤ 0)
+when qij ≤ q−
+ij. In particular, when qij = q+
+ij = −Fmin
+ij
+(resp.qij = q−
+ij =−Fmax
+ij ), then the coupling strength Kij
+Fig. 1: Examples of functions fij satisfying Assumption 1.
+takes values from the interval [0, αij·(Fmax
+ij −Fmin
+ij )] (resp.
+[αij· (Fmin
+ij −Fmax
+ij ), 0]).
+The topology of system (1) is deﬁned by an undirected
+connected graphG = (V,E ). Each vertexi∈V corresponds
+to the oscillator φi, and each edge ij ∈ E corresponds to
+the coupling strength Kij, so that |V| = n, where n is a
+number of oscillators in a system, andNi ={j∈V|ij∈E}.
+Additionally, if oscillatorsi andj are not connected, then the
+coupling strength between them is always equal to zero, i.e.
+Kij ≡ 0 if ij /∈ E. We denote by m the number of edges
+in a graph so that |E| = m. Therefore, the total number of
+variables and equations in system (1) isn+m. It is assumed
+that coupling is symmetric, and Kij and Kji are the same
+variable.
+System (1) is fairly general and includes other models
+studied in the literature as special cases. In particular, when
+qij = 0 ∀ i,j and fij(φj− φi) = sin( φj− φi) ∀i,j ,
+then Fij(φj−φi) = cos(φj−φi) and system (1) becomes
+the Kuramoto model with varying coupling strengths also
+known as generalized Kuramoto model [41]. We do require
+however that the functions fij satisfy the following three
+conditions:
+Assumption 1 Functionsfij∀ij∈E satisfy:
+1) Symmetric coupling:fij =fji;
+2) Odd:fij(x) =−fij(−x);
+3) C1:fij is continuously differentiable.
+Examples of two functions fij satisfying these three condi-
+tions are shown in Fig. 1.
+In this article we study frequency synchronization of sys-
+tem (1). We say that system (1) achieves frequency synchro-
+nization if ˙φ1(t) =··· = ˙φn(t) = ˙φ and ˙Kij(t) = 0∀i,j as
+t→∞ , where ˙φ is a common synchronization frequency. In
+the case of homogeneous oscillators, all intrinsic frequencies
+of oscillators are equal, i.e. there exists a constant ω such
+thatω1 =··· =ωn =ω. It is easy to see that if such homo-
+geneous oscillators synchronize, then their synchronization
+frequency is ω. Without loss of generality, we assume that
+ω = 0, and in the rest of the article consider the following
+system:
+˙φi =
+∑
+j∈Ni
+Kij·fij(φj−φi), i∈V (2a)
+˙Kij =sij
+(
+αij· (Fij(φj−φi) +qij)−Kij
+)
+, ij∈E. (2b)
+Observe that if
+(
+φ∗,K∗)
+is an equilibrium of system (2),
+then
+(
+φ∗ +δ1n,K∗)
+, where 1n is a n-dimensional vector of
+ones and δ∈ R, is also an equilibrium and belongs to the
+same limit cycle. We will not differentiate between equilibria
+3
+belonging to the same orbit and thus consider them to be
+identical. Therefore, in the rest of the article when we talk
+about the stability of an equilibrium
+(
+φ∗,K∗)
+, we imply
+stability of the following set of equilibria: 1
+Eφ∗ ={
+(
+φ,K
+)
+:
+(
+φ,K
+)
+=
+(
+φ∗ +δ1n,K∗)
+,δ∈ R}. (3)
+Further, two equilibria(ˆφ, ˆK) and (¯φ, ¯K) of the same system
+of plastic phase-coupled oscillators are called topologically
+equivalent, if they are characterized by the same phase
+differences, i.e. if ( ˆφi− ˆφj) = ( ¯φi− ¯φj) ∀ij ∈ E, or
+if all phase differences are opposite in sign, i.e. when
+( ˆφi− ˆφj) =−( ¯φi− ¯φj)∀ij∈E.
+2.2 Related Work and Contributions
+The plastic phase-coupled oscillator model (1) was initially
+introduced in [20] as an extension to the classical Kuramoto
+model to capture the behavior of neural networks. Because
+the strength of synapses – connections between neurons –
+can generally change its value and is believed to play a
+key role in learning and memory formation in the brain,
+it is natural to consider plastic coupling strengths between
+oscillators in the Kuramoto model. A well-known synap-
+tic plasticity mechanism called Hebbian rule [18] states
+that a synapse between two simultaneously active neurons,
+i.e. neurons that spike almost at the same time, becomes
+stronger. When neurons are modeled by phase-coupled os-
+cillators, simultaneously ﬁring neurons can be represented
+by oscillators whose phases are almost equal. This idea
+is implied in the model (1) with Fij = cos() , where a
+connection between two oscillators becomes stronger if it
+is small enough and if the phases of these oscillators are
+close to each other.
+Previous works have introduced and investigated sev-
+eral modiﬁcations to (1). For example, in [42], [1], [2] time
+delays are considered, and the behavior of the system for
+different values of delay parameters is experimentally ex-
+plored. In [29] the coupling strength equation of (1) was re-
+placed by an exponential Spike Timing-Dependent Plasticity
+(STDP) rule, in which a coupling strength’sKij dependence
+on a phase difference (φj−φi) is deﬁned via exponential
+function instead of function Fij. In [22] a stochastic model
+of oscillators is studied, where equations (1) contain additive
+Gaussian noise terms. Synchronization of model (1) with the
+complete topology, sin() coupling andqij = 0 is explored in
+[17] for both, homogeneous and heterogeneous oscillators.
+While in our previous work [13] results were obtained for
+model (1) with qij = 0 ∀ ij ∈ E, arbitrary choices of
+parameterqij are considered in this work.
+The contributions of our work with respect to the exist-
+ing literature are manifold. Firstly, we perform a thorough
+analytical analysis of the system of plastic phase-coupled
+oscillators in contrast to the empirical studies [8], [35],
+[39]. Secondly, we consider a fairly general form of the
+system: instead of studying plastic coupling based on a
+trigonometric sin() [40], [41], [42], [17], we investigate a
+general class of coupling functions. We further explore the
+1. Alternatively, we could consider phase differences (φi−φj ) as
+the variables of system (2) and study stability of a single equilibrium
+instead of a set (3) of equilibria. This approach will be used in Section
+6.
+(a) constant coupling (K > 0); plastic coupling (q12 = 2)
+(b) constant coupling (K < 0); plastic coupling (q12 = −2)
+(c) plastic coupling (q12 = 0)
+Fig. 2: Example with two oscillators. Green (ﬁlled) circles
+correspond to stable equilibria, red (not ﬁlled) circles corre-
+spond to unstable equilibria.
+behavior of model (2) for various values of its parameters
+and show how they impact the properties of the model such
+as synchronization and stability. Finally, several interesting
+and important examples are provided that illustrate speciﬁc
+features of the system and conﬁrm our theoretical results.
+3 M OTIVATING EXAMPLES
+In this section we illustrate the differences between the plas-
+tic oscillator model (2) and the constant coupling counter
+part using several simple examples. The number of os-
+cillators in these examples varies from two to four, and,
+for illustrative purpose, in this section we assume that
+fij(φj−φi) = sin( φj−φi) for all connected oscillators i
+and j. We demonstrate with these examples that stability
+of equilibria may change if the coupling strength becomes
+plastic. Additionally, new equilibria may arise in this case
+including scenarios with inﬁnitely many equilibria as shown
+in Subsection 3.3. Furthermore, the set of equilibria points
+and their stability may depend on the value of the pa-
+rameter qij. For each example we consider three types of
+coupling strengths: constant equal positive, constant equal
+negative, and varying coupling strengths. For the varying
+or plastic coupling strength we additionally explore the
+cases of strictly positive (qij > q+
+ij = 1 ), strictly negative
+(qij < q−
+ij = −1) and symmetric hybrid ( qij = 0 ) con-
+nections. All examples presented here will be used again
+for illustrative purposes in Section 7, where we apply our
+theoretical results to each example to explore its dynamics
+and stability of its equilibria.
+3.1 Two Oscillators
+A system of two connected homogeneous oscillators with
+a constant coupling strength K and a trigonometric sin()
+coupling function is described by the following equations:
+˙φi =K· sin(φj−φi), (4)
+4
+where i = 1 , j = 2 or i = 2 , j = 1 . This system
+has two topologically distinct equilibria: one is in-phase
+and stable: φ1 = φ2 (Fig. 2a-i), and the other one is anti-
+phase and unstable: φ2 = φ1 + π (Fig. 2a-ii). When the
+coupling strengthK is constant and negative, then the set of
+equilibria of system (4) remains unchanged, but the in-phase
+equilibrium now becomes unstable (Fig. 2b-i), whereas the
+anti-phase equilibrium becomes stable (Fig. 2b-ii).
+System (2) of two oscillators with a plastic coupling
+strength and q12 = 0 contains two sets of equilibria that
+are characterized by the following conditions:
+1). sin(φ2−φ1) = 0. If φ1 =φ2, then K =α, and when
+φ2 =φ1 +π, thenK =−α.
+2).K = 0, then cos(φ2−φ1) = 0, i.e.φ2 =φ1 +π/2. The
+Jacobian for the system of two oscillators takes form:
+J =
+
+
+−K· cos() K· cos() sin()
+K· cos() −K· cos() − sin()
+α·s· sin() −α·s· sin() −s
+
+,
+where sin() = sin( φ2− φ1) and cos() = cos( φ2− φ1)
+for brevity. It can be easily veriﬁed that equilibria from
+condition 1) above are stable (Fig. 2c-i, 2c-ii), whereas the
+equilibria from condition 2) (whenK = 0) are unstable (Fig.
+2c-iii).
+If the coupling strength is plastic and q12 = 2 (positive
+coupling), then the set of equilibria and their stability are
+the same as in the case of a constant positive K (Fig. 2a).
+Similarly, ifq12 =−2 (negative coupling), the equilibria and
+stability coincide with the ones corresponding to the case of
+a constant negative coupling K (Fig. 2b). This property is a
+priori not necessarily true given the fact that system (2) has
+a larger state space that can in principle change the stability
+of an equilibrium.
+Therefore, two observations can be made: all equilibria
+of system (4) with constant coupling strength are also equi-
+libria of system (2) with plastic coupling strength for each
+of three values of q12. The second observation is that when
+the coupling strength is non-constant and q12 = 0 , a new
+set of equilibria emerges. This set, however, contains only
+unstable equilibria in the case of two oscillators.
+3.2 Three Oscillators
+In this subsection we consider an example of three con-
+nected homogeneous oscillators. We assume that underlying
+topology is a complete graph, which means that each oscil-
+lator is connected to two others. When the coupling function
+is sin() and coupling strengthK is constant, the behavior of
+the oscillators is deﬁned by the following set of equations:
+˙φ1 =K· sin(φ2−φ1) +K· sin(φ3−φ1),
+˙φ2 =K· sin(φ1−φ2) +K· sin(φ3−φ2),
+˙φ3 =K· sin(φ1−φ3) +K· sin(φ2−φ3).
+(5)
+WhenK >0, system (5) has 3 topologically distinct equilib-
+ria (Fig. 3): one is in-phase when φ1 = φ2 = φ3 and stable
+(Fig. 3a-i), another one isφ1 =φ2,φ3 =φ1 +π and unstable
+(Fig. 3a-ii), and the last one is deﬁned as φ2 = φ1 + 2π/3,
+φ3 =φ1− 2π/3 and is also unstable (Fig. 3a-iii).
+WhenK <0, the set of equilibria of system (5) remains
+the same. Stability properties of the equilibria, however,
+(a) constant coupling (K > 0); plastic coupling (qij = 2)
+(b) constant coupling (K < 0)
+(c) plastic coupling (qij = 0)
+(d) plastic coupling (qij = −2)
+Fig. 3: Example with three oscillators. Green (ﬁlled) circles
+correspond to stable equilibria, red (not ﬁlled) circles corre-
+spond to unstable equilibria.
+change, as in the example with two oscillators. In particular,
+the ﬁrst equilibrium becomes unstable (Fig. 3b-i), and the
+last two become stable (Fig. 3b-ii, 3b-iii).
+We now consider the case of plastic coupling strengths
+while assuming that α12 = α23 = α13 = α > 0. When
+qij = 0 ∀ij ∈ E, a detailed description of equilibria was
+provided in [13] and is omitted here. The equilibria and their
+stability whenqij = 0∀ij∈E are illustrated in Fig. 3c.
+Whenqij = 2 for each edge ij∈E, equilibria and their
+stability coincide with the case of constant positive coupling
+strength (Fig. 3a), but whenqij =−2 (∀ij∈E), a new equi-
+librium emerges (Fig. 3d-iv). At this unstable equilibrium,
+(φ2−φ1) = (φ1−φ3)≈ 0.785π,K12 = K13≈− 2.7808α,
+andK23≈− 1.7808α.
+From the considered examples of two and three oscilla-
+tors several observations can be made. First, each equilib-
+rium of a system with constant coupling strengths was also
+an equilibrium of the corresponding system with varying
+coupling strengths. This is not true, however, for all values
+of parameters α and q. Second, stability of these common
+equilibria can differ for systems with constant and non-
+constant coupling. Third, system (2) can possess additional
+equilibria, and moreover, the set of equilibria and their
+stability may depend on the parameter q.
+3.3 Four Oscillators
+We consider here the case of four oscillators connected
+by a complete graph. Instead of describing all equilibria
+of this system, we will show that system (2) with four
+5
+Fig. 4: Equilibria corresponding to β = π/4 (left) and β =
+π/6 (right) for the example with four oscillators.
+homogeneous oscillators, sin() coupling, equalαij =α> 0
+∀ij ∈ E, and qij = 0 ∀ij ∈ E, has inﬁnitely many
+topologically distinct equilibria.
+These equilibria can be deﬁned by means of a parameter
+β. Then, for each value of β∈ (0,π/ 2), phases: φ2 = φ1 +
+π/2, φ3 = φ1 +β, φ4 = φ3−π/2, and coupling strengths
+K12 =K34 = 0,K13 = cos(β)·α,K14 =K23 = cos(π/2−
+β)·α = sin(β)·α,K24 = cos(π−β)·α =− cos(β)·α deﬁne
+an equilibrium. Phases corresponding to this equilibrium
+with values of parameter β = π/4 andβ = π/6 are shown
+in Fig. 4. Notice, that in all such equilibria two coupling
+strengths are equal to zero, and edges corresponding to non-
+zero coupling strengths form a graph with a ring topology.
+The inﬁnite set of equilibria deﬁned for the case of four
+oscillators can be generalized for all systems with even n>
+2 number of oscillators: φ1...φ n
+2−1 have the same phase
+φ, oscillators φ n
+2 ...φ n−2 have phase φ− π
+2 , and two other
+oscillators have phasesφn−1 =φ−β andφn =φ−β− π
+2 .
+4 S YNCHRONIZATION AND STABILITY ANALYSIS
+This section contains general results obtained for system
+(2) with arbitrary values of parameters qij and arbitrary
+underlying topology. We ﬁrst show in Theorem 1 by pro-
+viding a Lyapunov function that system (2) of homogeneous
+oscillators is gradient, and thus always converges to a set of
+equilibria, i.e. achieves frequency synchronization (Subsec-
+tion 4.1). After that we formulate sufﬁcient instability and
+stability conditions for equilibria of system (2) with arbitrary
+underlying topology and arbitrary qij in Theorems 2 and
+3, respectively (Subsection 4.2). We then apply the derived
+results to explore the stability of the in-phase and anti-phase
+equilibria in Subsection 4.3.
+4.1 Frequency Synchronization
+In Theorem 1 we prove that system (2) of homogeneous
+oscillators is a gradient system and always achieves fre-
+quency synchronization. A similar result was obtained in
+[40], where a potential function was found for system (2)
+and frequency synchronization was shown, but only for the
+case of a complete graph topology and for qij = 0,∀ij∈E.
+Therefore, Theorem 1 generalizes the result from [40] for
+the case of an arbitrary topology and arbitrary values of
+parametersqij.
+Theorem 1 (Frequency synchronization) System (2) is a
+gradient system and achieves frequency synchronization for all
+initial values of phases and coupling strengths.
+Proof. Notice that all phase variables φi are deﬁned on a n-
+dimensional torus Tn which is compact. The result of the
+theorem holds if the coupling strengths Kij are deﬁned on
+the whole Rm. Indeed, we can provide a potential function
+V :
+V =−
+∑
+ij∈E,i>j
+KijFij(φi−φj)−
+∑
+ij∈E,i>j
+qijKij
++ 1
+2
+∑
+ij∈E,i>j
+K2
+ij
+αij
+.
+(6)
+This function is well-deﬁned, radially unbounded, bounded
+below, and it is easy to verify that the derivative of V with
+respect to time is:
+˙V = (∇V )T∗
+
+
+˙φi
+.
+.
+˙φn
+˙K21
+.
+.
+˙Kn,n−1
+
+
+=−
+n∑
+i=1
+( ˙φi)2−
+∑
+ij∈E,i>j
+( ˙Kij)2
+αijsij
+.
+We can see that ˙V is always non-positive and is equal to
+zero if and only if ˙φi = 0 and ˙Kij = 0 for all i andj. Thus,
+by LaSalle’s Invariance Principle [27], the trajectories of (2)
+always converge to a set of equilibria. In other words, for all
+initial conditions frequency synchronization occurs.
+Remark Notice that Theorem 1 does not imply pointwise
+convergence to a single equilibrium. It is also not guaranteed that
+equilibria of system (2) are isolated.
+4.2 Stability and Instability Conditions
+The main results of this subsection are Theorem 2 which is a
+sufﬁcient instability condition, and Theorem 3 that deﬁnes a
+sufﬁcient condition for stability of an equilibrium of system
+(2). These results are based on Lyapunov’s indirect method
+[24], that states:
+1) If Re λi < 0 for all eigenvalues of the Jacobian matrix
+J, then equilibrium is asymptotically stable.
+2) If Re λi > 0 for at least one eigenvalue of the
+Jacobian matrixJ, then equilibrium is unstable.
+LetB∈ Rn×m denote an oriented incidence matrix of a
+graph that deﬁnes underlying topology of system (2). Then
+element (i,e ) of this matrix is
+B(i,e ) =
+
+
+
+1 ifi is the head of e,
+−1 ifi is the tail of e,
+0 otherwise,
+(7)
+wheree is an edge of graph G. Although the deﬁnition of
+matrix B implies that G is oriented, all properties of this
+matrix used in this article do not depend on a particular ori-
+entation. Therefore, we assume that for a given undirected
+graphG, an arbitrary orientation of its edges is chosen, i.e.
+for every undirected edge e = ij one of the nodes i, j is
+designated as the head ofe, and another one corresponds to
+the tail ofe.
+6
+Letα∈ Rm,s∈ Rm,K∈ Rm,f′∈ Rm andf∈ Rm de-
+note vectors whose components areαij,sij,Kij,f′
+ij(φj−φi)
+andfij(φj−φi), respectively, for eachi,j such thatij∈E.
+We will use symbol∗ to denote the componentwise product
+of vectors. Jacobian of system (2) does not depend on the
+values of parameters qij and can be written in a following
+way:
+J =
+[B 0
+0 I
+][ −diag(K∗f′) −diag(f)
+−diag(α∗s∗f) −diag(s)
+][
+BT 0
+0 I
+]
+.
+The ﬁrst matrix in the product is of size (n +m)× (m +m),
+the second matrix is of size (m +m)× (m +m) and the last
+matrix in the product has dimensions (m +m)× (n +m).
+Notice that Jacobian J has a trivial eigenvector [1n 0m]T ,
+where 1n ∈ Rn is a vector of ones and 0m ∈ Rm is a
+vector of zeros withn andm components, respectively. This
+eigenvector emerges due to rotational invariance of system
+(2) and corresponds to a zero eigenvalue. Since trajectories
+of system (2) are orthogonal to the direction of an orbit,
+we still can apply Lyapunov’s indirect method to explore
+stability of the set (3). If all remaining eigenvalues of the
+Jacobian have negative real part, then equilibrium is stable;
+if there exists an eigenvalue with a positive real part, then
+equilibrium is unstable.
+The component of vector f that corresponds to the edge
+e = ij is equal to fij(φi−φj) if edge e = ij is oriented
+from a tail j to a head i, and thus B(i,e ) = 1 , B(j,e ) =
+−1. Similarly, if edge e = ij is oriented from a tail i to a
+headj, then B(i,e ) =−1,B(j,e ) = 1 and component of f
+associated with edgeij is equal tofij(φj−φi).
+Each partitionP of the graph’s vertices into two setsV−
+andV + such thatV−∩V + = ∅ andV−∪V + =V , deﬁnes
+a cut C(P ) ≜{ij ∈ E|i∈ V−,j ∈ V +}. With each cut
+C(P ) we associate a cut vector cP ∈ Rm which is deﬁned
+as follows:
+cP (e) =
+
+
+
+1 ife goes fromV− toV +,
+−1 ife goes fromV + toV−,
+0 ife /∈C(P ).
+(8)
+We can now formulate the following instabiliy condition
+that is similar to Theorem 2 of [30]:
+Theorem 2 (Sufﬁcient instability condition) If there
+exists a cut C(P ) such that at equilibrium
+(
+φ∗,K∗)
+of system
+(2): ∑
+ij∈C(P)
+(Kijf′
+ij−αijf2
+ij)< 0, (9)
+whereKij =K∗
+ij,f′
+ij =f′
+ij(φ∗
+j−φ∗
+i ) andfij =fij(φ∗
+j−φ∗
+i ),
+then
+(
+φ∗,K∗)
+is an unstable equilibrium.
+Proof. We ﬁrst show that the Jacobian of system (2) can be
+decomposed into a product of matrices D andA:
+J =DA, (10)
+where D is a positively-deﬁnite diagonal matrix, and A
+is a symmetric matrix. We then demonstrate that stability
+of equilibria of system (2) does not depend on matrix D,
+because matrices J and A have the same number of posi-
+tive, negative and zero eigenvalues. Next, for matrix A we
+provide a vector ⃗X such that ⃗XTA⃗X >0, which guarantees
+that the symmetric matrix A has a positive eigenvalue and
+so does the Jacobian matrix J. This in turn means that an
+equilibrium is unstable due to Lyapunov’s indirect method.
+Decomposition (10) is possible because system (2) is a
+gradient system. Note that the Hessian matrix H(V ) of the
+potential function V is symmetric. Let diagonal (n +m)×
+(n +m) matrixD be deﬁned as
+D =
+[I 0
+0 diag(α∗s)
+]
+, (11)
+then, since equations (2) can be written as follows:
+[
+˙φ
+˙K
+]
+=−D·∇V, (12)
+decomposition (10) exists with A =−H(V ).
+We now show that matricesJ andA =−H(V ) have the
+same numbers of positive, negative and zero eigenvalues.
+Observe that if matrix D
+1
+2 is a square root of matrix D,
+then matricesDA andD
+1
+2AD
+1
+2 have the same eigenvalues,
+because matrix D is positive-deﬁnite. This also implies that
+Jacobian of system (2) with homogeneous oscillators has
+only real eigenvalues. Next, since A is a symmetric matrix
+with real entries, it can be diagonalized by an orthogonal
+matrix, i.e. there exists a real orthogonal matrix Q such that
+A = QGQT , where G is a diagonal matrix. Further, notice
+that
+D
+1
+2AD
+1
+2 =D
+1
+2QGQTD
+1
+2 =LGLT, (13)
+where matrix L is deﬁned as L = D
+1
+2Q and is invertible.
+Therefore,
+QTAQ =L−1(D
+1
+2AD
+1
+2 )(L−1)T =G. (14)
+By Sylvester’s law of inertia [7], numbers of positive, neg-
+ative and zero eigenvalues of matrices A, D
+1
+2AD
+1
+2 and G
+are equal. Thus, since J = DA and D
+1
+2AD
+1
+2 have equal
+eigenvalues, then the numbers of positive, negative and zero
+eigenvalues of matricesJ andA are the same.
+We now consider the symmetric matrix A and show
+that when condition (9) is satisﬁed, matrix A has a positive
+eigenvalue. We deﬁne a symmetric (2m)× (2m) matrixM
+to be:
+M =
+[diag(K∗f′) diag(f)
+diag(f) diag(1/α)
+]
+, (15)
+where 1/α is a vector with components 1/αij, then
+A =−
+[B 0
+0 I
+]
+M
+[
+BT 0
+0 I
+]
+. (16)
+We denote:
+ˆB =
+[B 0
+0 I
+]
+, (17)
+and then
+A =− ˆBM ˆBT. (18)
+Now we will assume that there exists a cut C(P ) that
+satisﬁes condition (9). We deﬁne a vector ⃗Y ∈R2m to be:
+⃗Y =
+[ cP
+−cP∗f∗α
+]
+, (19)
+wherecP is a cut vector associated with the cut C(P ), and
+multiplication in−cP∗f∗α is componentwise.
+It can be veriﬁed that the sum from (9) is equal to
+⃗YTM⃗Y . Indeed, if an edge k (1≤ k≤ m) belongs to the
+7
+cutC(P ), then⃗Yk =±1 and⃗Yk+m =∓fkαk. The summand
+numberk in ⃗YTM⃗Y is equal to:
+Y 2
+kKkf′
+k + 2YkYm+kfk + Y 2
+m+k
+αk
+=Kkf′
+k− 2f2
+kαk +f2
+kαk =Kkf′
+k−f2
+kαk,
+(20)
+which is also the kth summand of the sum (9).
+The cut space of the graph G is deﬁned as a space
+spanned by all cut vectors cP . It is known (see for example
+[4]) that the range of BT is the cut space of G. Therefore,
+for the cut vector cP there exists a vector ⃗ x1∈Rn such that
+cP =BT⃗ x1. Therefore,
+⃗Y =
+[
+BT⃗ x1
+−cP∗f∗α
+]
+=
+[
+BT 0
+0 I
+]
+·
+[ ⃗ x1
+−cP∗f∗α
+]
+= ˆBT ⃗X,
+(21)
+where ⃗X =
+[ ⃗ x1
+−cP∗f∗α
+]
+∈Rn+m. Finally,
+0> ⃗YTM⃗Y = ⃗XT ˆBM ˆBT ⃗X =−⃗XTA⃗X, (22)
+which means that there is a vector ⃗X such that ⃗XTA⃗X > 0
+and thus symmetric matrix A has a positive eigenvalue
+which implies that JacobianJ has also a positive eigenvalue.
+Therefore, equilibrium
+(
+φ∗,K∗)
+is unstable.
+We now formulate a sufﬁcient condition for an equilib-
+rium of system (2) to be stable.
+Theorem 3 (Sufﬁcient stability condition) If at equilib-
+rium
+(
+φ∗,K∗)
+of system (2), for eachij∈E:
+Kijf′
+ij−αijf2
+ij > 0, (23)
+whereKij =K∗
+ij,f′
+ij =f′
+ij(φ∗
+j−φ∗
+i ) andfij =fij(φ∗
+j−φ∗
+i ),
+then equilibrium
+(
+φ∗,K∗)
+is asymptotically stable.
+Proof. All eigenvalues of the Jacobian of system (2) are real.
+To apply Lyapunov’s indirect method, we need to show that
+at equilibrium
+(
+φ∗,K∗)
+Jacobian has only negative eigen-
+values. However, it has always at least one zero eigenvalue
+that corresponds to the rotational invariance of the system:
+if all phases φi (i = 1,...,n ) are simultaneously shifted by
+the same value, the system does not change. The eigenvector
+associated with this zero eigenvalue is a vector[1n 0m]T . As
+previously mentioned, in this article we do not distinguish
+equilibria that belong to the same set (3), and thus study
+stability of the whole setEφ∗. To show stability ofEφ∗ using
+an indirect Lyapunov’s method, we need to show that all
+remaining eigenvalues of the Jacobian are strictly negative.
+In the proof of Theorem 2 it was shown that the Jacobian
+matrix J and symmetric matrix A have the same numbers
+of negative, positive and zero eigenvalues. This means that
+matrix A also possesses a zero eigenvalue corresponding
+to the rotational invariance. Moreover, it is easy to see
+that vector [1n 0m]T is also an eigenvector of matrix A
+associated with a zero eigenvalue. Therefore, to prove that
+equilibrium
+(
+φ∗,K∗)
+is stable, it is sufﬁcient to demonstrate
+that all eigenvalues of matrix A are negative (except for one
+zero eigenvalue corresponding to the rotational invariance),
+or that ⃗XTA⃗X < 0 for all non-zero vectors ⃗X ∈ Rn+m,
+⃗X⁄∈ span
+(
+[1n 0m]T)
+, sinceA is symmetric.
+Notice that because A =− ˆBM ˆBT , the matrix A will
+have only negative eigenvalues (except one) if ⃗YTM⃗Y > 0
+for all non-zero vectors ⃗Y ∈ R2m. Indeed, if ˆBT ⃗X⁄= 0n+m,
+then
+⃗XTA⃗X =−⃗XT ˆBM ˆBT ⃗X =−⃗YTM⃗Y <0, (24)
+where the vector ⃗Y ≜ ˆBT ⃗X.
+Additionally, if ⃗X = [⃗ x1 ⃗ x2]T , where ⃗ x1 are the ﬁrst
+n components of ⃗X, and ⃗ x2 are the last m components of
+⃗X, then ˆBT ⃗X = 0n+m only if BT⃗ x1 = 0n and ⃗ x2 = 0m.
+And since ker (BT ) = span(1n) for a connected G (see for
+example [4]), then ˆBT ⃗X⁄= 0n+m if ⃗X⁄= span
+(
+[1n 0m]T)
+.
+Therefore, it is now enough to show that condition (23) is
+sufﬁcient for matrix M to be positive deﬁnite. Let ⃗Y ∈ R2m
+be an arbitrary vector, then ⃗YTM⃗Y is a sum of m terms,
+where thekth term is equal to
+Y 2
+kKkf′
+k + 2YkYm+kfk + Y 2
+m+k
+αk
+. (25)
+We now consider this term as a quadratic function of Yk.
+This equation is the equation of a parabola whose branches
+are directed upwards because Kkf′
+k > 0 due to (23). Then,
+the minimum value of (25) is achieved at the vertex of the
+parabola and is equal to:
+(Ym+kfk
+Kkf′
+k
+)2
+Kkf′
+k− 2
+(Ym+kfk
+Kkf′
+k
+)
+Ym+kfk + Y 2
+m+k
+αk
+=−Y 2
+m+kf2
+k
+Kkf′
+k
++ Y 2
+m+k
+αk
+=Y 2
+m+k
+(
+− f2
+k
+Kkf′
+k
++ 1
+αk
+)
+.
+(26)
+The last expression is positive if Ym+k⁄= 0 and if condition
+(23) is satisﬁed.
+Suppose that Ym+k = 0 , then (25) becomes equal to
+Y 2
+kKkf′
+k≥ 0, and is equal to zero only if Yk = 0. Since ⃗Y is
+a non-zero vector, there exists at least one component k of
+vector⃗Y such that the sum (25) is strictly positive, and for all
+other components these sums are non-negative. Therefore,
+for all vectors ⃗Y ∈ R2m: ⃗YTM⃗Y > 0, and ⃗XTA⃗X < 0
+for all vectors ⃗X∈ Rn+m such that ⃗X⁄∈ span
+(
+[1n 0m]T)
+.
+Thus, all eigenvalues of A except one are negative, so are
+eigenvalues of J, and therefore th equilibrium
+(
+φ∗,K∗)
+is
+asymptotically stable.
+Remark Condition (23) is equivalent to the following condi-
+tion:
+(Fij +qij)·f′
+ij−f2
+ij > 0, (27)
+whereFij = Fij(φ∗
+j−φ∗
+i ), since Kij = αij(Fij +qij) at an
+equilibrium, andαij > 0.
+We have proved frequency synchronization of system (2)
+and found sufﬁcient stability and instability conditions of
+its equilibria for a fairly general class of functions fij. In the
+next subsection we will apply these conditions for a more
+speciﬁc class of these functions to investigate stability of in-
+phase and anti-phase equilibria.
+4.3 Stability of In-phase and Anti-phase Equilibria
+In this subsection we investigate the stability properties
+of two special types of equilibria of system (2): in-phase
+and anti-phase equilibria. Equilibrium (φ∗,K∗) is called
+in-phase, if φ∗
+1 = φ∗
+2 = ··· = φ∗
+n, while for an anti-
+phase equilibrium the absolute value of the phase difference
+between any two oscillators is either zero orπ:|φ∗
+i−φ∗
+j| = 0
+8
+or|φ∗
+i−φ∗
+j| =π for anyi,j. To exclude the in-phase equilib-
+rium from the set of anti-phase equilibria, we additionally
+require that at any anti-phase equilibrium at least for one
+pair of oscillators i andj, their phase difference is equal to
+π. Such in-phase and anti-phase states are indeed equilibria
+of system (2) becausefij(0) =fij(π) = 0 for anyi andj due
+to the Assumption 1. Notice that the in-phase equilibrium is
+unique (up to rotational symmetry), and there are 2n−1− 1
+topologically distinct anti-phase equilibria.
+In the rest of the article we concentrate on a more special
+class of functions fij(). In particular, these functions must
+fulﬁll the following conditions.
+Assumption 2 The functionsfij∀ij∈E satisfy:
+1) Assumption 1;
+2) f′
+ij(0)> 0,f′
+ij(π)< 0;
+3) fij(x)> 0,∀x∈ (0,π ).
+Example of a function that meets all conditions of As-
+sumption 2 is shown on the left side of Fig. 1. Notice,
+that for instance, function fij() = sin() belongs to this
+type of functions. If fij() satisﬁes Assumptions 2, then
+its corresponding function Fij is strictly decreasing on the
+interval [0,π ], andFij(0) =Fmax
+ij > 0,Fij(π) =Fmin
+ij < 0.
+Therefore, there exists a single point x∈ (0,π ) such that
+Fij(x) = 0 . This property is crucial for showing isolation
+of equilibria of system (2) with a tree topology in Corollary
+9. If the function fij satisﬁes Assumption 2, then positive
+coupling (qij ≥ q+
+ij) between oscillators i and j is also
+attractive, and negative coupling (qij ≤ q−
+ij) is repulsive.
+Thus, in the rest of the article we will use these concepts
+interchangeably.
+For any set of phase values φ1,...,φ n there exists a
+unique arc of a circle S1 that contains all phase values and
+has a minimum possible length. Let d(φ) denote the length
+of this arc for phases φ1,...,φ n. Next theorem provides
+characterization of the in-phase equilibrium.
+Theorem 4 (Stability of the in-phase equilibrium) If
+functions fij() satisfy Assumption 2, then the in-phase equilib-
+rium (φ∗,K∗) is:
+• asymptotically stable, ifqij >q−
+ij∀ij∈E;
+• unstable, ifqij <q−
+ij∀ij∈E.
+Moreover, ifqij < q−
+ij∀ij∈E, or qij > q+
+ij∀ij∈E, then the
+in-phase equilibrium is the only equilibrium satisfyingd(φ)<π .
+Proof. The ﬁrst part of this theorem can be shown by a
+direct application of Theorems 2 and 3. Indeed, for the in-
+phase equilibrium and functions fij satisfying Assumption
+2: fij(0) = 0 and f′
+ij(0) > 0 for each ij ∈ E. Further,
+(Fij(0)+qij)> 0 ifqij >q−
+ij, becauseFij(0) =Fmax
+ij (func-
+tionFij is decreasing on [0,π ]). Then, (Fij(0)+qij)·f′
+ij(0)>
+0∀ij∈E, condition (27) is satisﬁed, and the equilibrium is
+stable by Theorem 3. Similarly,(Fij(0)+qij)< 0 ifqij <q−
+ij
+which means thatαij(Fij(0) +qij)·f′
+ij(0) =Kijf′
+ij(0)< 0
+∀ij ∈ E, condition (9) is satisﬁed, and the equilibrium is
+unstable according to Theorem 2.
+The second part of this theorem is similar to Lemma 3
+of [30] and can be proved as follows. Condition d(φ) < π
+implies that all phases of oscillators belong to the same half-
+circle. Suppose that qij < q−
+ij ∀ij ∈ E (strictly repulsive
+coupling), or qij >q +
+ij∀ij∈E (strictly attractive coupling)
+and there exists a non-in-phase equilibrium (ˆφ, ˆK) with
+d(φ) < π. Let φmin be the minimal phase value among all
+oscillators for this equilibrium. Then at least one oscillatork
+with phase value ˆφk = φmin is connected to an oscillator l
+with strictly greater phase value ˆφl > ˆφk, because the graph
+is assumed to be connected. Therefore, 0 < (ˆφl− ˆφk) < π
+andfkl(ˆφl− ˆφk) > 0 due to the Assumption 2. If qij < q−
+ij
+∀ij ∈ E, then all coupling strengths are strictly negative:
+Kij < 0∀ij∈ E. Thus, ˙ˆφk = ∑
+l∈Nk
+ˆKkl·fkl(ˆφl− ˆφk) < 0.
+Similarly, ifqij > q+
+ij∀ij∈ E, then Kij > 0∀ij∈ E, and
+˙ˆφk = ∑
+l∈Nk
+ˆKkl·fkl(ˆφl− ˆφk)> 0. In both cases (ˆφ, ˆK) cannot
+be an equilibrium.
+In [40] it was demonstrated that when in system (2) each
+fij = sin(φj− φi), qij = q+
+ij = 1 , and the underlying
+topology is a complete graph, then the in-phase equilibrium
+is asymptotically stable. Theorem 4 thus provides a comple-
+mentary set of results to [40] under more general topologies
+and coupling functions.
+A similar result can be formulated for the anti-phase
+equilibria of system (2).
+Theorem 5 (Stability of anti-phase equilibria) If func-
+tionsfij() satisfy Assumption 2, then an anti-phase equilibrium
+(φ∗,K∗) is:
+• asymptotically stable , if qij > q−
+ij (when φ∗
+i = φ∗
+j ),
+andqij <q +
+ij (when|φ∗
+i−φ∗
+j| =π),∀ij∈E;
+• unstable, if qij < q−
+ij (when φ∗
+i = φ∗
+j ), and qij > q+
+ij
+(when|φ∗
+i−φ∗
+j| =π),∀ij∈E.
+Proof. The proof is again based on the sufﬁcient instability
+and stability conditions of Theorems 2 and 3. According
+to Theorem 3 (condition (27)), an anti-phase equilibrium
+(φ∗,K∗) is stable if
+(Fij +qij)·f′
+ij > 0,∀ij∈E, (28)
+because at such equilibriafij = 0 for anyi andj. Ifφ∗
+i =φ∗
+j ,
+thenf′
+ij > 0 due to the Assumption 2. Therefore, condition
+(28) is satisﬁed if qij >−Fij(0) which is equivalent toqij >
+−Fmax
+ij =q−
+ij. Similarly, if|φ∗
+i−φ∗
+j| =π, then f′
+ij < 0, and
+inequality (28) will be fulﬁlled if Fij(π) +qij < 0, that is, if
+qij <−Fmin
+ij =q+
+ij.
+From Theorem 2, an anti-phase equilibrium will be un-
+stable if
+(Fij +qij)·f′
+ij < 0,∀ij∈E, (29)
+again since at such equilibria fij = 0 for any i and j, and
+becauseKij =αij(Fij +qij). If φ∗
+i =φ∗
+j , then f′
+ij > 0, and
+condition (29) is met ifFij(0)+qij < 0, i.e. ifqij <−Fmax
+ij =
+q−. If in turn |φ∗
+i−φ∗
+j| = π, then f′
+ij < 0, and equilibrium
+is unstable ifFij(π) +qij > 0, i.e. ifqij >−Fmin
+ij =q+
+ij.
+Notice that the ﬁrst part of Theorem 4 follows from
+Theorem 5.
+Remark Requirements for instability of Theorems 4 and 5
+are generally more restrictive than the instability condition of
+Theorem 2. Indeed, these requirements guarantee that Kijf′
+ij−
+αijf2
+ij < 0∀ij∈E which is a stronger requirement than (9).
+A direct consequence of Theorems 4 and 5 is the follow-
+ing result.
+9
+Corollary 6 If qij takes values from an interval (q−
+ij,q +
+ij)
+∀ij∈E, then the in-phase and all anti-phase equilibria of system
+(2) are asymptotically stable.
+Conditions formulated in Theorems 2 and 3 are sufﬁ-
+cient, and therefore, there may exist equilibria of system (2)
+whose stability cannot be characterized by these conditions.
+We overcome this problem in the next section by requiring
+underlying topology to be a tree graph. For such graphs we
+provide a criterion of stability that allows us to verify the
+stability of any equilibrium.
+5 P HASE LOCKING FOR TREE TOPOLOGY
+In this section we consider system (2) when the underlying
+topology graph G is a tree. For example, star and chain
+graphs are two graphs belonging to this type of topology.
+We apply the results formulated in the previous section and
+show how they can be further extended for the tree graphs.
+We ﬁrst consider in Subsection 5.1 the case of a general
+coupling, when parameters qij are allowed to take any
+arbitrary values except for q+
+ij and q−
+ij, and then explore a
+special case when each network connection is either strictly
+attractive (qij > q+
+ij) or strictly repulsive ( qij < q−
+ij) in
+Subsection 5.2.
+5.1 General Coupling
+When the topology is a tree, each single edge deﬁnes a cut
+of G, and condition (9) for a single-edge cut C(P ) = ij
+can be written as (Fij +qij)·f′
+ij−f2
+ij < 0, because Kij =
+αij(Fij +qij) at an equilibrium and αij > 0. Thus, using
+Theorem 2, a sufﬁcient instability condition for tree graphs
+can be formulated as follows.
+Corollary 7 (Sufﬁcient instability condition for trees)
+If there exists an edge ij∈E such that at equilibrium
+(
+φ∗,K∗)
+of system (2) with tree topology and functions fij satisfying
+Assumption 1:
+(Fij +qij)·f′
+ij−f2
+ij < 0, (30)
+where Fij = Fij(φ∗
+j−φ∗
+i ), f′
+ij = f′
+ij(φ∗
+j−φ∗
+i ) and fij =
+fij(φ∗
+j−φ∗
+i ), then
+(
+φ∗,K∗)
+is an unstable equilibrium.
+Using Theorem 3 and Corollary 7, the stability of an
+equilibrium of system (2) with a tree topology can be de-
+termined if (Fij +qij)·f′
+ij−f2
+ij⁄= 0 for every ij∈ E. As
+will be further shown, the last condition is always satisﬁed
+if all functions fij() satisfy Assumption 2. Besides these
+additional assumptions on functions fij(), we also require
+throughout this subsection that qij ⁄= q+
+ij = −Fmin
+ij and
+qij⁄=q−
+ij =−Fmax
+ij ,∀ij∈E. The following fact establishes
+a property of all equilibria of system (2) with a tree topology,
+and with functionsfij() satisfying Assumption 2.
+Lemma 8 Let
+(
+φ∗,K∗)
+be an equilibrium of system (2) with
+a tree underlying topology and with functions fij() satisfying
+Assumption 2, and letfij =fij(φ∗
+j−φ∗
+i ),Fij =Fij(φ∗
+j−φ∗
+i ),
+Kij = K∗
+ij. Suppose in addition, that qij⁄= q+
+ij andqij⁄= q−
+ij,
+∀ij∈E. Then, for each pair ij∈E exactly one of the following
+two conditions is satisﬁed:
+• fij = 0; this implies that either φ∗
+j−φ∗
+i = 0, or
+φ∗
+j−φ∗
+i =π.
+• Kij = 0; this implies that Fij +qij = 0.
+Proof. Since the underlying topology is deﬁned by a graph
+G that is a tree, there are nodes in G each of which has a
+single neighbor. These nodes are the leaves of a tree graph
+G. Let φi be an oscillator associated with a leaf node i, and
+letφj be an oscillator such that nodej is a single neighbor of
+nodei. Then, from equation (2a), at an equilibrium
+(
+φ∗,K∗)
+:
+˙φi = 0 if and only if Kij = 0 or fij(φ∗
+j−φ∗
+i ) = 0 . Notice
+thatKij = 0 if and only ifFij +qij = 0. Whenqij⁄=−Fmin
+ij
+and qij ⁄=−Fmax
+ij , for function fij satisfying Assumption
+2, fij and Fij +qij are not equal to zero simultaneously.
+This implies that either fij = 0 orKij =Fij +qij = 0. We
+then remove all leaf nodes from the graph G and apply the
+same reasoning for the leaves of a new smaller graph which
+is also a tree. We repeat this procedure until we obtain a
+single node, and at each step the condition of the theorem is
+satisﬁed.
+Corollary 9 Equilibria of system (2) with a tree topology and
+functionsfij() satisfying Assumption 2, are isolated.
+We can now see that when the underlying topology of
+system (2) is a tree, qij ⁄= q+
+ij, qij ⁄= q−
+ij (∀ij∈ E), and if
+coupling functions fij() satisfy Assumption 2, then at any
+equilibrium:
+(Fij +qij)·f′
+ij−f2
+ij⁄= 0 (31)
+for every ij ∈ E. Indeed, if at equilibrium fij = 0 , then
+from Lemma 8, Kij⁄= 0, and f′
+ij⁄= 0 due to Assumption 2.
+Hence, (Fij +qij)·f′
+ij⁄= 0. IfKij = 0, i.e.Fij +qij = 0, then
+by deﬁnition of Fij, properties ofqij, and from Assumption
+2:fij⁄= 0.
+Since Assumption 2 guarantees that condition (31) holds
+for every equilibrium, it is possible to formulate a criterion
+of stability for system (2) with underlying tree topology.
+Theorem 10 (Criterion of stability for tree topology)
+If the underlying topology of system (2) is a tree, qij ⁄= q+
+ij,
+qij ⁄= q−
+ij, and functions fij() satisfy Assumption 2 for each
+ij ∈ E, then an equilibrium
+(
+φ∗,K∗)
+is stable if and only if
+condition (27) holds for every edge ij∈E. Moreover, each stable
+equilibrium is also asymptotically stable.
+Proof. Suppose that for equilibrium
+(
+φ∗,K∗)
+condition (27)
+is satisﬁed for any ij∈ E, then this equilibrium is asymp-
+totically stable by Theorem 3. Now assume that there exists
+an edgeij∈E such that condition (27) does not hold for it,
+i.e.
+(Fij +qij)·f′
+ij−f2
+ij≤ 0.
+The above inequality must be strict since condition (31)
+holds for trees. Now consider a cut C(P ) =ij deﬁned by a
+single edge ij. It immediately follows that the equilibrium
+must be unstable by Theorem 2.
+From this criterion we also conclude that (under the
+criterion’s conditions) an equilibrium withK∗
+ij = 0 for some
+edge ij ∈ E will be unstable. We now provide a result
+regarding ranks of matrices ˆB and M for a tree topology.
+This result will be later used to show convergence to a stable
+equilibrium almost surely in Theorem 12.
+10
+Lemma 11 At any equilibrium of system (2) with a tree
+underlying topology andqij⁄=q+
+ij,qij⁄=q−
+ij (∀ij∈E):
+n =m + 1,
+Rank( ˆB) =Rank( ˆBT ) = min(n +m,m +m) = 2m,
+Rank(M) = 2m.
+Proof. First two equations are satisﬁed even outside of the
+equilibria. In particular, the ﬁrst equation says that in a tree
+graph the number of vertices is greater than the number
+of edges by one, and is straightforward. The second fact
+follows from the properties of the incidence matrix B and
+because we consider a tree topology. We now show that at an
+equilibrium the third equation is correct. Recall that matrix
+M has dimensions (2m)× (2m). Suppose by contradiction
+that at some equilibrium Rank(M)< 2m, then there exists
+a non-zero vector⃗ xsuch thatM⃗ x= 0. This system contains
+2m equations, the ﬁrst m of them are of the form:
+xiKif′
+i +xm+ifi = 0, (32)
+wherei = 1,...,m , and the remaining m equations are:
+xi·fi +xm+i/αi = 0, (33)
+where i = 1,...,m again. We choose a particular index i
+such that 1≤ i≤ m, and consider a pair of correspond-
+ing equations: one from (32) and another one from (33).
+According to Lemma 8, at an equilibrium exactly one of
+the following conditions holds: fi = 0 or Ki = 0. We ﬁrst
+consider the case whenfi = 0. Then, from the ﬁrst equation,
+xi = 0 because Ki⁄= 0, f′
+i⁄= 0 and fi = 0. And from the
+second equation: xm+i = 0 sinceαi > 0. Now consider the
+case when Ki = 0 , then fi ⁄= 0 . From the ﬁrst equation:
+xm+i = 0, and then from the second equation: xi = 0 since
+fi⁄= 0. Therefore, in both cases xi = xm+i = 0, and since
+this should be true for all 1≤ i≤ m, vector ⃗ xhas to be
+a zero vector which contradicts our assumption that ⃗ xis
+non-zero.
+While Theorem 1 does not guarantee pointwise conver-
+gence and isolation of equilibria in general, for the case of a
+tree underlying topology we proved isolation of equilibria
+in Corollary 9, and now can show that the system converges
+to a stable equilibrium almost surely.
+Theorem 12 At any equilibrium of system (2) with a tree
+topology, qij ⁄= q+
+ij, qij ⁄= q−
+ij (∀ij ∈ E), and with functions
+fij satisfying Assumption 2, the Jacobian has only one zero
+eigenvalue due to rotational invariance, and system converges to
+a stable equilibrium almost surely.
+Proof. The Jacobian matrix J and symmetric matrix A in
+decomposition (10) are both of size (n +m)× (n +m) or,
+using Lemma 11, of size (2m + 1)× (2m + 1). Moreover,
+matrixA can be expressed as follows:
+A =− ˆBM ˆBT, (34)
+where matrixM is of size (2m)× (2m), and matrices ˆB and
+ˆBT are of size (2m+1)×(2m), (2m)×(2m+1), respectively.
+We now employ the following fact: if matrix A1 has dimen-
+sionsx×y, matrixA2 is of sizey×z andRank(A2) =y, then
+Rank(A1A2) =Rank(A1). Using this fact we conclude that
+Rank( ˆBM ) = 2m, and Rank(A) = Rank( ˆBM ˆBT ) = 2m.
+Because rank of a symmetric matrix is equal to the number
+of its non-zero eigenvalues, A has a single zero eigenvalue.
+Then, since J andA have the same numbers of zero eigen-
+values (as was shown in the proof to Theorem 2), Jacobian
+matrix J has only one zero eigenvalue which is due to
+the rotational invariance. Thus, all equilibria of (2) with a
+tree topology and functions fij satisfying Assumption 2,
+are hyperbolic (i.e. they do not have any center manifold)
+when domain of the system is restricted to the subspace
+orthogonal to [1n 0m]T . Therefore, system (2) almost surely
+converges to a stable equilibrium (due to Proposition 1 of
+[12], for example).
+Remark Theorem 12 implies that for a tree topology at
+least one stable equilibrium exists. We can verify this fact by
+constructing a stable in-phase or anti-phase equilibrium for a
+given system (2) with a tree underlying topology, functions fij()
+satisfying Assumption 2, and parameters qij such that qij⁄=q+
+ij
+and qij⁄= q−
+ij for all edges ij∈ E. Without loss of generality,
+the phase value of each oscillator at such equilibrium is either
+0 or π. To construct a stable equilibrium, we arbitrarily choose
+an oscillator to be the root of a tree, assign phase value equal
+to zero to this oscillator, and then traverse the tree using, for
+example, the breadth-ﬁrst search. During the tree traversal, at
+each iteration we consider an edge connecting a previously visited
+oscillator with assigned phase value and a new oscillator whose
+phase is determined at this iteration. For example, if edge ij∈E
+is considered, and previously visited oscillatori has phaseφ∗
+i = 0,
+then the phase of oscillatorj is assigned with value 0 ifqij >q +
+ij,
+and with value π, otherwise. The equilibrium constructed in this
+manner will be asymptotically stable due to Theorem 5.
+5.2 Attractive and Repulsive Coupling
+All previously formulated results also hold for systems
+where each connection ij ∈ E is either strictly attractive
+(qij > q+
+ij) or strictly repulsive ( qij < q−
+ij) coupling. Ad-
+ditionally, Lemma 8 can be further improved: for strictly
+repulsive or attractive connections, Kij cannot attain a
+zero value, and thus each equilibrium is characterized by
+conditions fij = 0 for each ij ∈ E. This implies that at
+each equilibrium all phase differences are multiples of π.
+Moreover, the following result holds.
+Theorem 13 (Almost global stability for trees) Suppose
+in system (2) the functions fij() satisfy Assumption 2, and the
+underlying topology is a tree graph. If each connection ij∈E is
+either strictly attractive ( qij > q+
+ij) or strictly repulsive ( qij <
+q−
+ij), then system (2) has a (unique) almost globally asymptotically
+stable in-phase or anti-phase equilibrium (φ∗,K∗) that, for each
+edgeij∈E, (φ∗,K∗) satisﬁes:
+{
+φ∗
+i =φ∗
+j ifqij >q +
+ij,
+|φ∗
+i−φ∗
+j| =π ifqij <q−
+ij. (35)
+Proof. As was previously mentioned, under the conditions
+of this theorem the equilibrium set of system (2) consists
+of in-phase and anti-phase equilibria. Due to Theorem 10,
+an equilibrium (φ∗,K∗) is stable if and only if condition
+(Fij +qij)·f′
+ij > f2
+ij holds for each edge ij∈ E. Because
+11
+fij = 0 at each equilibrium of system (2) satisfying assump-
+tions of Theorem 13, an equilibrium is stable if and only
+if (Fij + qij)· f′
+ij > 0. If qij > q+
+ij, then this condition
+will be satisﬁed if and only if f′
+ij > 0, which implies that
+φ∗
+i = φ∗
+j due to Assumption 2. If qij < q−
+ij, then f′
+ij must
+be negative, and it means that |φ∗
+i−φ∗
+j| = π. Therefore,
+condition (35) is both necessary and sufﬁcient for stability
+of an equilibrium. Moreover, according to Theorem 10, if an
+equilibrium is stable, it is also asymptotically stable.
+Existence of a stable in-phase or anti-phase equilibrium
+satisfying (35) was shown by construction in the remark to
+Theorem 12. It remains to show, therefore, the uniqueness
+of this constructed stable equilibrium. Suppose, there exists
+another stable equilibrium (ˆφ, ˆK), which is different from
+the constructed equilibrium (φ∗,K∗). Since it is stable,
+equilibrium (ˆφ, ˆK), must also satisfy condition (35). And
+because (ˆφ, ˆK) is different from (φ∗,K∗), there exists at
+least one pair of oscillatorsk andl (not necessary connected)
+such that|φ∗
+k−φ∗
+l|⁄ =|ˆφk− ˆφl|. It cannot happen if k and
+l are connected, i.e. if kl∈E, because of the condition (35).
+Now, assume that k and l are not connected, then since
+the underlying topology graph G is a tree, there exists a
+single shortest path from k to l in G: k,p 1,...,p h,l , where
+p1,...,p h∈ V are some oscillators and h≥ 1. This path
+consists of h + 1 edges kp1,p 1p2,...,p hl, and let M be
+the number of edges in this path with strictly repulsive
+coupling (q < q−). Then, to satisfy condition (35), in any
+stable equilibrium the phase difference between oscillators
+k andl must be equal to zero ifM is even, and equal toπ if
+M is odd. Thus,|φ∗
+k−φ∗
+l| must be equal to|ˆφk− ˆφl|, which
+contradicts our assumption about equilibrium (ˆφ, ˆK).
+Corollary 14 If for system (2) under the assumptions of
+Theorem 13, all connections are strictly attractive ( qij > q+
+ij
+∀ij∈E), then the in-phase equilibrium is almost globally asymp-
+totically stable. If all connections are strictly repulsive (qij <q−
+ij
+∀ij ∈ E), then the unique anti-phase equilibrium satisfying:
+|φ∗
+i−φ∗
+j| =π∀ij∈E is almost globally asymptotically stable.
+Condition|φ∗
+i−φ∗
+j| =π∀ij∈E implies that oscillators
+are divided into two sets (corresponding to phase values 0
+and π, for example) so that each graph edge connects an
+oscillator from one set with an oscillators in the other set.
+This division can be done if the graph is bipartite which is
+always the case when the graph is a tree. Moreover, since
+the graph is connected, bipartition is unique, and thus, the
+anti-phase equilibrium satisfying condition |φ∗
+i−φ∗
+j| = π
+∀ij∈E is also unique.
+6 P HASE LOCKING FOR ARBITRARY TOPOLOGY
+In Theorem 12 we demonstrated that when the underlying
+topology is a tree, convergence to a stable equilibrium
+occurs almost surely. It was possible to show this fact mainly
+due to the characterization of the equilibria formulated in
+Lemma 8. In particular, for the case of a tree topology all
+equilibria are isolated and moreover, hyperbolic. However,
+equilibria are not necessary isolated in the case of a non-tree
+topology as was demonstrated in Subsection 3.3 by means of
+an example of four completely connected oscillators. In that
+example all values of parameters qij were equal to zero.
+It turns out that the example in Subsection 3.3 is de-
+generate. That is, the non-isolation of the equilibria was
+mainly due to the special choice of qij and αij. Thus, we
+can formulate a result similar to Theorem 12 by making
+additional assumption on the choice of parameters α and
+q. This leads again towards a condition that guarantees
+convergence to a stable equilibrium almost surely.
+Theorem 15 Suppose all functionsfij() satisfy Assumption
+2, and for each ij∈ E parameters αij and qij are chosen ran-
+domly from continuous probability distributions on the intervals
+(0,∞) and (−∞,∞), respectively. Then, with probability one in
+the selection of these parameters, system (2) converges to a stable
+equilibrium almost surely.
+Proof. The proof is similar to the proof of Theorem 4 in
+[33] and is based on the parametric transversality theorem
+(Theorem 6.35 of [28]). To get rid of a zero eigenvalue of
+the JacobianJ of system (2) which corresponds to rotational
+invariance, instead of n phase variables φ1,...,φ n we will
+consider n− 1 phase differences µj ≜ φj+1−φ1, where
+j = 1,...,n − 1. Thus, all other phase values are measured
+relative to the phase value of the ﬁrst oscillator. Notice, since
+the sum of all phases is an invariant of system (2), variables
+µj,j = 1,...,n − 1, uniquely deﬁne phase values φi, where
+i = 1,...,n . Let matrices R∈ Rn×(n−1) andU∈ Rn×(n−1)
+be deﬁned as
+R =
+[
+0T
+n−1
+In−1
+]
+,U =
+[
+−1T
+n−1
+In−1
+]
+, (36)
+whereIn−1 denotes an identity matrix of dimension n− 1,
+and 0n−1, 1n−1 are vectors of zeros and ones, respectively,
+of lengthn− 1. Note thatUTR =In−1 andBT =BTRUT .
+Then, in the new variables (µ,K ) system (2) can be rewrit-
+ten as follows:
+˙µ =−UTB diag(K)f[BTRµ],
+˙K =S
+(
+A(F [BTRµ] +q)−K
+)
+.
+(37)
+HereF∈ Rm is a vector whose components areFij, andq∈
+Rm is a vector containing parameters qij for each ij∈ E.
+Further,A∈ Rm×m andS∈ Rm×m are diagonal matrices
+with parameters αij and sij (ij∈ E), respectively, on the
+diagonal. In the above equations and further in the proof,
+diag(x), where vector x∈ Rm, denotes a diagonal matrix
+of sizem×m with elements ofx in its diagonal.
+The main idea of the proof is to show that at the equi-
+libria of system (37), the Jacobian does not have eigenvalues
+with zero real part. To show this we ﬁrst prove that the Ja-
+cobian is invertible at each equilibrium for almost all values
+of parameters α and q, and then demonstrate that all its
+eigenvalues are real. Let T denote the ﬁnite collection of all
+m×m diagonal matrixes ∆ = diag{δ1,,...,δ m} such that
+eitherδk = (Fk(0) +qk)·f′
+k(0) orδk = (Fk(π) +qk)·f′
+k(π),
+wherek = 1,...,m is the edge index. For each such matrix
+∆∈ T , we deﬁne the closed set
+P∆ ={α∈ Rm : det
+(
+RTBA∆BTR
+)
+= 0}, (38)
+Matrix ∆ is invertible due to Assumption 2 and because
+(Fij(x) +qij)⁄= 0 for x = 0 and x = π, since qij ⁄= q−
+ij
+and qij ⁄= q+
+ij. Additionally, the columns of BTR are
+independent since they are rows 2,...,n of the incidence
+matrix B. Then, P∆ ⁄= Rm (for instance, if A = ∆−1),
+12
+and thusP∆ is a closed algebraic set having zero measure.
+Therefore,P = ⋃
+∆∈T
+P∆ is also a closed algebraic set having
+zero measure, and set Oα = Rm
++\P is a nonempty open
+set. Further, let Oq be the set of vectors q ∈ Rm whose
+components satisfy qij ⁄= q−
+ij and qij ⁄= q+
+ij. It is easy to
+show that the set Rm\Oq has a zero measure.
+Let H(µ,K,q ) be a mapping Tn−1× Rm×O q →
+Rn−1+m:
+H(µ,K,q ) =
+[−UTB diag(K)f[BTRµ]
+S
+(
+A(F [BTRµ] +q)−K
+)
+]
+, (39)
+and α ∈ Oα. Notice that H(µ,K,q ) = 0 only at the
+equilibria of system (37). Next, the Jacobian of H(µ,K,q )
+is
+DH(µ,K,q ) =
+[
+∂H
+∂µ
+∂H
+∂K
+∂H
+∂q
+]
+, (40)
+where
+∂H
+∂µ =
+[−UTB diag(K∗f′[BTRµ])BTR
+−SA diag(f[BTRµ])BTR
+]
+, (41)
+∂H
+∂K =
+[
+−UTB diag(f[BTRµ])
+−S
+]
+, (42)
+∂H
+∂q =
+[0(n−1)×m
+SA
+]
+, (43)
+and 0x×y denotes a zero matrix of dimensions x byy.
+We now show that when H(µ,K,q ) = 0 , matrix
+DH(µ,K,q ) has full row rank for all (µ,K,α,q )∈ Tn−1×
+Rm×Oα×Oq. Consider the following block matrix:
+W =
+
+
+In−1 0(n−1)×m
+L 0m×m
+A−1L I m
+
+, (44)
+where
+L =A diag(f[BTRµ])+· diag
+(
+(F [0m] +q)∗f′[0m]
+− (F [BTRµ] +q)∗f′[BTRµ]
+)
+BTR,
+(45)
+here (·)+ denotes the Moore-Penrose pseudoinverse. Then,
+sinceK =A(F [BTRµ] +q) whenH(µ,K,q ) = 0,
+DH(µ,K,q )·W =[ −UTBA∆(µ)BTR 0(n−1)×m
+−SA diag(f[BTRµ])BTR SA
+]
+, (46)
+where ∆(µ) is a diagonal matrix
+∆(µ) = diag
+(
+(F [BTRµ] +q)∗f′[BTRµ]
+)
++ diag
+(
+f[BTRµ]
+)
+· diag
+(
+f[BTRµ]
+)+
+·
+· diag
+(
+(F [0m] +q)∗f′[0m]− (F [BTRµ] +q)∗f′[BTRµ]
+)
+.
+(47)
+Because functions f() satisfy Assumption 2, f(x) = 0 if
+and only if x∈{ 0,π}, and therefore, for any µ∈ Tn−1,
+the matrix ∆(µ) belongs to T . It implies that matrix
+RTBA∆(µ)BTR is invertible for (µ,K,α,q ) ∈ Tn−1×
+Rm×Oα×Oq. Next, because
+UTB =UTURTB, (48)
+and matrix UTU is invertible, it follows that matrix
+−UTBA∆(µ)BTR = −(UTU)(RTBA∆(µ)BTR) in (46)
+is also invertible. We now conclude that the whole matrix
+(46) is invertible, because its rows are independent (SA is a
+diagonal matrix with positive numbers on the diagonal). As
+a consequence of this, when H(µ,K,q ) = 0 , the Jacobian
+matrix DH(µ,K,q ) must have independent rows for all
+(µ,K,α,q )∈ Tn−1× Rm×Oα×Oq.
+Thus, H ⑂ {0}, and it follows from the parametric
+transversality theorem ( [28], Theorem 6.35) that there
+exists a set Y ⊂ Oq having zero measure such that if
+q∈O q\Y , thenHq ⑂{0}, whereHq denotes the mapping
+(µ,K )→H (µ,K,q ). Therefore, (n− 1 +m)× (n− 1 +m)
+matrix [
+∂H
+∂µ
+∂H
+∂K
+]
+(49)
+is invertible when H(µ,K,q ) = 0 for almost all values of
+parametersα andq.
+Now observe that matrix (49) is the Jacobian of system
+(37). It remains to show that this matrix can have only real
+eigenvalues. Indeed, (49) is equal to a product of a diagonal
+positively deﬁnite matrix and a symmetric matrix:
+[
+∂H
+∂µ
+∂H
+∂K
+]
+=
+[
+UTU 0(n−1)×m
+0m×(n−1) SA
+][−A1 −A2
+−A3 −A−1
+]
+,
+(50)
+where
+A1 =RTB diag
+(
+K∗f′[BTRµ]
+)
+BTR, (51)
+A2 =RTB diag(f[BTRµ]), (52)
+and
+A3 = diag(f[BTRµ])BTR. (53)
+We observe that the second matrix in the product (50) is
+indeed symmetric sinceAT
+2 =A3, andA1 is symmetric.
+To summarize the results, for almost all randomly se-
+lected system parametersαij andqij, the Jacobian of system
+(37) at each equilibrium cannot have eigenvalues with zero
+real part, and system (37) converges to a stable equilibrium
+almost surely, so does system (2).
+Remark Theorem 15 states that system (2) converges to a
+stable equilibrium almost surely for almost all values of param-
+eters α and q. In other words, the set of parameters α and q
+for which convergence to a stable equilibrium is not guaranteed,
+has zero measure. The theorem, however, does not provide a
+description of this zero-measure set and, therefore, it cannot be
+applied to guarantee convergence to a stable equilibrium for a
+given example with some ﬁxed values of parameters. This is the
+main distinction between this theorem and its analog Theorem 12
+for a tree topology: the latter result guarantees convergence for all
+values of the parameters (except for q =q+ andq =q−).
+In Corollary 14 we proved that the in-phase equilibrium
+is almost globally asymptotically stable in the case of strictly
+attractive coupling if the underlying topology is a tree. With
+additional requirements on the coupling functions fij() it
+is possible to show almost globally asymptotically stability
+of the in-phase equilibrium for an arbitrary topology. In
+particular, we now assume that each function fij satisﬁes
+Assumption 3 There exists a parameter b∈ (0,π ) such that
+functionsfij∀ij∈E satisfy:
+13
+TABLE 1: Behavior of system (2) for various choices of its parameters. Parameters sij are from (0,∞) in each case.
+Theorem Functionsfij Topology Parametersqij Parametersαij Synchronization/Convergence to
+Theorem 1 Assumption 1 arbitrary (−∞,∞) (0,∞) frequency synchronization
+Theorem 12 Assumption 2 tree qij⁄=q+
+ij,qij⁄=q−
+ij (0,∞) stable eq. a.s.
+Theorem 13 Assumption 2 tree qij >q +
+ij orqij <q −
+ij (0,∞) unique stable in/anti-phase eq. satisfying (35) a.s.
+Theorem 15 Assumption 2 arbitrary Oq\Y Oα stable eq. a.s.
+Theorem 16 Assumption 3 arbitrary Oq\Y ,qij >q +
+ij Oα in-phase stable eq. a.s.
+1) Assumption 1;
+2) f′
+ij(x)> 0,∀x∈ [0,b );
+3) f′
+ij(x)< 0,∀x∈ (b,π ].
+Notice that Assumption 3 is stronger than Assumption
+2 in a sense that if functions fij satisfy Assumption 3,
+they also satisfy Assumption 2. Function whose graph is
+shown on the left side of Fig. 1 satisﬁes Assumption 3. The
+following theorem is a generalization of [30] to systems with
+plastic connectivity.
+Theorem 16 (Almost global stability) Suppose functions
+fij satisfy Assumption 3 with b≤ π
+n−1 , and qij > q+
+ij for each
+ij∈ E, then with probability one in the selection of parameters
+α andq, the in-phase equilibrium of system (2) is almost globally
+asymptotically stable.
+Proof. The proof is almost identical to the proof of Theo-
+rem 6 in [30] and is not presented here due to the space
+limitations. The main idea is that if all functions fij satisfy
+Assumption 3 and qij > q+
+ij ∀ij ∈ E, then the in-phase
+equilibrium is the only stable equilibrium of system (2).
+Then the statement of the theorem follows from Theorem
+15.
+Remark The in-phase equilibrium will be also almost globally
+asymptotically stable if all functions (−fij) satisfy Assumption 3
+withb≤ π
+n−1 andqij <q−
+ij∀ij∈E.
+In Table 1 we summarized the convergence results of
+system (2) with arbitrary and tree underlying topology, and
+for various values of parameters α andq.
+7 N UMERICAL ILLUSTRATIONS
+In this section we consider several network examples and
+apply our results to explore their behavior and investigate
+stability of their equilibria. In these examples we will as-
+sume that fij = sin( φj− φi) and Fij = cos( φj− φi)
+∀ij ∈ E, then q+
+ij = 1 and q−
+ij = −1∀ij ∈ E. Thus,
+system (2) becomes a generalized Kuramoto model with
+plastic coupling strengths. Notice that this choice of func-
+tionsfij guarantees that Assumptions 2 and 3 are satisﬁed.
+Additionally, (strictly) positive and (strictly) negative coupling
+corresponds to (strictly) attractive and (strictly) repulsive
+coupling, respectively.
+7.1 Two Oscillators (Lemma 8, Theorems 10, 12, 13, 16)
+Since two connected oscillators form a tree topology, we
+can apply the results of Lemma 8 and Theorems 10, 12. In
+particular, for a tree topology case we can easily ﬁnd all
+equilibria of the system using our results (Lemma 8). We
+will assume thatα12 takes an arbitrary positive value.
+If q12 = 0 , then Lemma 8 can be applied to describe
+all equilibria of system (2) with two oscillators. The ﬁrst
+type of equilibria corresponds to condition f12 = 0 which
+implies that sin(φ2−φ1) = 0 , and K/α12 = F12 +q12 =
+f′
+12 +q12 = cos(φ2−φ1) +q12 = cos(φ2−φ1). The second
+type of equilibria is deﬁned by condition cos(φ2−φ1) = 0,
+i.e. K = 0 , and f12 = sin(φ2−φ1) = 1 . Stability of each
+equilibrium type can be veriﬁed using a criterion provided
+in Theorem 10. The criterion’s stability condition (27) takes
+the following form:
+(cos(φ2−φ1) +q12)· cos(φ2−φ1)> 0. (54)
+Ifq12 = 0, then (54) is satisﬁed for the ﬁrst type of equilibria
+(in-phase (Fig. 2c-i) and anti-phase (Fig. 2c-ii)), making these
+equilibria stable. The second equilibrium type correspond-
+ing to K = 0 is unstable (Fig. 2c-iii) because (54) does not
+hold for it.
+Next, if q12 = 2 or q12 =−2, then system (2) of two
+oscillators has only in-phase and anti-phase equilibria. We
+can use Theorem 13 to conclude that when q12 = 2 , then
+the in-phase equilibrium is stable (Fig. 2a-i) and the anti-
+phase equilibrium is unstable (Fig. 2a-ii), and in the case
+when q12 = −2, the in-phase (Fig. 2b-i) and anti-phase
+(Fig. 2b-ii) equilibria are unstable and stable, respectively.
+We can observe that all results are in agreement with Fig. 2
+as expected.
+According to Theorem 12, system (2) converges to a
+stable equilibrium almost surely for each of the considered
+values of parameter q12. Moreover, when q12 = 2 (strictly
+attractive coupling) or when q12 = −2 (strictly repulsive
+coupling) the system has a unique almost global stable
+in-phase (if q12 = 2 ) or anti-phase (when q12 = −2)
+equilibrium, as predicted by Theorem 13. In addition, since
+π
+2 =b < π
+2−1 =π, we can apply Theorem 16 when q12 = 2
+to reestablish the almost global stability of the in-phase
+equilibrium.
+14
+(a) 2 oscillators, stable equilibrium
+ (b) 3 oscillators, unstable equilibrium
+ (c) 12 oscillators, stable equilibrium
+Fig. 5: Behavior of system (2) with qij = 0 (∀ij∈E) of two (left), three (center) and twelve (right) oscillators after a small
+perturbation from a stable anti-phase, unstable and stable equilibrium, respectively.
+The behavior of the system with q12 = 0 of two
+oscillators after a small perturbation from the anti-phase
+equilibrium is shown in Fig. 5a. This equilibrium is stable,
+and the system converges to it after a perturbation.
+7.2 Three Oscillators (Theorems 2, 3, 4, 5, 15, 16)
+Here we examine the stability of equilibria and the behavior
+of system (2) with three all-to-all connected oscillators. In
+this case the underlying topology is not a tree and we will
+employ Theorems 2 and 3 to show stability or instability. We
+will assume for simplicity thatαij = 1 for allij∈E, and as
+in Subsection 3.2, will explore the cases qij = 0,qij = 2 and
+qij =−2 (∀ij∈E).
+We ﬁrst consider the case when qij = 0 for each ij∈E.
+The in-phase equilibrium is stable (Fig. 3c-i) since condition
+(27) is satisﬁed: cos2(0) > sin2(0). Clearly, the anti-phase
+equilibrium, i.e. when φ1 = φ2 and φ3 = φ1 +π, is also
+stable (Fig. 3c-ii). Now consider equilibriumφ2 =φ1+2π/3,
+φ3 = φ1− 2π/3, and a two-edge cut C(P ) = {12, 13}.
+Because 2
+(
+cos2(2π/3)− sin2(2π/3)
+)
+< 0, condition (9) is
+satisﬁed and the equilibrium is unstable (Fig. 3c-iii). The
+next equilibrium is deﬁned as φ1 = φ2, φ3 = φ1 +π/2.
+Using our cut C(P ) = {13, 23}, we obtain: 2
+(
+cos2(π/2)−
+sin2(π/2)
+)
+< 0, which means that the equilibrium is unstable
+(Fig. 3c-iv) due to Theorem 2. If the equilibrium is described
+by φ2 = φ1 + π/3, φ3 = φ1− π/3, then using the cut
+C(P ) = {12, 13}, we get 2
+(
+cos2(π/3)− sin2(π/3)
+)
+< 0,
+and thus the equilibrium is unstable (Fig. 3c-v). In Fig. 5b
+behavior of this system is shown after a small perturbation
+from this unstable equilibrium. Finally, whenφ2 =φ1+π/2,
+φ3 = φ1−π/2, we can use the cut C(P ) ={12, 13} to get
+2
+(
+cos2(π/2)− sin2(π/2)
+)
+< 0 which makes the equilibrium
+unstable (Fig. 3c-vi).
+We now assume thatqij = 2,∀ij∈E. Then, the in-phase
+equilibrium is stable (Fig. 3a-i) since (cos(0)+2)·cos(0)> 0,
+and condition (27) is satisﬁed. Next, the cutC(P ) ={12, 13}
+can be used to demonstrate the instability of the anti-phase
+equilibrium (Fig. 3a-ii): 2(cos(π) + 2)· cos(π) < 0, so that
+condition (9) is fulﬁlled. Using the same cut C(P ), the
+instability of equilibrium φ2 = φ1 + 2π/3,φ3 = φ1− 2π/3
+can be shown (Fig. 3a-iii).
+Finally, we explore the case when qij =−2,∀ij ∈ E.
+The in-phase equilibrium is unstable (Fig. 3d-i): (cos(0)−
+2)· cos(0) < 0. The stability of the anti-phase equilibrium,
+however, cannot be veriﬁed by our sufﬁcient condition in
+Theorem 3, because (cos(0)− 2)· cos(0) < 0. Further,
+equilibriumφ2 =φ1 + 2π/3,φ3 =φ1− 2π/3 is stable (Fig.
+3d-iii): (cos(2π/3)− 2)· cos(2π/3)− sin2(2π/3) > 0. And
+Theorem 2 does not allow us to verify the instability of the
+last equilibrium (Fig. 3d-iv).
+Stability or instability of in-phase and anti-phase equi-
+libria in some cases can be also checked using Theorems
+3 and 4. As was pointed out in the Remark of Subsection
+4.3, the instability conditions of Theorems 4 and 5 are
+generally weaker than condition of Theorem 2. For example,
+while we could apply Theorem 2 to show that the anti-
+phase equilibrium is unstable when qij = 2 (∀ij∈ E), the
+sufﬁcient instability condition of Theorem 5 is not fulﬁlled.
+Because the topology of this example is not a tree,
+Theorem 12 cannot be applied. In addition, Theorem 15
+formulated for an arbitrary topology, does not guarantee
+convergence to a stable equilibrium for given values of the
+parameters α and q. Nevertheless, when qij = 2, Theorem
+16 can be used since π
+2 = b = π
+3−1 = π
+2 . Therefore, the in-
+phase equilibrium is almost globally asymptotically stable
+whenqij = 2 (∀ij∈E), which is in agreement with Fig. 3a.
+7.3 Four Oscillators (Theorems 2, 15)
+In Subsection 3.3 we described a set of equilibria of system
+(2) withqij = 0 (∀ij∈E) andαij =α> 0 (∀ij∈E) of four
+all-to-all connected oscillators, characterized by a parameter
+β ∈ (0,π/ 2). We will ﬁrst check that each equilibrium of
+this set is unstable. At any such equilibrium with ﬁxed β∈
+(0,π/ 2):φ2 =φ1 +π/2,φ3 =φ1 +β,φ4 =φ1− (π/2−β),
+and we deﬁne a cut C(P ) as C(P ) = {12, 13, 14}. Since(
+cos2(π/2)− sin2(π/2)
+)
++
+(
+cos2(β)− sin2(β)
+)
++
+(
+sin2(β)−
+cos2(β)
+)
+< 0, then Theorem 2 guarantees that this equilib-
+rium is unstable.
+This set of equilibria is of a special interest, because it
+consists of non-isolated equilibria, and the result of Theorem
+15 does not apply to this system. Therefore, the values of
+parametersα andq corresponding to this example, i.e.αij =
+α >0 (∀ij∈ E) and qij = 0 (∀ij∈ E) belong to the zero-
+measure set of parameters that is excluded in the statement
+of Theorem 15. The requirement αij =α> 0 (∀ij∈E) can
+be generalized: it is sufﬁcient that α13 =α14 andα23 =α24
+for the described set of equilibria to persist.
+15
+Fig. 6: Stable equilibrium corresponding to the example with
+twelve oscillators with ring topology.
+7.4 Twelve Oscillators
+In [40] it was shown that when in system (2) all coupling
+functions are sin(), qij = 0 (∀ij∈ E), and the underlying
+topology is a complete graph, then the only stable equilibria
+are those in which every phase difference is a multiple of
+π. This property does not generally hold in the case of an
+arbitrary topology as we will demonstrate here using an
+example with twelve oscillators and sin() coupling func-
+tions. The underlying topology is a ring graph, so that the
+pairs of connected oscillators are (1, 2), (2, 3), (3, 4), ... ,
+(11, 12), (12, 1). We will assume thatαij =α> 0 (∀ij∈E),
+and qij = q (∀ij∈ E). The equilibrium is deﬁned by the
+following phase values: φ1 = 0 , and φi = φi−1 +π/12,
+where i = 2,..., 12. The phases of the oscillators at the
+equilibrium are shown in Fig. 6.
+We can apply Theorem 3 to ﬁnd stability conditions for
+this equilibrium under various values of q. Condition (27)
+in this example takes the form:
+(cos(β) +q)· cos(β)− sin(β)2 > 0, (55)
+whereβ = 2π
+n is the phase difference between two neighbor-
+ing oscillators in equilibrium, and β = π
+6 whenn = 12. The
+inequality (55) implies that ifq >− 1√
+3 , then the equilibrium
+is stable for n = 12 oscillators. In Fig. 5c the behavior of
+the system is shown after a small perturbation from this
+equilibrium.
+8 C ONCLUSION
+In this work we studied a model of arbitrarily intercon-
+nected homogeneous coupled oscillators with a plastic cou-
+pling. We demonstrated that systems of oscillators described
+by this model always achieve frequency synchronization.
+Sufﬁcient stability and instability conditions for equilibria
+were provided for a general underlying topology, and a
+criterion of stability was formulated for a tree topology. We
+additionally derived a sufﬁcient condition that guarantees
+almost surely convergence to a stable equilibrium for tree
+topologies, and then obtained an analogous condition for
+the arbitrary topology case. Further, under certain assump-
+tions on the coupling (strictly attractive or strictly repulsive
+connections), we formulated an almost global stability result
+for tree topologies. A similar condition was also derived for
+arbitrary topologies and strictly attractive connections. We
+illustrated our theoretical results with several examples.
+REFERENCES
+[1] Aoki, Takaaki, and Toshio Aoyagi. ”Co-evolution of phases and
+connection strengths in a network of phase oscillators.” Physical
+review letters 102.3 (2009): 034101.
+[2] Aoki, Takaaki, and Toshio Aoyagi. ”Self-organized network of
+phase oscillators coupled by activity-dependent interactions.”
+Physical Review E 84.6 (2011): 066109.
+[3] Ashwin, Peter, and James W. Swift. ”The dynamics of n weakly
+coupled identical oscillators.” Journal of Nonlinear Science 2.1
+(1992): 69-108.
+[4] Bollob ´as, B´ela. Modern graph theory. Vol. 184. Springer, 1998.
+[5] Bressloff, Paul C., and S. Coombes. ”Travelling waves in chains
+of pulse-coupled integrate-and-ﬁre oscillators with distributed de-
+lays.” Physica D: Nonlinear Phenomena 130.3 (1999): 232-254.
+[6] Brown, Eric, Philip Holmes, and Jeff Moehlis. ”Globally coupled os-
+cillator networks.” Perspectives and Problems in Nolinear Science.
+Springer New York, 2003. 183-215.
+[7] Carlson, David, and Hans Schneider. ”Inertia theorems for matri-
+ces: The semideﬁnite case.” Journal of Mathematical Analysis and
+Applications 6.3 (1963): 430-446.
+[8] Cumin, D., and C. P . Unsworth. ”Generalising the Kuramoto model
+for the study of neuronal synchronisation in the brain.” Physica D:
+Nonlinear Phenomena 226.2 (2007): 181-196.
+[9] D ¨orﬂer, Florian, and Francesco Bullo. ”Synchronization in complex
+networks of phase oscillators: A survey.” Automatica (2014).
+[10] D ¨orﬂer, Florian, Michael Chertkov, and Francesco Bullo. ”Syn-
+chronization in complex oscillator networks and smart grids.”
+Proceedings of the National Academy of Sciences 110.6 (2013): 2005-
+2010.
+[11] D ¨orﬂer, Florian, and Francesco Bullo. ”Exploring synchronization
+in complex oscillator networks.” Decision and Control (CDC), 2012
+IEEE 51st Annual Conference on. IEEE, 2012.
+[12] Freeman, Randy A. ”A global attractor consisting of exponentially
+unstable equilibria.” Proceedings of the 2013 American Control
+Conference,(Washington, DC). 2013.
+[13] Gushchin, Andrey, Enrique Mallada, and Ao Tang. ”Synchroniza-
+tion of Phase-coupled Oscillators with Plastic Coupling Strength.”
+Information Theory and Applications Workshop, 2015.
+[14] Gushchin, Andrey, Enrique Mallada, and Ao Tang. ”Synchro-
+nization of Heterogeneous Kuramoto Oscillators with Arbitrary
+Topology.” American Control Conference (ACC), 2015. IEEE, 2015.
+[15] Gushchin, Andrey, Enrique Mallada, and Ao Tang. ”Synchro-
+nization of Heterogeneous Kuramoto Oscillators with Graphs of
+Diameter Two.” Conference on Information Sciences and Systems
+(CISS), 2015. IEEE, 2015.
+[16] Ha, Seung-Yeal, Zhuchun Li, and Xiaoping Xue. ”Formation of
+phase-locked states in a population of locally interacting Kuramoto
+oscillators.” Journal of Differential Equations 255.10 (2013): 3053-
+3070.
+[17] Ha, Seung-Yeal, Se Eun Noh, and Jinyeong Park. ”Synchronization
+of Kuramoto Oscillators with Adaptive Couplings.” SIAM Journal
+on Applied Dynamical Systems 15.1 (2016): 162-194.
+[18] Hebb, Donald. ”0.(1949) The organization of behavior.” (1968): 44.
+[19] Hong, Hyunsuk, and Steven H. Strogatz. ”Kuramoto model of
+coupled oscillators with positive and negative coupling parameters:
+An example of conformist and contrarian oscillators.” Physical
+Review Letters 106.5 (2011): 054102.
+[20] Hoppensteadt, Frank Charles, and Eugene M. Izhikevich. Weakly
+connected neural networks. Vol. 126. New York: Springer, 1997.
+[21] Hoppensteadt, Frank Charles, and Eugene M. Izhikevich. ”Oscilla-
+tory neurocomputers with dynamic connectivity.” Physical Review
+Letters 82.14 (1999): 2983.
+[22] Isakov, A., and L. Mahadevan. ”Synchronization in a stochas-
+tic Hebbian network of phase oscillators.” arXiv preprint
+arXiv:1404.2328 (2014).
+[23] Kazantsev, Victor, and Alexey Pimashkin. ”Forced phase-locked
+states and information retrieval in a two-layer network of oscilla-
+tory neurons with directional connectivity.” Physical Review E 76.3
+(2007): 031912.
+[24] Khalil, Hassan K., and J. W. Grizzle. Nonlinear systems. Vol. 3.
+Upper Saddle River: Prentice hall, 2002.
+[25] Kiss, Istv ´an Z., Yumei Zhai, and John L. Hudson. ”Emerging
+coherence in a population of chemical oscillators.” Science 296.5573
+(2002): 1676-1678.
+[26] Kuramoto, Yoshiki. ”Self-entrainment of a population of coupled
+non-linear oscillators.” International symposium on mathematical
+problems in theoretical physics. Springer Berlin Heidelberg, 1975.
+16
+[27] LaSalle, Joseph P . ”Some extensions of Liapunov’s second
+method.” Circuit Theory, IRE Transactions on 7.4 (1960): 520-527.
+[28] Lee, John M., Introduction to Smooth Manifolds, ser. Graduate
+Texts in Mathematics. New York: Springer, 2012, vol. 218.
+[29] Maistrenko, Yuri L., Borys Lysyansky, Christian Hauptmann,
+Oleksandr Burylko, and Peter A. Tass. ”Multistability in the Ku-
+ramoto model with synaptic plasticity.” Physical Review E 75, no.
+6 (2007): 066207.
+[30] Mallada, Enrique, and Ao Tang. ”Synchronization of phase-
+coupled oscillators with arbitrary topology.” American Control
+Conference (ACC), 2010. IEEE, 2010.
+[31] Mallada, Enrique, and Ao Tang. ”Synchronization of weakly cou-
+pled oscillators: coupling, delay and topology.” Journal of Physics
+A: Mathematical and Theoretical 46.50 (2013): 505101.
+[32] Mallada, Enrique, and Ao Tang. ”Distributed clock synchroniza-
+tion: Joint frequency and phase consensus.” Decision and Control
+and European Control Conference (CDC-ECC), 2011 50th IEEE
+Conference on. IEEE, 2011.
+[33] Mallada, Enrique, and Randy Freeman. ”Distributed Synchro-
+nization of Heterogeneous Oscillators on Networks with Arbitrary
+Topology.” (2014).
+[34] Marvel, Seth A., and Steven H. Strogatz. ”Invariant submanifold
+for series arrays of Josephson junctions.” Chaos: An Interdisci-
+plinary Journal of Nonlinear Science 19.1 (2009): 013132.
+[35] Moioli, Renan C., Patricia A. Vargas, and Phil Husbands. ”The
+dynamics of a neural network of coupled phase oscillators with
+synaptic plasticity controlling a minimally cognitive agent.” Arti-
+ﬁcial Neural NetworksICANN 2010. Springer Berlin Heidelberg,
+2010. 245-255.
+[36] Monz ´on, Pablo, and Fernando Paganini. ”Global considerations
+on the Kuramoto model of sinusoidally coupled oscillators.” De-
+cision and Control, 2005 and 2005 European Control Conference.
+CDC-ECC’05. 44th IEEE Conference on. IEEE, 2005.
+[37] Niyogi, Ritwik K., and L. Q. English. ”Learning-rate-dependent
+clustering and self-development in a network of coupled phase
+oscillators.” Physical Review E 80.6 (2009): 066213.
+[38] Popovych, Oleksandr V ., Yuri L. Maistrenko, and Peter A. Tass.
+”Phase chaos in coupled oscillators.” PHYSICAL REVIEW-SERIES
+E- 71.6 (2005): 065201.
+[39] Ren, Quansheng, and Jianye Zhao. ”Adaptive coupling and en-
+hanced synchronization in coupled phase oscillators.” Physical
+Review E 76.1 (2007): 016207.
+[40] Scardovi, Luca. ”Clustering and synchronization in phase models
+with state dependent coupling.” Decision and Control (CDC), 2010
+49th IEEE Conference on. IEEE, 2010.
+[41] Seliger, Philip, Stephen C. Young, and Lev S. Tsimring. ”Plasticity
+and learning in a network of coupled phase oscillators.” Physical
+Review E 65.4 (2002): 041906.
+[42] Timms, Liam, and Lars Q. English. ”Synchronization in phase-
+coupled Kuramoto oscillator networks with axonal delay and
+synaptic plasticity.” Physical Review E 89.3 (2014): 032906.
+[43] Winfree, Arthur T. ”Biological rhythms and the behavior of pop-
+ulations of coupled oscillators.” Journal of theoretical biology 16.1
+(1967): 15-42.
+[44] Yamaguchi, Shun, et al. ”Synchronization of cellular clocks in the
+suprachiasmatic nucleus.” Science 302.5649 (2003): 1408-1412.

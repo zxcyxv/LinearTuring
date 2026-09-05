@@ -1,0 +1,53 @@
+{
+ "bilin123k": {
+  "title": "R1B8_bilin_r2@123039 (STDP \uc5c6\uc74c)",
+  "n": 1024,
+  "segs": 256,
+  "exact16": 415,
+  "exact_end": 473,
+  "exact_max": 473,
+  "argmax": 247,
+  "agg_drop_transitions": 0,
+  "agg_max_drop": 0,
+  "puzzles_with_loss": 0,
+  "total_loss_events": 0,
+  "ever_solved": 473,
+  "solved_end": 473,
+  "ever_but_not_end": 0,
+  "lost_after_seg16": 0
+ },
+ "stdp1": {
+  "title": "R1B8_min_stdp1@228501 (\u03bb=1)",
+  "n": 1024,
+  "segs": 256,
+  "exact16": 445,
+  "exact_end": 513,
+  "exact_max": 513,
+  "argmax": 223,
+  "agg_drop_transitions": 1,
+  "agg_max_drop": -1,
+  "puzzles_with_loss": 7,
+  "total_loss_events": 8,
+  "ever_solved": 514,
+  "solved_end": 513,
+  "ever_but_not_end": 1,
+  "lost_after_seg16": 2
+ },
+ "kaggle": {
+  "title": "kaggle@182450 (\u03bb \ud63c\ud569, \ub808\uc774\uc5b4 2\ubc8c)",
+  "n": 1024,
+  "segs": 256,
+  "exact16": 516,
+  "exact_end": 708,
+  "exact_max": 708,
+  "argmax": 224,
+  "agg_drop_transitions": 0,
+  "agg_max_drop": 0,
+  "puzzles_with_loss": 2,
+  "total_loss_events": 2,
+  "ever_solved": 709,
+  "solved_end": 708,
+  "ever_but_not_end": 1,
+  "lost_after_seg16": 0
+ }
+}

@@ -1,0 +1,29 @@
+[LT] accelerate 사용 불가 (ModuleNotFoundError: No module named 'accelerate') — torch.distributed 폴백
+[LT] out_dir = /tmp/claude-0/-workspace/08bc710b-d194-40cc-8cfb-cb09bdc9e744/scratchpad/eqlt  (쓰기 가능)
+[LT] ※ 체크포인트 없음 — step 0 부터 시작한다. 이어서 돌릴 의도였다면 CFG['resume_from'] 에 이전 세션 output 경로를 지정하라 (예외사항.md §4).
+[LT] world_size=1 local_bs=128 params=884,019 total_steps=390625 total_iters=200 out=/tmp/claude-0/-workspace/08bc710b-d194-40cc-8cfb-cb09bdc9e744/scratchpad/eqlt
+[LT] 시작 step=0 iter=0 batch_in_iter=0
+[LT] step 200  lm_loss 1.9943  acc 0.3595  exact 0.0000 (~0/128) [halt step 192]
+[LT] step 400  lm_loss 1.6396  acc 0.4250  exact 0.0000 (~0/128) [halt step 400]
+[LT] step 600  lm_loss 1.5052  acc 0.4469  exact 0.0000 (~0/128) [halt step 592]
+[LT] step 800  lm_loss 1.4448  acc 0.4587  exact 0.0000 (~0/128) [halt step 800]
+[LT] step 1000  lm_loss 1.4020  acc 0.4660  exact 0.0000 (~0/128) [halt step 992]
+[LT] step 1200  lm_loss 1.3705  acc 0.4675  exact 0.0000 (~0/128) [halt step 1200]
+[LT] step 1400  lm_loss 1.3408  acc 0.4670  exact 0.0000 (~0/128) [halt step 1392]
+[LT] step 1600  lm_loss 1.3207  acc 0.4750  exact 0.0000 (~0/128) [halt step 1600]
+[LT] step 1800  lm_loss 1.3148  acc 0.4651  exact 0.0000 (~0/128) [halt step 1792]
+[EVAL] step 1953  acc 0.4565  exact 0/2048
+[LT] step 2000  lm_loss 1.2868  acc 0.4755  exact 0.0000 (~0/128) [halt step 2000]
+[LT] step 2200  lm_loss 1.2905  acc 0.4776  exact 0.0000 (~0/128) [halt step 2192]
+[LT] step 2400  lm_loss 1.2523  acc 0.4840  exact 0.0000 (~0/128) [halt step 2400]
+[LT] step 2600  lm_loss 1.2806  acc 0.4840  exact 0.0000 (~0/128) [halt step 2592]
+[LT] step 2800  lm_loss 1.2452  acc 0.4854  exact 0.0000 (~0/128) [halt step 2800]
+[LT] step 3000  lm_loss 1.2287  acc 0.4882  exact 0.0000 (~0/128) [halt step 2992]
+[LT] step 3200  lm_loss 1.2436  acc 0.4851  exact 0.0000 (~0/128) [halt step 3200]
+[LT] step 3400  lm_loss 1.2296  acc 0.4905  exact 0.0000 (~0/128) [halt step 3392]
+[LT] step 3600  lm_loss 1.2122  acc 0.4963  exact 0.0000 (~0/128) [halt step 3600]
+[LT] step 3800  lm_loss 1.2262  acc 0.4842  exact 0.0000 (~0/128) [halt step 3792]
+[EVAL] step 3906  acc 0.4807  exact 0/2048
+[LT] step 4000  lm_loss 1.1844  acc 0.4967  exact 0.0000 (~0/128) [halt step 4000]
+[LT] step 4200  lm_loss 1.1978  acc 0.4882  exact 0.0000 (~0/128) [halt step 4192]
+[LT] step 4400  lm_loss 1.1752  acc 0.4994  exact 0.0000 (~0/128) [halt step 4400]

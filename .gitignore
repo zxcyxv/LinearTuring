@@ -18,3 +18,4 @@ kaggle/pull/*.log
 
 # [2026-09-06] 캐글 노트북 로그(각 ~5MB)는 커밋하지 않는다. 외삽 txt·lt_train.py 만 보관
 kaggle/pull/output*/*.log
+# [2026-09-06] 로컬 보관 체크포인트(refs/ckpt_hist/, gitignore): R1B8_min_faith_step310527.pt(9/1 원본 310k) · repro0901/step_{10000,60000,120000}.pt(9/1 재현, train_0901.py) · v3/step_60000.pt(v3, |Z| 정규화 ③) · kaggle/pull/output/(v2.1 60k/120k/180k/206k) · output2/(③ 플래그판 120k/176.6k)

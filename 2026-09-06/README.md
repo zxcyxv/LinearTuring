@@ -222,7 +222,7 @@ seg8 에 수렴, 이후 0. seg16 eval 은 정상 상승 (3906스텝 .586 → 976
 - `analysis/probe_0901_cause.py` — 9/1@310k 추론 시점 절제 14모드 + `--ckpt` 로 재현 체크포인트. `train_0901.py` — 9/1 재현 학습 스크립트(`legacy_gauge`). `train_v21.py` — v2.1 대조군(미실행). `launch_0901.py`·`launch_v3.py` — 로컬 런처. `bench_v3.py` — 스텝 벤치. `extrap_v3.py` — v3 체크포인트 외삽. `exponent_probe.py` — v2.1 206k 의 곱셈 읽기 지수 측정.
 - `results/` — 절제 로그·npz, 재현 런 외삽 txt(10k/60k/120k)·스칼라 궤적, v3 26k 외삽, 벤치.
 - `kaggle/train_kaggle.py`(플래그판, 캐글 1회차) · `train_kaggle_resume60k.py`(2회차) · **`train_kaggle_v3.py`**(플래그 없는 새 버전, 로컬 런 중).
-- `refs/ckpt_hist/` (gitignore) — 9/1 체크포인트·코드·config, URM 없이 로드하는 `models/` 심. 스크래치 `URM/` — 9/1 패치 적용본 (검증용).
+- `refs/ckpt_hist/` (gitignore) — 9/1 체크포인트·코드·config, URM 없이 로드하는 `models/` 심. **`repro0901/step_{10000,60000,120000}.pt`** (9/1 재현 마일스톤, 외삽 txt 는 results/), **`v3/step_60000.pt`** (v3 60k). 스크래치(/tmp)에서 옮겨 둔 것 — v3 120k 는 나오면 같은 곳에. 스크래치 `URM/` — 9/1 패치 적용본 (검증용).
 
 ## 9. 오늘의 실패 기록
 

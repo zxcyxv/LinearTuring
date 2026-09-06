@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """LinearTuring / minimal(LT) 스도쿠 학습 — Kaggle 노트북 셀 1개용 단독 스크립트.
 
@@ -140,10 +141,11 @@ CFG = dict(
 
     # ---- 실행/저장
     out_dir=None,                 # None → /kaggle/working/checkpoints (없으면 ./lt_checkpoints)
-    resume_from=None,             # None → out_dir + /kaggle/input 자동 탐색. 명시하면 그 경로(파일/디렉터리)만 씀
+    resume_from="/kaggle/input",   # [2회차] 이전 버전 output 을 input 으로 붙이면 그 아래 step_*.pt 중 최신(60000)을 잡는다.
+                                  #   자동 스캔의 cfg 키 비교(1608행)를 우회한다 — 옛 체크포인트 cfg 에 stdp_lam_fixed 가 없어 그 비교는 실패한다
     scan_kaggle_input=True,       # [2026-09-04] 새 세션은 /kaggle/working 이 비어 있다. 이전 세션 output 을 input 으로
                                   #   붙였으면 자동으로 찾아 잇는다 (구조 키가 전부 일치할 때만 채택)
-    require_resume=False,         # True 면 재개할 체크포인트가 없을 때 즉시 중단 — 2회차 이후 세션에 켜라
+    require_resume=True,          # [2회차] 못 찾으면 즉시 중단
     expect_processes=None,        # 정수를 주면 world_size 가 그 값이 아닐 때 즉시 중단 (캐글 L4×4 면 4).
                                   #   4장 요청했는데 1장으로 조용히 떨어져 12시간을 헛도는 것을 막는다
     keep_last=2,                  # 체크포인트 보관 개수 (용량)
@@ -153,7 +155,7 @@ CFG = dict(
                                   #   목적: 외삽 능력이 학습량에 따라 느는지 / 구조 변경 효과인지 가르기. 0 이면 끔
     milestone_extrap_segs=128,    # 외삽 세그먼트 수 (학습은 16). 테스트 2,048 전체, 랭크 분담
     milestone_extrap_n=None,      # 외삽 퍼즐 수 상한 (None = 테스트 전체)
-    max_hours=3.0,                # [2026-09-05] 6.0 → 6.5 (사용자 지정). [2026-09-04] 9.0 → 6.0. quota 30h/주, 4xL4 는 2배 차감이라 9h 세션이
+    max_hours=2.0,                # [2026-09-05] 6.0 → 6.5 (사용자 지정). [2026-09-04] 9.0 → 6.0. quota 30h/주, 4xL4 는 2배 차감이라 9h 세션이
                                   #   18 quota-h 를 먹어 ARC 용이 안 남는다. persistent_reductions 수정 후
                                   #   약 8 it/s 라 6h 면 약 160k step — 역대 최고 런(123k)을 넘긴다.
                                   #   lr_min_ratio=1.0 이라 LR 은 상수다: 여기서 끊어도 어닐링 손실이 없다.

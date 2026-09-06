@@ -15,3 +15,6 @@ refs/ckpt_hrm/
 *.zip
 kaggle/pull/*.log
 2026-09-05/results/json/*.npz
+
+# [2026-09-06] 캐글 노트북 로그(각 ~5MB)는 커밋하지 않는다. 외삽 txt·lt_train.py 만 보관
+kaggle/pull/output*/*.log

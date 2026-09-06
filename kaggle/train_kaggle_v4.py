@@ -1,62 +1,16 @@
 # -*- coding: utf-8 -*-
-"""LinearTuring / minimal(LT) 스도쿠 학습 — Kaggle 노트북 셀 1개용 단독 스크립트.
+"""LinearTuring v4 — Kaggle 단독 학습 스크립트 (2026-09-06 저녁). 플래그 없음. v3 에서 쓰기 목표·읽기 두 줄만 바꿈.
 
-이 파일이 무엇인가
-    저장소 `clean` 브랜치의 `core/minimal.py` 모델을 URM 하네스(`refs/URM/pretrain.py`) 없이
-    **처음부터 끝까지** 학습시킨다. 모델·손실·옵티마이저·데이터·학습 루프·EMA·eval·체크포인트가
-    전부 이 한 파일 안에 있고, 외부 저장소 import 가 없다. 노트북 셀에 통째로 붙여넣으면 돈다.
-
-무엇을 재현하는가 (기준: `checkpoints/R1B8_min_faith_config.yaml` + `stdp_window=psi`)
-    1 step = `model(carry, batch)` 1회 = 세그먼트 1개(블록 8개) fwd+bwd+opt.step().
-    carry 는 스텝을 넘어 유지되고 세그먼트 끝에서 detach. ACT 없음 → halted = (steps >= loops=16).
-    1 에폭 = 퍼즐 그룹 1,000개 × 그룹당 1샘플 = 1,000 예제, global_batch_size=128 → 7.8125 step/epoch.
-    총 스텝 = int(epochs × 1000 / 128) = 390,625 (epochs=50000). 실제로 도는 것은 eval 구간 경계에서
-    마지막 부분배치를 버리므로 200 iter × 1,953 = 390,600 (HANDOVER 의 '계획 390,600 step' 과 일치).
-
-URM 하네스에서 무엇을 어떻게 옮겼는가
-    - 모델: `core/minimal.py` 의 `LTConfig`/`LTCarry`/`LT_Inner`/`LT` **수식·초기화·draw 순서 그대로**.
-      바뀐 것은 (a) `pydantic.BaseModel` → 평범한 `dataclass`(수치 무관, 의존성 축소),
-      (b) URM import 두 개를 이 파일 안의 동등 구현으로 교체. 그 외 한 글자도 안 바꿨다.
-    - `trunc_normal_init_`: `refs/URM/models/common.py` 에서 그대로 복사.
-    - `CastedSparseEmbedding` + 전용 sign-SGD: `refs/URM/models/sparse_embedding.py` 를 **그대로 이식**.
-      평범한 `nn.Parameter` 로 바꾸지 않은 근거는 §옵티마이저의 주석 참조 (동등하지 않다).
-      단 `forward` 의 범위 검사 `if torch.any(...)` 만 제거 — 데이터 의존 분기라 dynamo 가 그래프를 끊는다.
-    - `stablemax_cross_entropy` / `ACTLossHead`(accuracy·exact_accuracy 정의): `refs/URM/models/losses.py` 그대로.
-    - `AdamATan2`: `sudoku/adam_atan2.py` 그대로 인라인.
-    - weight decay 그룹 분리: `sudoku/urm_patches.diff` 의 `pretrain.py:229` 패치 그대로.
-      (psi/theta/alpha_raw/gamma_raw/inj_gate/st_gain/gain_raw/eta_raw/lam_raw/beta/mu 와 1차원 파라미터는 wd=0.
-       빠지면 wd=1.0 이 약한 그래디언트의 커널을 (1−lr·wd)^t 로 잠식해 학습이 망가진다.)
-    - 학습 루프·loss_scale·all-reduce·EMA·lr 스케줄: `pretrain.py` 의 `train_batch`(:522)·`launch`(:838) 의미론 그대로.
-    - 데이터: `refs/URM/puzzle_dataset.py` 의 에폭/배치 프로토콜 + `data/build_sudoku_dataset.py` 의 증강 규칙.
-      증강 1,000배를 파일로 안 받고 학습 중 생성한다 (§데이터 주석에 동등성 논증).
-
-Kaggle 제약 (자세한 것은 kaggle/예외사항.md)
-    * `notebook_launcher` 는 **부모(노트북) 프로세스에서 CUDA 가 초기화되어 있으면 실패**한다
-      (fork 로 자식을 띄우기 때문). 그래서 이 파일은 **import 시점에 `torch.cuda` 를 절대 건드리지 않는다.**
-      GPU 를 쓰는 코드는 전부 `main()` 안에 있다. 셀에서 이 파일 앞에 `torch.cuda.*` 를 호출하지 말 것
-      (`nvidia-smi` 는 별개 프로세스라 무해). 유일한 예외가 `run()` 의 `torch.cuda.device_count()` 인데,
-      이것은 NVML 경로라 컨텍스트를 만들지 않는다(accelerate 자신도 같은 호출을 한다).
-    * 12시간 세션 제한 → `CFG["max_hours"]` 가 지나면 체크포인트를 쓰고 정상 종료한다. 재개는 필수 기능.
-
-사용
-    # 노트북 셀: 이 파일 전체를 붙여넣고 실행. 필요하면 맨 위 CFG 만 고친다.
-    # 셸:      python train_kaggle.py
+모델 (LTConfig docstring 참조):
+    커널  a = Re Z = Σ_j r r cos(Δφ_j + θ_j·Δ + ψ_j)     = 순간 시냅스 K_fast = G(Δφ)  (K̇=ε(G−K), ε→∞)
+    쓰기  w ← (1−δ)w + δ·g·a                           = 느린 시냅스 K_slow = LPF_δ(G), 같은 G
+    읽기  a_eff = (1−λ)·a + λ·w                        = (K_fast + K_slow)·Γ, 병렬 시냅스의 합
+    1벌 · post 순서 · 거리감쇠 없음 · 게이지 상수 · 대각/비대각 g 분리
+하네스: URM pretrain.py 의미론 그대로 (손실·AdamATan2·EMA·증강·세그먼트별 감독). 2026-09-06/README §1 에 검증 기록.
+근거: 2026-09-06/README §9–10, 레퍼런스_덧셈결합.md (Miconi 2018 Eq.1–2, Bicknell–Latham Eq.3).
 """
-
-# ─────────────────────────────────────────────────────────────────────────────
-# import — 여기서 CUDA 를 건드리는 것은 하나도 없다 (notebook_launcher 제약)
-# ─────────────────────────────────────────────────────────────────────────────
-import copy
-import glob
-import json
-import math
-import os
-import re
-import shutil
-import subprocess
-import sys
-import time
-from dataclasses import dataclass, field, fields, replace
+import glob, json, math, os, re, sys, time, zipfile
+from dataclasses import dataclass, fields, replace
 from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
 
 import numpy as np
@@ -68,61 +22,36 @@ from torch.optim.optimizer import Optimizer
 from torch.utils.data import DataLoader, IterableDataset
 
 
+
 # ─────────────────────────────────────────────────────────────────────────────
 # CFG — 셀에서 한 줄로 바꾸는 곳
 # ─────────────────────────────────────────────────────────────────────────────
 CFG = dict(
-    # ---- 데이터 경로 (prep_dataset.py 가 만든 npz)
-    data_npz="/kaggle/input/datasets/jrjinwoo/sudoku-lt-1k/sudoku_lt_1k.npz",  # [2026-09-04 실측] 캐글 경로는
-                                  #   /kaggle/input/datasets/<user>/<slug>/ 형태다. 틀려도 _find_npz 가 자동 탐색한다.
-    num_aug=1000,                 # 퍼즐당 증강 개수 = 그룹 크기 1+num_aug. build_sudoku_dataset.py --num-aug 1000 과 동일
-    test_size=2048,               # 테스트 앞 N개 (sudoku/truncate_test.py)
-
-    # ---- 모델 (checkpoints/R1B8_min_faith_config.yaml + stdp_window=psi)
+    # ---- 데이터
+    data_npz="/kaggle/input/datasets/jrjinwoo/sudoku-lt-1k/sudoku_lt_1k.npz",
+    num_aug=1000,
+    test_size=2048,
+    # ---- 모델
     hidden_size=832,
     num_heads=8,
     loops=16,
-    blocks_per_seg=8,            # 스택 반복 횟수
-    num_layers=1,                # [2026-09-06] ③ 첫 검정은 1벌 (9/1과 동일, 공유 w 교란 없음). 2벌은 레이어별 w 구현 후
+    blocks_per_seg=8,
+    num_layers=1,
     grid=9,
     vocab_size=11,
     mlp_expansion=4.0,
-    alpha_init=0.1,
-    dist_decay=False,             # [2026-09-05 v2] 거리 감쇠 e^{−α|Δ|₁} 제거 (decay_h ≡ 1). 측정: 안정성에 불필요, #155 실패 원인도 아님.
-                                  #   위치 정보는 θ·pos 회전이 맡고(칸 위상에 정확히 흡수, 오차 2e-7), 동료 구조는 학습이 ψ·θ 로 만든다.
     eps=1e-4,
-    psi_zero=False,
-    addr_dim=0,
-    puzzle_emb_ndim=832,          # yaml 과 동일. 식별자 1개 → 내용상 전역 편향 1개
+    lam_init=0.25,
+    eta_init=0.05,
+    gain_init=1.0,
+    puzzle_emb_ndim=832,
     forward_dtype="float32",
-    amp=True,                     # bf16 autocast
-    stdp=True,
-    stdp_target="addr",           # [2026-09-06] ③: G = a(ψ+π/2) 만. agree 없음 (Gushchin 에 agree 자리 없음). faithful 로 바꾸면 ·agree
-    stdp_window="perp",           # [2026-09-06] ③: 창 = ψ+π/2, 성분별 90°. β 미사용
-    stdp_eta_init=0.05,
-    stdp_gain_init=1.0,
-    stdp_lam_init=0.25,
-    stdp_lam_fixed=-1.0,          # prod 에서는 미사용. extrapolate 헤더·재개 키가 cfg[...] 로 직접 읽어서 키는 있어야 한다
-    stdp_read="prod",             # [2026-09-06] ③: a_eff = w·a. K·Γ 그대로
-                                  #   λ=1 런(212k: seg128 60%)은 순간 커널 a 를 전달에서 뺀 것이 원인 — 곱으로 두면 λ 자체가 사라진다.
-                                  #   w 는 로그 이득(무차원, 초기 0 → a 와 동일), 목표는 헤드별 RMS 1 로 정규화한 â. "add" 면 이전 (1−λ)a+λw.
-    stdp_gain_fixed=-1.0,         # [2026-09-06] prod 에서는 gain 이 결합 전체의 스케일 (|a_eff| = gain·|⟨a⊥⟩|·|a|). 학습.
-    stdp_mu_init=0.5,
-    stdp_diag="keep",             # [2026-09-06] 9/1 에서 zero 는 붕괴
-    stdp_w0=False,                # [2026-09-06] 옵션으로만. True 면 첫 블록 w 를 학습 파라미터 w₀[H,T,T] (init 1 → 첫 블록 a_eff = a) 로. 표본 간 학습되는 쌍 결합 사전분포
-                                  #   자기항 a_tt 가 동료항의 ~10배라(continual_stdp_whatS) 정규화 rms 를 지배하는 것도 막는다.
-    gate=False,
-    gate_s_init=5.0,
-    boundary="bilinear",          # [2026-09-05] bilinear: Δ = W_d(½ g⊙u) (현행) | sym: 같은 파라미터로 삼선형 퍼텐셜 U = ½ Σ_i g_i u_i c_i (c = W_dᵀh) 의
-                                  #   경사 Δ = ∇U = ½[W_d(g⊙u) + W_gᵀ(u⊙c) + W_uᵀ(g⊙c)]. 야코비안 = 헤시안(대칭). 새 파라미터 없음, 초기 Δ=0 동일.
-    block_order="post",          # [2026-09-04 추가 플래그] 블록 안 연산 순서. post = 주입→스텝→경계 (판독이 쌍선형 직후,
-                                  #   표준 트랜스포머 배치). pre 는 흐름 사양 이월값이고 R=1 에서는 논거가 없다
-
-    # ---- 학습 (yaml 그대로)
-    global_batch_size=128,        # **전역**. 프로세스당 128//world_size
+    amp=True,
+    # ---- 학습 (URM yaml 그대로)
+    global_batch_size=128,
     epochs=50000,
     lr=1e-4,
-    lr_min_ratio=1.0,             # 1.0 → warmup 후 상수 lr
+    lr_min_ratio=1.0,
     lr_warmup_steps=2000,
     weight_decay=1.0,
     beta1=0.9,
@@ -130,40 +59,30 @@ CFG = dict(
     puzzle_emb_lr=1e-4,
     puzzle_emb_weight_decay=1.0,
     grad_accum_steps=1,
-    q_weight=0.5,                 # ACTLossHead 기본값 (q 로짓은 상수라 그래디언트 0, 로그값에만 영향)
+    q_weight=0.5,
     seed=0,
     ema=True,
     ema_rate=0.999,
-    eval_interval=250,            # 에폭 단위. iter 1개 = 250 에폭 = 1,953 step
-    compile=True,                 # torch.compile(model, dynamic=False)
-    inductor_no_persist=True,     # ↓ [2026-09-04] 소배치 persistent-reduction 병리 회피. 아래 주석 참조
-
+    eval_interval=250,
+    compile=True,
+    inductor_no_persist=True,
     # ---- 실행/저장
-    out_dir=None,                 # None → /kaggle/working/checkpoints (없으면 ./lt_checkpoints)
-    resume_from=None,             # None → out_dir + /kaggle/input 자동 탐색. 명시하면 그 경로(파일/디렉터리)만 씀
-    scan_kaggle_input=True,       # [2026-09-04] 새 세션은 /kaggle/working 이 비어 있다. 이전 세션 output 을 input 으로
-                                  #   붙였으면 자동으로 찾아 잇는다 (구조 키가 전부 일치할 때만 채택)
-    require_resume=False,         # True 면 재개할 체크포인트가 없을 때 즉시 중단 — 2회차 이후 세션에 켜라
-    expect_processes=None,        # 정수를 주면 world_size 가 그 값이 아닐 때 즉시 중단 (캐글 L4×4 면 4).
-                                  #   4장 요청했는데 1장으로 조용히 떨어져 12시간을 헛도는 것을 막는다
-    keep_last=2,                  # 체크포인트 보관 개수 (용량)
-    save_every_steps=2000,        # iter 경계 말고도 이 주기로 저장 (12h 잘림 대비)
-    milestone_every=60000,        # [2026-09-05] 이 주기로 out_dir/milestones/step_N.pt 에 **영구** 저장 (keep_last 정리 대상 아님)
-                                  #   + 그 시점 EMA 가중치로 세그먼트 외삽을 돌려 milestones/extrap_step_N.txt 에 기록.
-                                  #   목적: 외삽 능력이 학습량에 따라 느는지 / 구조 변경 효과인지 가르기. 0 이면 끔
-    milestone_extrap_segs=128,    # 외삽 세그먼트 수 (학습은 16). 테스트 2,048 전체, 랭크 분담
-    milestone_extrap_n=None,      # 외삽 퍼즐 수 상한 (None = 테스트 전체)
-    max_hours=3.0,                # [2026-09-05] 6.0 → 6.5 (사용자 지정). [2026-09-04] 9.0 → 6.0. quota 30h/주, 4xL4 는 2배 차감이라 9h 세션이
-                                  #   18 quota-h 를 먹어 ARC 용이 안 남는다. persistent_reductions 수정 후
-                                  #   약 8 it/s 라 6h 면 약 160k step — 역대 최고 런(123k)을 넘긴다.
-                                  #   lr_min_ratio=1.0 이라 LR 은 상수다: 여기서 끊어도 어닐링 손실이 없다.
-                                  #   더 돌리려면 output 을 input 으로 붙여 재개(scan_kaggle_input).
-    max_steps=None,               # 디버그용 상한
+    out_dir=None,
+    resume_from=None,                # 2회차: "/kaggle/input" (이전 output 을 input 으로 붙인 뒤). 자동 스캔의 cfg 비교를 우회
+    scan_kaggle_input=True,
+    require_resume=False,            # 2회차: True
+    expect_processes=None,
+    keep_last=2,
+    save_every_steps=2000,
+    milestone_every=60000,
+    milestone_extrap_segs=128,
+    milestone_extrap_n=None,
+    max_hours=3.0,
+    max_steps=None,
     log_every=200,
-    num_processes=None,           # None → torch.cuda.device_count() (Kaggle L4×4 → 4)
-    dataloader_workers=1,         # URM 과 동일 (1 초과 금지 — 데이터셋이 단일 워커 가정)
+    num_processes=None,
+    dataloader_workers=1,
 )
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 1. URM `models/common.py` — 그대로 복사
@@ -318,16 +237,22 @@ class LTCarry:
     steps: Optional[torch.Tensor] = None
     halted: Optional[torch.Tensor] = None
     current_data: Optional[Dict[str, torch.Tensor]] = None
-    coupling: Optional[torch.Tensor] = None       # [4단계] STDP 결합 기억 w [B,H,T,T]
+    coupling: Optional[torch.Tensor] = None       # 결합 기억 w [B,H,T,T]
     fresh: Optional[torch.Tensor] = None          # [B] bool — 이 퍼즐의 w 가 아직 초기화 전
-    vprev: Optional[torch.Tensor] = None          # [causal] 직전 블록의 정규화 값 v̂ [B,T,H,C]
-    gate: Optional[torch.Tensor] = None           # [gate] 직전 블록 메시지의 판별력에서 나온 굳힘 이득 K [B,T]
 
 
 @dataclass
 class LTConfig:
-    """core/minimal.py 의 LTConfig 를 pydantic 없이 옮긴 것 — 필드·기본값·주석 전부 동일.
-    pydantic 의 extra="allow" 는 from_dict 가 모르는 키를 버리는 것으로 대체했다 (수치 무관)."""
+    """v4 (2026-09-06 저녁). 플래그 없음. 구조는 아래 한 가지:
+
+        커널       a   = Σ_j r_tj r_nj cos(Δφ_j + θ_j·Δ + ψ_j) = Re Z       순간 시냅스 K_fast = G(Δφ(t))
+        쓰기       w ← (1−δ) w + δ · g · a                                  느린 시냅스 K_slow = LPF_δ(G), 같은 G
+        읽기       a_eff = (1−λ) a + λ w                                    (K_fast + K_slow) · Γ
+        전달       h ← h + Wᵀ Σ_n a_eff,tn W h_n ;  h ← boundary(h) ;  h ← Φ(h)
+
+    a 와 w 는 같은 가소성 규칙의 두 시정수(ε→∞ / ε=δ). 두 시냅스가 같은 뉴런에 병렬이므로 전류는 합.
+    λ, δ, g 헤드별 학습. g 는 대각(자기 관성)·비대각(쌍 결합) 따로. 게이지 상수: 주입 √d, Φ 반경 √d (γ = 1/d). 거리 감쇠 없음.
+    근거: 2026-09-06/README §9–10, 레퍼런스_덧셈결합.md."""
     batch_size: int
     seq_len: int
     vocab_size: int
@@ -337,59 +262,15 @@ class LTConfig:
     num_heads: int = 8
     loops: int = 16
     grid: int = 9
-    blocks_per_seg: int = 8     # 스택 반복 횟수. 세그먼트당 블록 적용 = blocks_per_seg × num_layers
-    num_layers: int = 1         # [2026-09-04] 물리 레이어(가중치 한 벌) 수. URM 의 num_layers 와 같은 자리.
-                                #   블록 k → layers[k % num_layers]. N↑ 는 깊이와 용량을 함께 늘리고,
-                                #   blocks_per_seg 를 비례로 줄이면 용량만 는다. 레이어 0 복사로 출발해
-                                #   N=1 과 같은 함수에서 시작한다. 상태(h, w)는 스택을 관통해 흐른다.
+    blocks_per_seg: int = 8
+    num_layers: int = 1         # 물리 레이어 수. 블록 k → layers[k % num_layers]. w 는 레이어 간 공유 (2벌이면 정합성 미해결 — 이론.md §6)
     mlp_expansion: float = 4.0
-    # [2026-09-04 폐기] inj_gate_init — 아래 §주입 참조. 남아 있으면 발사가 죽는다(_DEPRECATED)
-    alpha_init: float = 0.1
-    dist_decay: bool = True     # False 면 kernel() 의 decay_h ≡ 1 (alpha_raw 미사용)
-    eps: float = 1e-4
+    eps: float = 1e-4           # 주소 정규화 ε
+    lam_init: float = 0.25      # λ 초기값 (헤드별 학습). 읽기에서 느린 시냅스의 비. 9/1 은 .19~.48 로 학습됨
+    eta_init: float = 0.05      # δ 초기값 (헤드별 학습)
+    gain_init: float = 1.0      # g 초기값 (대각·비대각 각각 헤드별 학습)
     amp: bool = True
     forward_dtype: str = "float32"
-    addr_dim: int = 0           # [3단계] >0 이면 상태 = [주소 addr_dim | 값 나머지]. W_C 는 주소 블록만, 값 경로는 값 블록만 → row(W_C) ⟂ row(W), 스텝 안 a 불변 (STDP.md)
-    stdp: bool = False          # [4단계] 결합 기억 w ← w + η(a−w), 결합 = (1−λ)a + λw. η,λ 헤드별 학습 (sigmoid). STDP.md §2
-    stdp_target: str = "addr"  # faithful: Γ = a^β·⟨v̂_t,v̂_n⟩ — 가소성 창(β) × 동시활동. STDP 세 인자를 모두 담는 형태 (2026-08-31)
-                                #   addr: Γ = a (주소 위상 커널, β 비대칭) / value: Γ = D(Δ)·⟨v̂_t,v̂_n⟩ (값 겹침만; 부호 없음 → 거부됨)
-                                #   product: Γ = a_tn·⟨v̂_t,v̂_n⟩ — 결합 에너지 E(h,w)=−½Σ w a⟨Wh,Wh⟩+½Σw² 의 ∂/∂w. 그래프 부호 × 값 일치 (STDP.md)
-                                #   causal: Γ = a_tn·⟨v̂_t,v̂_n⟩ + μ_h · a^β_tn·⟨Δv̂_t, v̂_n⟩ — 창의 비대칭(sin) 성분이 곱하는 항.
-                                #     STDP 발화율 축약에서 창의 홀수 부분은 pre 활동 × post 활동의 시간 미분을 낳는다(Kempter–Gerstner–van Hemmen).
-                                #     Δv̂_t = 이 블록의 값 변화 → "t 가 바뀌는 순간 서 있던 n" 이 결합에 남는다 = 의존 그래프 (STDP.md §6.13)
-    stdp_window: str = "beta"   # [2026-09-04] 가소성 창을 무엇으로 쓸 것인가. beta: 커널을 β 위상차로 다시 떠서 a_β (현행 faithful/addr/causal)
-                                #   perp [2026-09-06]: 창 = a(ψ + π/2). 성분별로 G_j = −∫Γ_j (Gushchin 경사 조건). β 파라미터 미사용,
-                                #     ψ 는 자유. 쿠라모토 G=cos/Γ=sin 의 90° 를 스칼라가 아니라 성분별로 들어올린 것 (2026-09-06/이론.md).
-                                #   psi: 창을 따로 만들지 않고 전달에 쓰는 원본 a (ψ 위상차) 를 그대로 Γ 에 쓴다 → faithful 이면 Γ = a·⟨v̂,v̂⟩.
-                                #   β 재계산(attn_xy 1회)이 사라져 블록당 T×T einsum 2회 절약. beta 파라미터는 만들어 두되 미사용(체크포인트 호환).
-    stdp_eta_init: float = 0.1
-    stdp_gain_init: float = 1.0  # [2026-08-31] 누적 이득 G (헤드별 학습, softplus). w ← (1−δ)w + δ·G·Γ 의 고정점 = G·⟨Γ⟩.
-                                #   기존 EMA 는 고정점이 ⟨Γ⟩ 로 이득이 δ 와 무관하게 정확히 1 — 필터지 적분기가 아니다.
-                                #   G=1 이면 기존과 비트 동치. δ=잊음률(eta_raw 재사용), G=축적량 으로 역할 분리.
-    stdp_lam_init: float = 0.25
-    stdp_gain_fixed: float = -1.0  # [2026-09-05] ≥0 이면 G 를 이 값으로 고정(학습 안 함). 1.0 = 순수 EMA w ← w + δ(Γ − w)
-    stdp_lam_fixed: float = -1.0  # ≥0 이면 λ 를 이 값으로 고정(학습 안 함). 1.0 = 전달을 w 가 전담하는 STDP 충실형
-    stdp_read: str = "add"       # add: a_eff=(1−λ)a+λw | mul: a_eff = a·exp(w), w ← (1−δ)w + δ·G·â (â = a/rms_h(a)), w 초기 0
-                                #   prod [2026-09-06]: a_eff = w·a — 쿠라모토 K·Γ 그대로. exp·rms·λ 없음. w 초기 = tgt (add 와 동일).
-                                #     G≠Γ (perp/beta) 일 때만 부호가 살아있다. window=psi 와 같이 쓰면 부호 제곱 → 금지.
-    stdp_mu_init: float = 0.5
-    stdp_diag: str = "keep"      # keep | zero(자기시냅스 제거) | only(관계항 제거) — 절제용, 기본은 무변경
-    stdp_w0: bool = False        # [2026-09-06] True 면 에피소드 첫 블록의 w 를 tgt 대신 학습 파라미터 w0[H,T,T] 로 초기화 (init 1). 쿠라모토 K(0) 학습   # [causal] 인과 항의 헤드별 계수 μ_h 초기값 (학습; softplus 아님, 부호 자유)
-    gate: bool = False          # [굳힘 게이트] 경계(추론) 항의 이득 = K(d) = (s·d)²/(1+(s·d)²)  — 칼만 이득 형.
-                                #   d_t = (직전 블록 메시지가 만든 로짓의 top1−top2) / std_v  — 척도 불변 판별력(증거 정밀도의 대리).
-                                #   K≡1 (현재) = 모든 메시지를 무한 정밀로 취급 = 전제 확인 없는 단정 규칙. STDP.md §6.13
-    gate_s_init: float = 5.0   # K(d) 가 초기에 관대(≈0.85)하도록: 무작위 초기 모델의 d 중앙값 ≈0.46
-    boundary: str = "bilinear"  # bilinear | sym (삼선형 퍼텐셜의 경사, 대칭 야코비안)
-    block_order: str = "pre"    # [2026-09-04] 블록 안 연산 순서. pre: 경계 → 주입 → 스텝 (현행, 흐름 사양 이월 —
-                                #   경계 = 적분 구간의 경계조건이라 구간 앞. R=8 흐름판의 논거이고 R=1 에서는 근거가 없다)
-                                #   post: 주입 → 어텐션+수송 → 경계 → Φ (표준 배치. 판독이 쌍선형 직후)
-                                #   [2026-09-04 정정] 처음 구현은 Φ 를 step 안에 둔 채 경계를 뒤에 붙여서 판독·carry 가
-                                #   Φ 를 지나쳤다 — ‖h‖ 가 흡수구 반경 3.24 → 29.7 로 9.2배 부풀었다(readout_norm.py).
-                                #   순서가 아니라 정규화를 바꾸는 대조군이었다. 지금은 Φ 를 블록 끝으로 옮겨 순수 위상 변수다.
-                                #   블록 8개가 루프라 연산 구성은 동일하고 위상만 다르다 — 차이는 세그먼트 양 끝뿐:
-                                #   pre 는 carry 를 경계가 먼저 받고 로짓을 어텐션 직후에 읽고, post 는 그 반대. 파라미터 0개.
-    psi_zero: bool = False      # [2단계] ψ≡0 고정 → a_tn = a_nt (명제 7), 값 수송이 대칭 → 스텝이 E_adj 의 경사 (STDP.md §3)
-
 
     @classmethod
     def from_dict(cls, d: dict) -> "LTConfig":
@@ -402,51 +283,27 @@ def inv_softplus(y: float) -> float:
 
 
 class LTLayer(nn.Module):
-    """물리 레이어 하나 = 블록 한 벌의 파라미터 전부.
+    """물리 레이어 하나 = 블록 한 벌의 파라미터."""
 
-    [2026-09-04] URM 규약(`urm.py`: `for _ in range(L_cycles): for layer in self.layers:`)을 따른다.
-    세그먼트당 블록 적용 = `blocks_per_seg`(스택 반복) × `num_layers`(스택 크기).
-    `num_layers` 를 늘리면 **깊이와 용량이 함께** 늘고, `blocks_per_seg` 를 비례로 줄이면 용량만 는다.
-
-    상태(`h`, `w`)는 레이어에 속하지 않는다 — 스택을 관통해 흐르며 레이어마다 자기 η·λ·G 로 읽고 쓴다.
-    파라미터 생성 순서는 단일 레이어 시절과 동일하게 유지한다 (num_layers=1 이 비트 동일해야 한다).
-    """
-
-    def __init__(self, config: "LTConfig", H, d, d_a, d_v, dh_a, dh_v, p) -> None:
+    def __init__(self, config: "LTConfig", H, d, dh, p) -> None:
         super().__init__()
-        self.wc_raw = nn.Parameter(torch.randn(H, dh_a, d_a) / math.sqrt(d_a))
-        if config.psi_zero:
-            self.register_buffer("psi", torch.zeros(H, p), persistent=False)
-        else:
-            self.psi = nn.Parameter(torch.rand(H, p) * 2 * math.pi - math.pi)
-        self.theta = nn.Parameter((torch.rand(H, p, 2) * 2 - 1) * (math.pi / 2))
-        self.alpha_raw = nn.Parameter(torch.full((H, 1), inv_softplus(config.alpha_init)))
-        w_sh = torch.zeros(H, dh_v, d_v)
+        self.wc_raw = nn.Parameter(torch.randn(H, dh, d) / math.sqrt(d))          # 복소 주소 투영 (QR 로 행직교화)
+        self.psi = nn.Parameter(torch.rand(H, p) * 2 * math.pi - math.pi)         # 읽기 위상 오프셋. 쓰기는 ψ+π/2 로 파생
+        self.theta = nn.Parameter((torch.rand(H, p, 2) * 2 - 1) * (math.pi / 2))  # 2D 파수
+        w_sh = torch.zeros(H, dh, d)
         for m in range(H):
-            w_sh[m, :, m * dh_v:(m + 1) * dh_v] = torch.eye(dh_v)
-        self.w_sh = nn.Parameter(w_sh + 0.01 * torch.randn(H, dh_v, d_v) / math.sqrt(d_v))
-        if config.stdp:
-            lg = lambda x: math.log(x / (1 - x))
-            self.eta_raw = nn.Parameter(torch.full((H, 1, 1), lg(config.stdp_eta_init)))
-            self.lam_raw = nn.Parameter(torch.full((H, 1, 1), lg(config.stdp_lam_init)))
-            self.gain_raw = nn.Parameter(torch.full((H, 1, 1), inv_softplus(config.stdp_gain_init)))
-            if config.stdp_w0:
-                self.w0 = nn.Parameter(torch.ones(H, config.seq_len, config.seq_len))   # 첫 블록 결합. 1 = 기저 어텐션에서 출발
-            self.beta = nn.Parameter(torch.zeros(H, p))       # 위상 STDP 창의 비대칭 (ψ 와 별개, 0 = 대칭 Hebb)
-            if config.stdp_target in ("causal", "faithful") and config.stdp_window == "beta":
-                self.beta.data.normal_(0.0, 0.5)
-            if config.stdp_target == "causal":
-                self.mu = nn.Parameter(torch.full((H, 1, 1), float(config.stdp_mu_init)))
-        if config.gate:
-            self.gate_s_raw = nn.Parameter(torch.tensor(inv_softplus(config.gate_s_init)))
+            w_sh[m, :, m * dh:(m + 1) * dh] = torch.eye(dh)
+        self.w_sh = nn.Parameter(w_sh + 0.01 * torch.randn(H, dh, d) / math.sqrt(d))   # sheaf 값 수송, 블록 항등 초기화
+        lg = lambda x: math.log(x / (1 - x))
+        self.eta_raw = nn.Parameter(torch.full((H, 1, 1), lg(config.eta_init)))              # δ = sigmoid
+        self.lam_raw = nn.Parameter(torch.full((H, 1, 1), lg(config.lam_init)))              # λ = sigmoid
+        self.gain_raw = nn.Parameter(torch.full((H, 1, 1), inv_softplus(config.gain_init)))  # g 비대각 = softplus
+        self.gain_diag_raw = nn.Parameter(torch.full((H, 1, 1), inv_softplus(config.gain_init)))  # g 대각
         inter = int(config.mlp_expansion * d * 2 / 3 + 255) // 256 * 256
         self.b_gate_up = nn.Linear(d, 2 * inter, bias=False)
         self.b_down = nn.Linear(inter, d, bias=False)
         with torch.no_grad():
             self.b_down.weight.zero_()
-
-    @property
-    def alpha(self): return F.softplus(self.alpha_raw)
 
 
 class LT_Inner(nn.Module):
@@ -456,178 +313,90 @@ class LT_Inner(nn.Module):
         self.forward_dtype = getattr(torch, config.forward_dtype)
         T, g, d, H = config.seq_len, config.grid, config.hidden_size, config.num_heads
         assert T == g * g and d % H == 0 and (d // H) % 2 == 0
-        self.split = config.addr_dim > 0
-        self.d_a = config.addr_dim if self.split else d
-        self.d_v = d - self.d_a if self.split else d
-        assert self.d_a % H == 0 and self.d_v % H == 0 and (self.d_a // H) % 2 == 0
         self.d, self.H = d, H
-        self.dh_a, self.dh_v = self.d_a // H, self.d_v // H     # 주소·값 헤드 폭 (분할 없으면 둘 다 d/H)
-        self.dh = self.dh_v
-        self.p = self.dh_a // 2
-        # 위치 (행, 열) 와 차 Δ
+        self.dh = d // H
+        self.p = self.dh // 2
         u = torch.arange(T).float() // g; w = torch.arange(T).float() % g
         self.register_buffer("pos_u", u, persistent=False); self.register_buffer("pos_w", w, persistent=False)
-        self.register_buffer("l1", (u[:, None] - u[None]).abs() + (w[:, None] - w[None]).abs(), persistent=False)
-        # 임베딩 · 판독
-        # [2026-09-04] URM/TRM 규약 (urm.py:72-78, trm.py:126-129):
-        #   embed_scale = √d 상수,  init_std = 1/√d  →  초기 ‖E‖ ≈ 1, 주입 크기 ≈ √d
-        # 학습 스칼라(구 inj_gate)를 두면 `β·E` 에 평평한 방향이 생기고, wd 가 E 에만 걸려 있어
-        # 그 방향으로 단방향으로 미끄러진다: 310k 에서 ‖E‖ ÷23 · β ×30 · 곱은 ×1.3 (scale_anatomy.py).
-        # 상수로 고정하면 게이지가 닫히고, √d 배 큰 그래디언트가 wd 를 이겨 ‖E‖ 를 붙든다.
-        # [2026-09-04] Φ 반경 = γ^(-1/2) 를 √d 로 **고정**한다 → γ = 1/d.
-        #   THEORY §3 이 γ 를 스케일 게이지로 증명했다. 게이지는 학습시키는 것이 아니라 고정하는 것이고,
-        #   학습시킨 결과가 1,000배 미끄러짐(0.1 → 9.2e-5)과 무의미한 inj_gate=7.6 이었다(scale_anatomy.py).
-        #   포화 구간에서 Φ 는 반경 γ^(-1/2) 로의 사영이므로, γ=1/d 는 **학습 이득 없는 RMSNorm 과 같은 것**이다
-        #   (URM/HRM 도 RMSNorm 에서 scale·bias 를 의도적으로 뺐다: layers.py rms_norm, HRM 논문 3.2).
-        #   이로써 init_hidden(√d) · 주입(√d) · Φ 반경(√d) 이 한 스케일로 정렬된다.
+        self.register_buffer("eye", torch.eye(T), persistent=False)
+        # 게이지 상수 (URM 규약): 주입 √d, γ = 1/d → Φ 반경 √d
         self.gamma = 1.0 / d
         self.embed_scale = math.sqrt(d)
         self.embed = nn.Embedding(config.vocab_size, d)
         with torch.no_grad():
             trunc_normal_init_(self.embed.weight, std=1.0 / self.embed_scale)
         self.w_cls = nn.Linear(d, config.vocab_size)
-        # 물리 레이어 — 블록 k 는 self.layers[k % num_layers]
         assert config.num_layers >= 1
-        assert config.stdp_window in ("beta", "psi", "perp"), f"stdp_window: beta | psi | perp (받은 값 {config.stdp_window})"
-        assert config.stdp_read in ("add", "mul", "prod"), f"stdp_read: add | mul | prod (받은 값 {config.stdp_read})"
-        assert not (config.stdp_read == "prod" and config.stdp_window == "psi"), "read=prod 는 G=Γ(window=psi) 에서 부호가 제곱된다"
-        assert config.block_order in ("pre", "post"), f"block_order: pre | post (받은 값 {config.block_order})"
-        assert not (config.gate and config.stdp_target == "causal"), "gate + causal 동시 사용은 미구현"
-        self.stdp = config.stdp
-        self.gate_on = config.gate
-        self.layers = nn.ModuleList([LTLayer(config, H, d, self.d_a, self.d_v, self.dh_a, self.dh_v, self.p)
-                                     for _ in range(config.num_layers)])
-        # 레이어 0 을 복사해 출발 — num_layers 만이 단독변수가 되도록 (초기 함수가 N 과 무관)
-        if config.num_layers > 1:
+        self.layers = nn.ModuleList([LTLayer(config, H, d, self.dh, self.p) for _ in range(config.num_layers)])
+        if config.num_layers > 1:                      # 레이어 0 복사로 출발 — 초기 함수가 N 과 무관
             sd0 = self.layers[0].state_dict()
             for Lx in self.layers[1:]:
                 Lx.load_state_dict({k: v.clone() for k, v in sd0.items()})
-        # 하네스 인터페이스 (내용상 전역 편향 1개)
         self.puzzle_emb_ndim = config.puzzle_emb_ndim
         if config.puzzle_emb_ndim > 0:
             self.puzzle_emb = CastedSparseEmbedding(config.num_puzzle_identifiers, config.puzzle_emb_ndim,
                                                     batch_size=config.batch_size, init_std=0, cast_to=self.forward_dtype)
         self.init_hidden = nn.Buffer(trunc_normal_init_(torch.empty(d, dtype=self.forward_dtype), std=1.0), persistent=True)
 
-    # ---------------------------------------------------------------- 부품 (L = 레이어)
+    # ---------------------------------------------------------------- 부품
     def W_C(self, L):
-        """행직교 [A;B] (헤드별 dh×d): raw 의 전치를 QR 해 열직교 → 전치."""
-        Q, _ = torch.linalg.qr(L.wc_raw.transpose(-1, -2))               # [H,d,dh]
+        """행직교 [A;B] (헤드별 dh×d)."""
+        Q, _ = torch.linalg.qr(L.wc_raw.transpose(-1, -2))
         AB = Q.transpose(-1, -2)
         return AB[:, :self.p, :], AB[:, self.p:, :]
 
-    def kernel(self, L, psi=None):
-        """decay_h [H,T,T], 위상각 A_t = ψ/2 + θ·pos_t (q), B_t = −ψ/2 + θ·pos_t (k) → cos/sin [T,H,p]. psi 를 주면 그 위상차로 (STDP 창 β 용)."""
-        psi = L.psi if psi is None else psi
-        decay_h = torch.exp(-L.alpha[:, 0, None, None] * self.l1) if self.config.dist_decay else torch.ones_like(self.l1).expand(L.alpha.shape[0], -1, -1)
+    def kernel(self, L):
+        """위상각 A_t = ψ/2 + θ·pos_t (q), B_t = −ψ/2 + θ·pos_t (k) → cos/sin [T,H,p]."""
+        psi = L.psi
         ppos = L.theta[..., 0, None] * self.pos_u + L.theta[..., 1, None] * self.pos_w         # [H,p,T]
         A = (ppos + psi[..., None] / 2).permute(2, 0, 1); B = (ppos - psi[..., None] / 2).permute(2, 0, 1)
-        return decay_h, torch.cos(A), torch.sin(A), torch.cos(B), torch.sin(B)
+        return torch.cos(A), torch.sin(A), torch.cos(B), torch.sin(B)
 
     def addr(self, h, AB):
-        """정규화된 복소 주소 ẑ 의 (실부, 허부). **커널 위상(ψ/β)과 무관** — 한 블록에서 여러 커널로
-        attn 을 부를 때 이것을 공유한다. 이 사영이 T×T einsum 보다 10배 비싸다 (7.18 vs 0.70 G-MAC)."""
+        """정규화된 복소 주소 ẑ 의 (실부, 허부). 커널 오프셋과 무관 — 한 블록에서 두 커널이 공유."""
         A, Bm = AB
-        ha = h[..., :self.d_a] if self.split else h                         # 주소 블록만 읽음
-        x = torch.einsum('btd,hjd->bthj', ha, A); y = torch.einsum('btd,hjd->bthj', ha, Bm)
+        x = torch.einsum('btd,hjd->bthj', h, A); y = torch.einsum('btd,hjd->bthj', h, Bm)
         nrm = (x.pow(2) + y.pow(2)).sum(-1, keepdim=True).sqrt()
         return x / (nrm + self.config.eps), y / (nrm + self.config.eps)
 
     def attn_xy(self, xy, kc):
-        """정규화된 주소에서 커널 kc 로 a 를 만든다 (회전 + 내적 + 감쇠)."""
-        x, y = xy; decay_h, cosA, sinA, cosB, sinB = kc
+        """복소 스코어 Z_tn = Σ_j q̂_tj conj(k̂_nj) 의 Re Z = 커널 a [B,H,T,T]. 쓰기·읽기가 같은 G 를 쓰므로 −Im Z 는 계산하지 않는다."""
+        x, y = xy; cosA, sinA, cosB, sinB = kc
         qx = x * cosA - y * sinA; qy = x * sinA + y * cosA
         kx = x * cosB - y * sinB; ky = x * sinB + y * cosB
-        a = torch.einsum('bthj,bnhj->bhtn', qx, kx) + torch.einsum('bthj,bnhj->bhtn', qy, ky)
-        return a * decay_h.unsqueeze(0)
+        a  = torch.einsum('bthj,bnhj->bhtn', qx, kx) + torch.einsum('bthj,bnhj->bhtn', qy, ky)   # Re Z
+        return a
 
     def attn(self, h, AB, kc):
-        """a_tn [B,H,T,T] = e^{−α‖Δ‖} · Re[conj(q̂_t) k̂_n].  (분석 스크립트 호환용 래퍼)"""
         return self.attn_xy(self.addr(h, AB), kc)
 
     def phi(self, h):
         return h / torch.sqrt(1.0 + self.gamma * h.pow(2).sum(-1, keepdim=True))
 
-    def step(self, L, h, AB, kc, w=None, fresh=None, kcb=None, vprev=None, apply_phi=True):
-        """vprev: 직전 블록의 정규화 값 v̂ [B,T,H,C] (causal 전용). 반환에 현재 v̂ 를 함께 돌려준다."""
-        xy = self.addr(h, AB)                                               # 주소 사영 — 블록당 1회
-        a = self.attn_xy(xy, kc)
-        hv = h[..., self.d_a:] if self.split else h
-        v = torch.einsum('btd,hcd->bthc', hv, L.w_sh)                       # 값 사영 — 블록당 1회 (수송·agree 공용)
-        if self.stdp:
-            eta = torch.sigmoid(L.eta_raw); lam = torch.sigmoid(L.lam_raw) if self.config.stdp_lam_fixed < 0 else torch.full_like(L.lam_raw, float(self.config.stdp_lam_fixed))
-            if self.config.stdp_target in ("value", "product", "causal", "faithful"):
-                vv = v / (v.norm(dim=-1, keepdim=True) + self.config.eps)   # 재사용 (재계산 안 함)
-                agree = torch.einsum('bthc,bnhc->bhtn', vv, vv)
-                if self.config.stdp_target == "causal":
-                    G = a * agree
-                    if vprev is not None:
-                        dv = vv - vprev                                                     # 이 블록의 값 변화 (post 의 시간 미분)
-                        ab = self.attn_xy(xy, kcb) if kcb is not None else a                # 비대칭 창 a^β (사영 재사용)
-                        G = G + L.mu * ab * torch.einsum('bthc,bnhc->bhtn', dv, vv)      # 인과 항: t 가 변할 때 서 있던 n
-                elif self.config.stdp_target == "faithful":
-                    # [2026-08-31] 충실형 STDP: 가소성 창(β) × 동시활동. 창 × pre × post 의 세 인자를 모두 담는다.
-                    #   addr 은 창만, product 는 동시활동만(창은 전달용 ψ 를 빌려 씀) 담았다.
-                    # [2026-09-04] stdp_window=psi 면 kcb 가 None 이라 창을 따로 안 뜨고 전달용 a 를 그대로 쓴다 (= product 형).
-                    G = (self.attn_xy(xy, kcb) if kcb is not None else a) * agree   # 사영 재사용
-                else:
-                    G = agree * kc[0].unsqueeze(0) if self.config.stdp_target == "value" else a * agree   # product: 전달 창(ψ) × 값 일치
-            else:
-                G = self.attn_xy(xy, kcb) if kcb is not None else a      # STDP 창 Γ = cos(Δφ − θ·Δ − β)
-            gain = F.softplus(L.gain_raw) if self.config.stdp_gain_fixed < 0 else float(self.config.stdp_gain_fixed)
-            tgt = gain * G                                        # 고정점 목표 = G·Γ (이득; stdp_gain_fixed≥0 이면 상수)
-            if self.config.stdp_diag != "keep":
-                # [2026-09-01 절제] STDP 에 자기시냅스(t=n)는 없다. Γ 단계에서 걸러야 w 대각이 항상 0 이다.
-                eye = torch.eye(tgt.shape[-1], device=tgt.device, dtype=tgt.dtype)
-                tgt = tgt * (eye if self.config.stdp_diag == "only" else (1 - eye))
-            if self.config.stdp_read == "mul":
-                # [v2] 시냅스 = 로그 이득. 목표 â 는 헤드별 RMS 1 (무차원, 부호 보존). 첫 블록 w=0 → a_eff = a (STDP 없는 모델과 동일).
-                tgt = tgt / (tgt.float().pow(2).mean(dim=(-2, -1), keepdim=True).sqrt().to(tgt.dtype) + self.config.eps)
-                if w is None: w = torch.zeros_like(tgt)
-                elif fresh is not None: w = torch.where(fresh.view(-1, 1, 1, 1), torch.zeros_like(w), w)
-                w = (1 - eta) * w + eta * tgt                        # K̇ = ε(G(Δφ) − K)
-                # [2026-09-05 v2.1] 부호 대칭 일관성 이득. exp(w) 만 곱하면 일관된 반발(a<0, w<0)이 e^{−|w|} 로 약해지고
-                #   인력만 커져 긴 지평에서 인력 우세(과평활)로 기운다 — 로컬 1000스텝 ckpt 16세그 측정: 인력 3.0×, 반발 0.75×
-                #   (analysis/v2_sign_asym_check.py). sign(a)·w 는 "지금 관계가 이력과 같은 부호면 강화, 다르면 약화" 라 인력·반발 대칭.
-                #   Seliger 의 K·sin = (α/2)sin(2Δφ) 가 동위상·반위상을 똑같이 굳히는 것에 대응.
-                a = a * torch.exp((torch.sign(a) * w).clamp(-4.0, 4.0))   # K_ij · F(Δφ_ij): 시냅스 × 순간 커널, 부호 대칭
-            else:
-                w_init = L.w0.unsqueeze(0).expand_as(tgt) if self.config.stdp_w0 else tgt   # [2026-09-06] 학습 w₀ 또는 첫 목표
-                if w is None: w = w_init
-                else:
-                    w = torch.where(fresh.view(-1, 1, 1, 1), w_init, w) if fresh is not None else w
-                    w = (1 - eta) * w + eta * tgt                        # 고정점 = G·⟨Γ⟩.  G=1 이면 기존 EMA 와 동일
-                if self.config.stdp_read == "prod":
-                    a = w * a                                            # [2026-09-06] K·Γ. 시냅스(이력) × 응답(순간)
-                else:
-                    a = (1 - lam) * a + lam * w
-        o = torch.einsum('bhtn,bnhc->bthc', a, v)                         # Σ_n a_tn v_n  (위에서 계산한 v 재사용)
-        f = torch.einsum('bthc,hcd->btd', o, L.w_sh)                   # Wᵀ o
-        if self.split: f = F.pad(f, (self.d_a, 0))                         # 주소 블록에는 0 → 스텝 안 a 불변
-        # apply_phi=False 는 block_order="post" 전용 — Φ 를 블록 **끝**(경계 뒤)으로 옮긴다.
-        # 그래야 두 순서가 같은 연산 집합 {경계, 주입, 어텐션+수송, Φ} 을 갖고 위상만 달라진다.
-        hout = self.phi(h + f) if apply_phi else (h + f)
-        if self.gate_on:                                                   # 메시지가 만드는 로짓 변화의 척도 불변 마진 → 다음 블록 굳힘 이득
-            ell = torch.einsum('btd,vd->btv', f, self.w_cls.weight)
-            t2 = ell.topk(2, dim=-1).values
-            z = F.softplus(L.gate_s_raw) * (t2[..., 0] - t2[..., 1]) / (ell.std(-1) + self.config.eps)
-            return hout, (w if self.stdp else a), z * z / (1.0 + z * z)
-        if self.stdp and self.config.stdp_target == "causal":
-            hv1 = hout[..., self.d_a:] if self.split else hout
-            v1 = torch.einsum('btd,hcd->bthc', hv1, L.w_sh); v1 = v1 / (v1.norm(dim=-1, keepdim=True) + self.config.eps)
-            return hout, w, v1
-        return hout, (w if self.stdp else a)
-
-    def boundary(self, L, h, gate=None):
-        g, u = L.b_gate_up(h).chunk(2, dim=-1)
-        if self.config.boundary == "sym":
-            # [2026-09-05] Δ = ∇_h U,  U(h) = ½ Σ_i g_i u_i c_i,  g = W_g h, u = W_u h, c = W_dᵀ h.  세 항이 같은 U 의 편미분.
-            Wg, Wu = L.b_gate_up.weight.chunk(2, dim=0)                       # [inter, d] ×2
-            c = F.linear(h, L.b_down.weight.t())                              # W_dᵀ h  [.., inter]
-            delta = 0.5 * (L.b_down(g * u) + F.linear(u * c, Wg.t()) + F.linear(g * c, Wu.t()))
+    def step(self, L, h, AB, kc, w=None, fresh=None):
+        """한 블록의 어텐션·쓰기·읽기·수송. Φ 는 블록 끝(경계 뒤)에서 _forward 가 건다."""
+        a = self.attn(h, AB, kc)                                            # 순간 시냅스 K_fast = G(Δφ(t))
+        v = torch.einsum('btd,hcd->bthc', h, L.w_sh)
+        # ---- 쓰기: 느린 시냅스, 같은 G.  tgt = g · a.  g 는 대각·비대각 따로
+        gain = F.softplus(L.gain_raw) * (1 - self.eye) + F.softplus(L.gain_diag_raw) * self.eye     # [H,T,T]
+        tgt = gain.unsqueeze(0) * a
+        eta = torch.sigmoid(L.eta_raw)
+        if w is None:
+            w = tgt
         else:
-            delta = L.b_down(0.5 * g * u)
-        return h + (delta if gate is None else gate.unsqueeze(-1) * delta)
+            if fresh is not None: w = torch.where(fresh.view(-1, 1, 1, 1), tgt, w)
+            w = (1 - eta) * w + eta * tgt                                   # K̇ = ε(G − K), dt=1
+        # ---- 읽기: (K_fast + K_slow)·Γ — 병렬 시냅스의 합
+        lam = torch.sigmoid(L.lam_raw)
+        a_eff = (1 - lam) * a + lam * w
+        # ---- 전달
+        o = torch.einsum('bhtn,bnhc->bthc', a_eff, v)
+        f = torch.einsum('bthc,hcd->btd', o, L.w_sh)
+        return h + f, w
+
+    def boundary(self, L, h):
+        g, u = L.b_gate_up(h).chunk(2, dim=-1)
+        return h + L.b_down(0.5 * g * u)                                    # 토큰 내 쌍선형. W_d 영 초기화 → 시작 시 항등
 
     def injection(self, batch):
         inj = self.embed(batch["inputs"].to(torch.long))
@@ -654,44 +423,21 @@ class LT_Inner(nn.Module):
 
     def _forward(self, carry, batch):
         h = carry.current_hidden; inj = self.injection(batch)
-        # 레이어별 사전량 — QR·커널은 h 에 무관하므로 세그먼트당 1회 (레이어 수만큼)
         ABs = [self.W_C(L) for L in self.layers]
         kcs = [self.kernel(L) for L in self.layers]
-        w = carry.coupling if self.stdp else None; fresh = carry.fresh if self.stdp else None
-        # psi 면 Γ 가 전달용 a 를 그대로 씀. beta 면 β 커널. perp 면 ψ+π/2 커널 (β 미사용, 성분별 90°)
-        if self.stdp and self.config.stdp_window == "beta":   kcbs = [self.kernel(L, L.beta) for L in self.layers]
-        elif self.stdp and self.config.stdp_window == "perp": kcbs = [self.kernel(L, L.psi + math.pi / 2) for L in self.layers]
-        else:                                                  kcbs = [None for L in self.layers]
-        gate = carry.gate if self.gate_on else None
-        if self.gate_on and fresh is not None and gate is not None: gate = torch.where(fresh.view(-1, 1), torch.zeros_like(gate), gate)
-        causal = self.stdp and self.config.stdp_target == "causal"
-        vprev = carry.vprev if causal else None
-        if causal and vprev is not None and fresh is not None: vprev = torch.where(fresh.view(-1, 1, 1, 1), torch.zeros_like(vprev), vprev)
-        pre = self.config.block_order == "pre"
-        # URM 규약: 스택(num_layers)을 blocks_per_seg 번 반복 → 총 적용 = blocks_per_seg × num_layers
+        w = carry.coupling; fresh = carry.fresh
         for _ in range(self.config.blocks_per_seg):
             for li, L in enumerate(self.layers):
-                AB, kc, kcb = ABs[li], kcs[li], kcbs[li]
-                if pre:
-                    h = self.boundary(L, h, gate)                          # 굳힘 = 직전 블록 증거의 판별력에 비례
-                h = h + self.embed_scale * inj                             # URM 규약: 상수 √d
-                if self.gate_on:
-                    h, w, gate = self.step(L, h, AB, kc, w, fresh, kcb, apply_phi=pre)
-                elif causal:
-                    h, w, vprev = self.step(L, h, AB, kc, w, fresh, kcb, vprev, apply_phi=pre)
-                else:
-                    h, w = self.step(L, h, AB, kc, w, fresh, kcb, apply_phi=pre)
-                if not pre:
-                    h = self.boundary(L, h, gate)                          # post: 굳힘 이득은 방금 이 블록 스텝의 판별력
-                    h = self.phi(h)                                     # Φ 는 블록 끝에 — 판독·carry 가 흡수구 안에
-                fresh = None                                               # 첫 블록에서만 초기화
-        return replace(carry, current_hidden=h.detach(), coupling=(w.detach() if self.stdp else None), fresh=None,
-                       vprev=(vprev.detach() if causal and vprev is not None else None),
-                       gate=(gate.detach() if self.gate_on else None)), self.w_cls(h)
+                h = h + self.embed_scale * inj                             # 주입 (매 블록, √d 상수)
+                h, w = self.step(L, h, ABs[li], kcs[li], w, fresh)
+                h = self.boundary(L, h)
+                h = self.phi(h)                                            # Φ 는 블록 끝 — 판독·carry 가 흡수구 안
+                fresh = None
+        return replace(carry, current_hidden=h.detach(), coupling=w.detach(), fresh=None), self.w_cls(h)
 
 
 class LT(nn.Module):
-    """URM 하네스 인터페이스. ACT 없음 (halted = steps ≥ loops). q 로짓은 상수 (파라미터 0)."""
+    """URM 하네스 인터페이스. ACT 없음 (halted = steps ≥ loops). q 로짓은 상수."""
     def __init__(self, config_dict: dict):
         super().__init__()
         self.config = LTConfig.from_dict(config_dict)
@@ -717,14 +463,9 @@ class LT(nn.Module):
         outputs = {"logits": logits, "q_halt_logits": q, "q_continue_logits": q}
         with torch.no_grad():
             steps = steps + 1; halted = steps >= self.config.loops
-        return LTCarry(current_hidden=inner.current_hidden, steps=steps, halted=halted, current_data=data, coupling=inner.coupling, vprev=inner.vprev, gate=inner.gate), outputs
+        return LTCarry(current_hidden=inner.current_hidden, steps=steps, halted=halted, current_data=data, coupling=inner.coupling), outputs
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 4. 손실 — refs/URM/models/losses.py 그대로.
-#    accuracy / exact_accuracy 의 정의를 바꾸지 않았으므로 eval 수치가 저장소 기록과 직접 비교 가능하다.
-#    떼어낸 것: moe_aux_loss · router_metrics · profile 분기 (LT 의 outputs 에는 존재하지 않는 키다),
-#              return_raw_outputs (미사용). 손실·지표 계산에는 손대지 않았다.
 # ─────────────────────────────────────────────────────────────────────────────
 IGNORE_LABEL_ID = -100
 
@@ -853,8 +594,7 @@ class AdamATan2(Optimizer):
 # wd 제외 키 — sudoku/urm_patches.diff 의 pretrain.py:229 패치와 **문자열까지 동일**.
 # 동역학 상수(ψ·θ·α·γ·게이트)와 가소성 파라미터(η·λ·G·β·μ), 그리고 1차원 이하 파라미터는 wd=0.
 # 근거(패치 주석): wd=1.0 이 약한 그래디언트의 커널을 (1−lr·wd)^t 로 잠식 → loss 역행.
-NO_DECAY_KEYS = ("psi", "theta", "alpha_raw", "gamma_raw", "inj_gate", "st_gain",
-                 "gain_raw", "eta_raw", "lam_raw", "beta", "mu", "w0")
+NO_DECAY_KEYS = ("psi", "theta", "gain_raw", "gain_diag_raw", "eta_raw", "lam_raw")
 
 
 def _is_no_decay(name: str, p: torch.Tensor) -> bool:
@@ -1297,7 +1037,7 @@ def extrapolate(base, eval_in, eval_lb, cfg, rank, world_size, device, step: int
     be = int(np.argmax(exact)); ba = int(np.argmax(acc))
     lines = [f"# seg_extrap  step={step}  weights=ema  segs={segs}  n={N}  elapsed={time.time()-t0:.0f}s",
              f"# cfg: d={cfg['hidden_size']} H={cfg['num_heads']} blocks={cfg['blocks_per_seg']} layers={cfg['num_layers']} "
-             f"order={cfg['block_order']} stdp={cfg['stdp_target']}/{cfg['stdp_window']} lam_fixed={cfg['stdp_lam_fixed']} gain_fixed={cfg.get('stdp_gain_fixed')} read={cfg.get('stdp_read')} diag={cfg.get('stdp_diag')} dist_decay={cfg.get('dist_decay')}",
+             f"layers={cfg['num_layers']} lam_init={cfg['lam_init']} eta_init={cfg['eta_init']} gain_init={cfg['gain_init']}",
              f"{'seg':>5} {'acc':>8} {'exact':>6} {'exact%':>8} {'churn':>8}"]
     for si in range(segs):
         lines.append(f"{si+1:5d} {acc[si]:8.4f} {int(exact[si]):6d} {100*exact[si]/max(N,1):8.2f} {churn[si]:8.5f}" + ("  <-train" if si == 15 else ""))
@@ -1346,7 +1086,7 @@ def _milestone(out_dir, ts, base, optimizers, ema, cur_iter, cfg, rank, world_si
 #   accelerate 의 `prepare()`(DDP)는 그래디언트를 **평균**내므로 그대로 쓰면 1/world_size 로 어긋난다.
 #   그래서 여기서는 **모델을 accelerate 로 감싸지 않고**(prepare 호출 없음) URM 의 수동 all_reduce 를
 #   그대로 쓴다. accelerate 는 프로세스 기동·프로세스 그룹 초기화·디바이스 배치에만 쓴다.
-#   부수 효과로 DDP 의 unused-parameter 문제도 사라진다 — stdp_window="psi" 면 `beta` 가 forward 에
+#   부수 효과로 DDP 의 unused-parameter 문제도 사라진다 (수동 all_reduce 는 grad=None 을 0 으로 대신해 랭크 간 집합 호출 횟수만 맞춘다).
 #   등장하지 않아 DDP 는 find_unused_parameters 없이는 죽는다. 수동 경로는 grad=None 을 0 으로 대신
 #   all_reduce 해 랭크 간 집합 호출 횟수만 맞추면 되므로(원본과 동일) 문제가 없다.
 #
@@ -1600,11 +1340,7 @@ def main():
                 c = torch.load(cand, map_location="cpu", weights_only=False).get("cfg", {})
             except Exception:
                 c = {}
-            keys = ("hidden_size", "num_heads", "loops", "blocks_per_seg", "grid", "addr_dim",
-                    "psi_zero", "stdp", "stdp_target", "stdp_window", "stdp_lam_fixed", "stdp_gain_fixed", "stdp_read", "stdp_diag", "stdp_w0", "dist_decay", "boundary", "block_order",
-                    # [2026-09-04] num_layers/mlp_expansion 이 빠져 있었다. 둘 다 파라미터 shape 을
-                    #   바꾸므로 여기서 안 걸러지면 load_checkpoint 가 shape 오류로 죽는다.
-                    "num_layers", "mlp_expansion")
+            keys = ("hidden_size", "num_heads", "loops", "blocks_per_seg", "grid", "num_layers", "mlp_expansion")
             diff = [k for k in keys if c.get(k) != cfg[k]]
             if not diff:
                 resume_path = cand

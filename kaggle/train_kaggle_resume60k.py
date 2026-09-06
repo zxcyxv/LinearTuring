@@ -140,10 +140,11 @@ CFG = dict(
 
     # ---- 실행/저장
     out_dir=None,                 # None → /kaggle/working/checkpoints (없으면 ./lt_checkpoints)
-    resume_from=None,             # None → out_dir + /kaggle/input 자동 탐색. 명시하면 그 경로(파일/디렉터리)만 씀
+    resume_from="/kaggle/input",   # [2회차] 이전 버전 output 을 input 으로 붙이면 그 아래 step_*.pt 중 최신(60000)을 잡는다.
+                                  #   자동 스캔의 cfg 키 비교(1608행)를 우회한다 — 옛 체크포인트 cfg 에 stdp_lam_fixed 가 없어 그 비교는 실패한다
     scan_kaggle_input=True,       # [2026-09-04] 새 세션은 /kaggle/working 이 비어 있다. 이전 세션 output 을 input 으로
                                   #   붙였으면 자동으로 찾아 잇는다 (구조 키가 전부 일치할 때만 채택)
-    require_resume=False,         # True 면 재개할 체크포인트가 없을 때 즉시 중단 — 2회차 이후 세션에 켜라
+    require_resume=True,          # [2회차] 못 찾으면 즉시 중단
     expect_processes=None,        # 정수를 주면 world_size 가 그 값이 아닐 때 즉시 중단 (캐글 L4×4 면 4).
                                   #   4장 요청했는데 1장으로 조용히 떨어져 12시간을 헛도는 것을 막는다
     keep_last=2,                  # 체크포인트 보관 개수 (용량)

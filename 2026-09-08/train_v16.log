@@ -1,0 +1,50 @@
+[LT] num_processes=1
+[LT] accelerate 사용 불가 (ModuleNotFoundError: No module named 'accelerate') — torch.distributed 폴백
+[LT] out_dir = /workspace/LinearTuring/2026-09-08/run_v16  (쓰기 가능)
+[LT] ※ 체크포인트 없음 — step 0 부터 시작한다. 이어서 돌릴 의도였다면 CFG['resume_from'] 에 이전 세션 output 경로를 지정하라 (예외사항.md §4).
+[LT] inductor: persistent_reductions=False (소배치 축약 병리 회피)
+[LT] world_size=1 local_bs=128 params=7,156,075 total_steps=390625 total_iters=200 out=/workspace/LinearTuring/2026-09-08/run_v16
+[LT] 시작 step=0 iter=0 batch_in_iter=0
+W0908 13:05:08.038000 15173 torch/_inductor/utils.py:1436] [0/0] Not enough SMs to use max_autotune_gemm mode
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/compile_fx.py:282: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+[LT] step 250  lm_loss 1.5409  acc 0.4379  exact 0.0000 (~0/128) [halt step 240]
+[LT] step 500  lm_loss 1.3061  acc 0.4949  exact 0.0000 (~0/128) [halt step 496]
+[LT] step 750  lm_loss 1.1163  acc 0.5541  exact 0.0000 (~0/128) [halt step 736]
+[LT] step 1000  lm_loss 1.0800  acc 0.5910  exact 0.0000 (~0/128) [halt step 992]
+[LT] step 1250  lm_loss 1.0702  acc 0.6348  exact 0.0000 (~0/128) [halt step 1248]
+[LT] step 1500  lm_loss 0.8686  acc 0.6902  exact 0.0000 (~0/128) [halt step 1488]
+[LT] step 1750  lm_loss 0.8922  acc 0.7432  exact 0.0000 (~0/128) [halt step 1744]
+[EVAL] step 1953  acc 0.4810  exact 0/2048
+[LT] step 2000  lm_loss 0.5905  acc 0.7806  exact 0.0000 (~0/128) [halt step 2000]
+[LT] step 2250  lm_loss 0.7591  acc 0.7635  exact 0.0000 (~0/128) [halt step 2240]
+[LT] step 2500  lm_loss 0.9044  acc 0.7857  exact 0.0000 (~0/128) [halt step 2496]
+[LT] step 2750  lm_loss 0.6631  acc 0.8122  exact 0.0391 (~5/128) [halt step 2736]
+[LT] step 3000  lm_loss 0.7520  acc 0.7912  exact 0.0156 (~2/128) [halt step 2992]
+[LT] step 3250  lm_loss 0.8429  acc 0.7953  exact 0.0156 (~2/128) [halt step 3248]
+[LT] step 3500  lm_loss 0.6676  acc 0.7804  exact 0.0156 (~2/128) [halt step 3488]
+[LT] step 3750  lm_loss 0.8142  acc 0.7728  exact 0.0234 (~3/128) [halt step 3744]
+[EVAL] step 3906  acc 0.6255  exact 45/2048
+[LT] step 4000  lm_loss 0.6115  acc 0.7790  exact 0.0312 (~4/128) [halt step 4000]
+[LT] step 4250  lm_loss 0.7215  acc 0.7840  exact 0.0156 (~2/128) [halt step 4240]
+[LT] step 4500  lm_loss 0.9088  acc 0.8071  exact 0.0391 (~5/128) [halt step 4496]
+[LT] step 4750  lm_loss 0.6549  acc 0.8046  exact 0.0078 (~1/128) [halt step 4736]
+[LT] step 5000  lm_loss 0.7546  acc 0.7629  exact 0.0391 (~5/128) [halt step 4992]
+[LT] step 5250  lm_loss 0.8227  acc 0.7874  exact 0.0391 (~5/128) [halt step 5248]
+[LT] step 5500  lm_loss 0.6452  acc 0.7946  exact 0.0234 (~3/128) [halt step 5488]
+[LT] step 5750  lm_loss 0.7751  acc 0.7974  exact 0.0469 (~6/128) [halt step 5744]
+[EVAL] step 5859  acc 0.6641  exact 94/2048
+[LT] step 6000  lm_loss 0.5608  acc 0.7999  exact 0.0391 (~5/128) [halt step 6000]
+[LT] step 6250  lm_loss 0.7013  acc 0.7947  exact 0.0469 (~6/128) [halt step 6240]
+[LT] step 6500  lm_loss 0.8616  acc 0.7649  exact 0.0000 (~0/128) [halt step 6496]
+[LT] step 6750  lm_loss 0.6480  acc 0.7966  exact 0.0859 (~11/128) [halt step 6736]
+[LT] step 7000  lm_loss 0.7591  acc 0.8406  exact 0.1328 (~17/128) [halt step 6992]
+[LT] step 7250  lm_loss 0.8510  acc 0.8058  exact 0.0391 (~5/128) [halt step 7248]
+[LT] step 7500  lm_loss 0.6595  acc 0.8161  exact 0.0703 (~9/128) [halt step 7488]
+[LT] step 7750  lm_loss 0.8198  acc 0.8044  exact 0.0547 (~7/128) [halt step 7744]
+[EVAL] step 7812  acc 0.6625  exact 149/2048
+[LT] step 8000  lm_loss 0.5285  acc 0.8035  exact 0.0469 (~6/128) [halt step 8000]

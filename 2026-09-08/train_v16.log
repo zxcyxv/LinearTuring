@@ -48,3 +48,6 @@ W0908 13:05:08.038000 15173 torch/_inductor/utils.py:1436] [0/0] Not enough SMs 
 [LT] step 7750  lm_loss 0.8198  acc 0.8044  exact 0.0547 (~7/128) [halt step 7744]
 [EVAL] step 7812  acc 0.6625  exact 149/2048
 [LT] step 8000  lm_loss 0.5285  acc 0.8035  exact 0.0469 (~6/128) [halt step 8000]
+[LT] step 8250  lm_loss 0.7411  acc 0.8076  exact 0.0703 (~9/128) [halt step 8240]
+[LT] step 8500  lm_loss 0.8930  acc 0.8403  exact 0.1172 (~15/128) [halt step 8496]
+[LT] step 8750  lm_loss 0.6184  acc 0.7628  exact 0.0078 (~1/128) [halt step 8736]

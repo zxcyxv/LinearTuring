@@ -164,7 +164,7 @@ CFG = dict(
                                   #   약 8 it/s 라 6h 면 약 160k step — 역대 최고 런(123k)을 넘긴다.
                                   #   lr_min_ratio=1.0 이라 LR 은 상수다: 여기서 끊어도 어닐링 손실이 없다.
                                   #   더 돌리려면 output 을 input 으로 붙여 재개(scan_kaggle_input).
-    max_steps=120000,               # 디버그용 상한
+    max_steps=None,                 # [2026-09-08] 디버그 상한 해제 (원래 120000 — 그대로 두어 120k 에서 멈췄다). None → total_steps
     log_every=250,
     num_processes=None,           # None → torch.cuda.device_count() (Kaggle L4×4 → 4)
     dataloader_workers=1,         # URM 과 동일 (1 초과 금지 — 데이터셋이 단일 워커 가정)

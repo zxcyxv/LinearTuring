@@ -1,0 +1,9 @@
+[LT] num_processes=1
+[LT] accelerate 사용 불가 (ModuleNotFoundError: No module named 'accelerate') — torch.distributed 폴백
+[LT] out_dir = /workspace/LinearTuring/2026-09-08/run_v16  (쓰기 가능)
+[LT] 체크포인트 재개: /workspace/LinearTuring/2026-09-08/run_v16/step_120000.pt
+[LT] EMA shadow 복원
+[LT] inductor: persistent_reductions=False (소배치 축약 병리 회피)
+[LT] world_size=1 local_bs=128 params=7,156,075 total_steps=390625 total_iters=200 out=/workspace/LinearTuring/2026-09-08/run_v16
+[LT] 시작 step=120000 iter=61 batch_in_iter=867
+[LT] step 120250  lm_loss 0.4801  acc 0.9514  exact 0.7422 (~95/128) [halt step 120240]

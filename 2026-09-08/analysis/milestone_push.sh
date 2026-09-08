@@ -21,8 +21,8 @@ commit_push() {   # $1 = 커밋 메시지 제목
   git add -A 2026-09-08/ >> "$LOG" 2>&1
   if git diff --cached --quiet; then say "변경 없음 — 건너뜀"; return 0; fi
   local STEP ACC
-  STEP=$(grep -o 'step [0-9]*' 2026-09-08/train_v16.log | tail -1 | grep -o '[0-9]*')
-  ACC=$(grep "^\[EVAL\]" 2026-09-08/train_v16.log | tail -1)
+  STEP=$(cat 2026-09-08/train_v16*.log 2>/dev/null | grep -o 'step [0-9]*' | tail -1 | grep -o '[0-9]*')
+  ACC=$(cat 2026-09-08/train_v16*.log 2>/dev/null | grep "^\[EVAL\]" | tail -1)
   git commit -q -m "$1" -m "step ${STEP:-?} · ${ACC:-eval 없음}" \
     -m "Co-Authored-By: Claude Opus 5 (1M context) <noreply@anthropic.com>" \
     -m "Claude-Session: https://claude.ai/code/session_013S3A18eaYkivG5KAc1LbNW" >> "$LOG" 2>&1

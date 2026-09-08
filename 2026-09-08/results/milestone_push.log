@@ -20,3 +20,7 @@ To https://github.com/zxcyxv/LinearTuring.git
 To https://github.com/zxcyxv/LinearTuring.git
    32488e3..6aebb23  clean -> clean
 [18:16:04] 푸시 성공: v1.6 마일스톤 체크포인트(npz)·외삽·로그 (step 101248)
+To https://github.com/zxcyxv/LinearTuring.git
+   6aebb23..0736b01  clean -> clean
+[19:16:08] 푸시 성공: v1.6 학습 로그 (자동) (step 120000)
+[19:16:08] 학습 프로세스 종료 감지 — 마지막 처리

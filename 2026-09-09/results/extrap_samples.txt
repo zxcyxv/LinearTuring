@@ -23,3 +23,17 @@ seg16 96/512 (18.75%)   best 130/512 (25.39%) @seg116   +34   [seg128 기준]
 # ckpt step_180000.pt  step=180000  weights=ema  missing=[] unexpected=[]
 seg16 190/512 (37.11%)   best 275/512 (53.71%) @seg119   +85   [seg128 기준]
 오차 감소율 = 26.4%   (145s)
+===== 목표 200000 =====
+# ckpt step_200000.pt  step=200000  weights=ema  missing=[] unexpected=[]
+seg16 229/512 (44.73%)   best 359/512 (70.12%) @seg126   +130   [seg128 기준]
+오차 감소율 = 45.9%   (145s)
+
+=== 요약 ===
+# ckpt step_118000.pt  step=118000  weights=ema  missing=[] unexpected=[]	오차 감소율 = 17.4%   (145s)
+# ckpt step_126000.pt  step=126000  weights=ema  missing=[] unexpected=[]	오차 감소율 = 21.4%   (145s)
+# ckpt step_140000.pt  step=140000  weights=ema  missing=[] unexpected=[]	오차 감소율 = 31.1%   (145s)
+# ckpt step_118000.pt  step=118000  weights=ema  missing=[] unexpected=[]	오차 감소율 = 17.4%   (145s)	# ckpt step_126000.pt  step=126000  weights=ema  missing=[] unexpected=[]	오차 감소율 = 21.4%   (145s)
+# ckpt step_140000.pt  step=140000  weights=ema  missing=[] unexpected=[]	오차 감소율 = 31.1%   (145s)	# ckpt step_160146.pt  step=160146  weights=ema  missing=[] unexpected=[]
+오차 감소율 = 8.2%   (145s)	# ckpt step_180000.pt  step=180000  weights=ema  missing=[] unexpected=[]
+오차 감소율 = 26.4%   (145s)	# ckpt step_200000.pt  step=200000  weights=ema  missing=[] unexpected=[]
+오차 감소율 = 45.9%   (145s)	

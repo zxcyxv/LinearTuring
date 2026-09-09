@@ -44,3 +44,8 @@ To https://github.com/zxcyxv/LinearTuring.git
 To https://github.com/zxcyxv/LinearTuring.git
    961c602..3597169  clean -> clean
 [11:32:43] 푸시 성공: v1.7 학습 로그 (자동) (step 176992)
+To https://github.com/zxcyxv/LinearTuring.git
+   3597169..364dfe0  clean -> clean
+[12:32:47] 푸시 성공: v1.7 학습 로그 (자동) (step 195248)
+[12:52:47] step_200000 → npz 변환 시작
+[12:52:50] step_200000 변환 완료 (13MB)

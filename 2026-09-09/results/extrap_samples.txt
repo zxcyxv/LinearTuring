@@ -19,3 +19,7 @@ seg16 187/512 (36.52%)   best 288/512 (56.25%) @seg128   +101
 # ckpt step_160146.pt  step=160146  weights=ema  missing=[] unexpected=[]
 seg16 96/512 (18.75%)   best 130/512 (25.39%) @seg116   +34   [seg128 기준]
 오차 감소율 = 8.2%   (145s)
+===== 목표 180000 =====
+# ckpt step_180000.pt  step=180000  weights=ema  missing=[] unexpected=[]
+seg16 190/512 (37.11%)   best 275/512 (53.71%) @seg119   +85   [seg128 기준]
+오차 감소율 = 26.4%   (145s)

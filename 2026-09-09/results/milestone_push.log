@@ -89,3 +89,9 @@ To https://github.com/zxcyxv/LinearTuring.git
    9f6a8fd..cfb0458  clean -> clean
 [22:42:56] 푸시 성공: v1.7 학습 로그 (자동) (step ?)
 [22:43:44] 학습 프로세스 종료 감지 — 마지막 처리
+To https://github.com/zxcyxv/LinearTuring.git
+   cfb0458..f5b491d  clean -> clean
+[22:46:47] 푸시 성공: v1.7 학습 종료 — 최종 체크포인트·로그 (step 380736)
+[22:46:47] watcher 종료
+[23:22:57] step_130000 → npz 변환 시작
+[23:23:00] step_130000 변환 완료 (13MB)

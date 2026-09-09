@@ -1,0 +1,7 @@
+[LT] num_processes=1
+[LT] accelerate 사용 불가 (ModuleNotFoundError: No module named 'accelerate') — torch.distributed 폴백
+[LT] out_dir = /workspace/LinearTuring/2026-09-09/run_v17  (쓰기 가능)
+[LT] ※ 체크포인트 없음 — step 0 부터 시작한다. 이어서 돌릴 의도였다면 CFG['resume_from'] 에 이전 세션 output 경로를 지정하라 (예외사항.md §4).
+[LT] inductor: persistent_reductions=False (소배치 축약 병리 회피)
+[LT] world_size=1 local_bs=128 params=7,156,075 total_steps=390625 total_iters=200 out=/workspace/LinearTuring/2026-09-09/run_v17
+[LT] 시작 step=0 iter=0 batch_in_iter=0

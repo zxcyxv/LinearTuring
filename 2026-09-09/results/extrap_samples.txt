@@ -2,3 +2,16 @@
 # ckpt step_118000.pt  step=118000  weights=ema  missing=[] unexpected=[]
 seg16 155/512 (30.27%)   best 217/512 (42.38%) @seg120   +62
 오차 감소율 = 17.4%   (145s)
+===== 목표 126000 =====
+# ckpt step_126000.pt  step=126000  weights=ema  missing=[] unexpected=[]
+seg16 162/512 (31.64%)   best 237/512 (46.29%) @seg123   +75
+오차 감소율 = 21.4%   (145s)
+===== 목표 140000 =====
+# ckpt step_140000.pt  step=140000  weights=ema  missing=[] unexpected=[]
+seg16 187/512 (36.52%)   best 288/512 (56.25%) @seg128   +101
+오차 감소율 = 31.1%   (145s)
+
+=== 요약 ===
+# ckpt step_118000.pt  step=118000  weights=ema  missing=[] unexpected=[]	오차 감소율 = 17.4%   (145s)
+# ckpt step_126000.pt  step=126000  weights=ema  missing=[] unexpected=[]	오차 감소율 = 21.4%   (145s)
+# ckpt step_140000.pt  step=140000  weights=ema  missing=[] unexpected=[]	오차 감소율 = 31.1%   (145s)

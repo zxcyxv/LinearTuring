@@ -1,0 +1,13 @@
+[LT] num_processes=1
+[LT] accelerate 사용 불가 (ModuleNotFoundError: No module named 'accelerate') — torch.distributed 폴백
+[LT] out_dir = /workspace/LinearTuring/2026-09-09/run_v1_resume  (쓰기 가능)
+[LT] 체크포인트 재개: /workspace/LinearTuring/2026-09-09/run_v1_resume/repro0901_step120000.pt
+[LT] EMA shadow 복원
+[LT] inductor: persistent_reductions=False (소배치 축약 병리 회피)
+[LT] world_size=1 local_bs=128 params=7,155,245 total_steps=390625 total_iters=200 out=/workspace/LinearTuring/2026-09-09/run_v1_resume
+[LT] 시작 step=120000 iter=61 batch_in_iter=867
+W0909 22:41:48.680000 105740 torch/_inductor/utils.py:1436] [0/0] Not enough SMs to use max_autotune_gemm mode
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/compile_fx.py:282: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(

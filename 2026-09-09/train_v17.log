@@ -5,3 +5,8 @@
 [LT] inductor: persistent_reductions=False (소배치 축약 병리 회피)
 [LT] world_size=1 local_bs=128 params=7,156,075 total_steps=390625 total_iters=200 out=/workspace/LinearTuring/2026-09-09/run_v17
 [LT] 시작 step=0 iter=0 batch_in_iter=0
+W0909 00:59:01.949000 39823 torch/_inductor/utils.py:1436] [0/0] Not enough SMs to use max_autotune_gemm mode
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/compile_fx.py:282: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
+  warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(

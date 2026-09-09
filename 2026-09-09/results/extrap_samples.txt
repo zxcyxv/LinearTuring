@@ -1,0 +1,4 @@
+===== 목표 118000 =====
+# ckpt step_118000.pt  step=118000  weights=ema  missing=[] unexpected=[]
+seg16 155/512 (30.27%)   best 217/512 (42.38%) @seg120   +62
+오차 감소율 = 17.4%   (145s)

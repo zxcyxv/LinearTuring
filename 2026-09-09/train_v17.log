@@ -496,3 +496,11 @@ W0909 00:59:01.949000 39823 torch/_inductor/utils.py:1436] [0/0] Not enough SMs 
 [LT] step 106500  lm_loss 0.6589  acc 0.9135  exact 0.6172 (~79/128) [halt step 106496]
 [LT] step 106750  lm_loss 0.4325  acc 0.9008  exact 0.5156 (~66/128) [halt step 106736]
 [LT] step 107000  lm_loss 0.5468  acc 0.8745  exact 0.4531 (~58/128) [halt step 106992]
+[LT] num_processes=1
+[LT] accelerate 사용 불가 (ModuleNotFoundError: No module named 'accelerate') — torch.distributed 폴백
+[LT] out_dir = /workspace/LinearTuring/2026-09-09/run_v17  (쓰기 가능)
+[LT] 체크포인트 재개: /workspace/LinearTuring/2026-09-09/run_v17/step_106000.pt
+[LT] EMA shadow 복원
+[LT] inductor: persistent_reductions=False (소배치 축약 병리 회피)
+[LT] world_size=1 local_bs=128 params=7,156,075 total_steps=390625 total_iters=200 out=/workspace/LinearTuring/2026-09-09/run_v17
+[LT] 시작 step=106000 iter=54 batch_in_iter=538

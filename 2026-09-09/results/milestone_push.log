@@ -95,3 +95,7 @@ To https://github.com/zxcyxv/LinearTuring.git
 [22:46:47] watcher 종료
 [23:22:57] step_130000 → npz 변환 시작
 [23:23:00] step_130000 변환 완료 (13MB)
+To https://github.com/zxcyxv/LinearTuring.git
+   f5b491d..b25af3a  clean -> clean
+[23:23:05] 푸시 성공: v1.7 마일스톤 체크포인트(npz)·외삽·로그 (step 130851)
+[23:51:40] watcher 시작 (train pid=112955)

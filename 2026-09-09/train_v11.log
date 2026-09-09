@@ -8,3 +8,8 @@
 W0909 23:51:02.987000 112955 torch/_inductor/utils.py:1436] [0/0] Not enough SMs to use max_autotune_gemm mode
 /usr/local/lib/python3.12/dist-packages/torch/_inductor/compile_fx.py:282: UserWarning: TensorFloat32 tensor cores for float32 matrix multiplication available but not enabled. Consider setting `torch.set_float32_matmul_precision('high')` for better performance.
   warnings.warn(
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+[LT] step 250  lm_loss 1.7386  acc 0.4144  exact 0.0000 (~0/128) [halt step 240]

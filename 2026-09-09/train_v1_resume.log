@@ -104,3 +104,12 @@ W0909 22:41:48.680000 105740 torch/_inductor/utils.py:1436] [0/0] Not enough SMs
 [LT] step 139250  lm_loss 0.7156  acc 0.9178  exact 0.6172 (~79/128) [halt step 139248]
 [LT] step 139500  lm_loss 0.3743  acc 0.9448  exact 0.7500 (~96/128) [halt step 139488]
 [LT] step 139750  lm_loss 0.6441  acc 0.9192  exact 0.6875 (~88/128) [halt step 139744]
+[LT] step 140000  lm_loss 0.2191  acc 0.9255  exact 0.6250 (~80/128) [halt step 140000]
+[LT] milestone 저장 step=140000 → /workspace/LinearTuring/2026-09-09/run_v1_resume/milestones/step_140000.pt
+[EXTRAP] step 140000  seg16 38.28%  best seg122 58.79%  (+20.51%p)  churn@128 0.06313  → /workspace/LinearTuring/2026-09-09/run_v1_resume/milestones/extrap_step_140000.txt
+[LT] step 140250  lm_loss 0.4240  acc 0.9054  exact 0.5078 (~65/128) [halt step 140240]
+[LT] step 140500  lm_loss 0.6939  acc 0.9379  exact 0.7344 (~94/128) [halt step 140496]
+[EVAL] step 140616  acc 0.7951  exact 822/2048
+[LT] step 140750  lm_loss 0.2995  acc 0.9239  exact 0.5938 (~76/128) [halt step 140736]
+[LT] step 141000  lm_loss 0.6332  acc 0.9578  exact 0.8047 (~103/128) [halt step 140992]
+[LT] step 141250  lm_loss 0.7101  acc 0.9171  exact 0.4609 (~59/128) [halt step 141248]

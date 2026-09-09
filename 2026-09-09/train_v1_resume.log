@@ -11,3 +11,8 @@ W0909 22:41:48.680000 105740 torch/_inductor/utils.py:1436] [0/0] Not enough SMs
   warnings.warn(
 /usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
   check(
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+[LT] step 120250  lm_loss 0.5794  acc 0.8964  exact 0.5312 (~68/128) [halt step 120240]
+[LT] step 120500  lm_loss 0.7126  acc 0.9097  exact 0.5859 (~75/128) [halt step 120496]
+[LT] step 120750  lm_loss 0.4103  acc 0.8983  exact 0.5234 (~67/128) [halt step 120736]

@@ -10,3 +10,52 @@ W0910 10:47:11.812000 146298 torch/_inductor/utils.py:1436] [0/0] Not enough SMs
   warnings.warn(
 /usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
   check(
+/usr/local/lib/python3.12/dist-packages/torch/_inductor/lowering.py:1696: FutureWarning: `torch._prims_common.check` is deprecated and will be removed in the future. Please use `torch._check*` functions instead.
+  check(
+[LT] step 160250  lm_loss 0.4910  acc 0.9247  exact 0.6953 (~89/128) [halt step 160242]
+[LT] step 160500  lm_loss 0.7071  acc 0.9310  exact 0.6328 (~81/128) [halt step 160498]
+[LT] step 160750  lm_loss 0.2544  acc 0.9337  exact 0.6406 (~82/128) [halt step 160738]
+[LT] step 161000  lm_loss 0.5612  acc 0.9369  exact 0.6016 (~77/128) [halt step 160994]
+[LT] step 161250  lm_loss 0.1615  acc 0.9418  exact 0.7578 (~97/128) [halt step 161250]
+[LT] step 161500  lm_loss 0.3757  acc 0.9649  exact 0.8047 (~103/128) [halt step 161490]
+[LT] step 161750  lm_loss 0.6157  acc 0.9265  exact 0.6094 (~78/128) [halt step 161746]
+[LT] step 162000  lm_loss 0.2231  acc 0.9323  exact 0.6797 (~87/128) [halt step 161986]
+[EVAL] step 162099  acc 0.8076  exact 903/2048
+[LT] step 162250  lm_loss 0.5293  acc 0.9319  exact 0.7344 (~94/128) [halt step 162242]
+[LT] step 162500  lm_loss 0.7000  acc 0.9533  exact 0.7734 (~99/128) [halt step 162498]
+[LT] step 162750  lm_loss 0.4696  acc 0.9307  exact 0.6406 (~82/128) [halt step 162738]
+[LT] step 163000  lm_loss 0.5382  acc 0.9535  exact 0.6953 (~89/128) [halt step 162994]
+[LT] step 163250  lm_loss 0.1056  acc 0.9651  exact 0.8359 (~107/128) [halt step 163250]
+[LT] step 163500  lm_loss 0.4137  acc 0.9181  exact 0.6797 (~87/128) [halt step 163490]
+[LT] step 163750  lm_loss 0.6483  acc 0.9626  exact 0.7969 (~102/128) [halt step 163746]
+[LT] step 164000  lm_loss 0.2336  acc 0.9153  exact 0.6406 (~82/128) [halt step 163986]
+[EVAL] step 164052  acc 0.8090  exact 921/2048
+[LT] step 164250  lm_loss 0.4983  acc 0.9261  exact 0.6797 (~87/128) [halt step 164242]
+[LT] step 164500  lm_loss 0.7187  acc 0.9668  exact 0.8516 (~109/128) [halt step 164498]
+[LT] step 164750  lm_loss 0.2891  acc 0.9646  exact 0.8203 (~105/128) [halt step 164738]
+[LT] step 165000  lm_loss 0.5623  acc 0.9559  exact 0.7578 (~97/128) [halt step 164994]
+[LT] step 165250  lm_loss 0.1102  acc 0.9618  exact 0.8125 (~104/128) [halt step 165250]
+[LT] step 165500  lm_loss 0.4179  acc 0.9718  exact 0.8672 (~111/128) [halt step 165490]
+[LT] step 165750  lm_loss 0.6205  acc 0.9367  exact 0.6719 (~86/128) [halt step 165746]
+[LT] step 166000  lm_loss 0.2097  acc 0.9333  exact 0.6953 (~89/128) [halt step 165986]
+[EVAL] step 166005  acc 0.8157  exact 970/2048
+[LT] step 166250  lm_loss 0.4800  acc 0.9611  exact 0.8281 (~106/128) [halt step 166242]
+[LT] step 166500  lm_loss 0.7054  acc 0.9590  exact 0.8125 (~104/128) [halt step 166498]
+[LT] step 166750  lm_loss 0.4374  acc 0.9245  exact 0.6406 (~82/128) [halt step 166738]
+[LT] step 167000  lm_loss 0.5465  acc 0.9361  exact 0.6094 (~78/128) [halt step 166994]
+[LT] step 167250  lm_loss 0.0796  acc 0.9766  exact 0.8672 (~111/128) [halt step 167250]
+[LT] step 167500  lm_loss 0.4442  acc 0.9464  exact 0.7344 (~94/128) [halt step 167490]
+[LT] step 167750  lm_loss 0.6283  acc 0.9416  exact 0.7344 (~94/128) [halt step 167746]
+[EVAL] step 167958  acc 0.8147  exact 935/2048
+[LT] step 168000  lm_loss 0.4714  acc 0.9456  exact 0.6797 (~87/128) [halt step 167986]
+[LT] step 168250  lm_loss 0.5166  acc 0.9606  exact 0.8281 (~106/128) [halt step 168242]
+[LT] step 168500  lm_loss 0.7079  acc 0.9439  exact 0.7500 (~96/128) [halt step 168498]
+[LT] step 168750  lm_loss 0.3018  acc 0.9583  exact 0.8047 (~103/128) [halt step 168738]
+[LT] step 169000  lm_loss 0.5715  acc 0.9351  exact 0.6094 (~78/128) [halt step 168994]
+[LT] step 169250  lm_loss 0.1291  acc 0.9598  exact 0.8047 (~103/128) [halt step 169250]
+[LT] step 169500  lm_loss 0.3474  acc 0.9629  exact 0.8125 (~104/128) [halt step 169490]
+[LT] step 169750  lm_loss 0.5687  acc 0.9379  exact 0.7734 (~99/128) [halt step 169746]
+[EVAL] step 169911  acc 0.7977  exact 853/2048
+[LT] step 170000  lm_loss 0.1513  acc 0.9594  exact 0.7969 (~102/128) [halt step 169986]
+[LT] milestone 저장 step=170000 → /workspace/LinearTuring/2026-09-09/run_v1_resume/milestones/step_170000.pt
+[EXTRAP] step 170000  seg16 37.89%  best seg123 65.62%  (+27.73%p)  churn@128 0.04986  → /workspace/LinearTuring/2026-09-09/run_v1_resume/milestones/extrap_step_170000.txt

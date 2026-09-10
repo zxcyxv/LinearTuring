@@ -73,11 +73,11 @@ from torch.utils.data import DataLoader, IterableDataset
 # ─────────────────────────────────────────────────────────────────────────────
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-PRESETS = {                       # v1 → v1.7 의 차이는 이 세 플래그뿐
-    "v1":   dict(legacy_gauge=True,  block_order="pre",  use_trace=False),
-    "v1.1": dict(legacy_gauge=False, block_order="pre",  use_trace=False),
-    "v1.2": dict(legacy_gauge=False, block_order="post", use_trace=False),
-    "v1.7": dict(legacy_gauge=False, block_order="post", use_trace=True),
+PRESETS = {                       # 판 사이의 차이는 이 세 플래그뿐
+    "v1":   dict(legacy_gauge=True,  block_order="pre",  use_trace=False),   # 9/1 원본
+    "v1.1": dict(legacy_gauge=False, block_order="pre",  use_trace=False),   # √d 고정 게이지. 학습·측정 완료 (최신)
+    "v2":   dict(legacy_gauge=False, block_order="post", use_trace=False),   # v1.1 + post 순서. 아직 학습 안 함
+    "v1.7": dict(legacy_gauge=False, block_order="post", use_trace=True),    # v2 + 주소 흔적 z. 학습 후반 불안정
 }
 
 CFG = dict(
@@ -269,8 +269,8 @@ class LTCarry:
 class LTConfig:
     """모델 설정. 판(preset) 간 차이는 legacy_gauge · block_order · use_trace 세 플래그뿐이다.
       v1   = legacy_gauge=True,  block_order="pre",  use_trace=False   (9/1 원본)
-      v1.1 = legacy_gauge=False, block_order="pre",  use_trace=False
-      v1.2 = legacy_gauge=False, block_order="post", use_trace=False
+      v1.1 = legacy_gauge=False, block_order="pre",  use_trace=False   (최신 학습판)
+      v2   = legacy_gauge=False, block_order="post", use_trace=False   (미학습)
       v1.7 = legacy_gauge=False, block_order="post", use_trace=True
     """
     batch_size: int

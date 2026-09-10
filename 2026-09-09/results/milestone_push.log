@@ -183,3 +183,8 @@ To https://github.com/zxcyxv/LinearTuring.git
 [06:08:56] 푸시 성공: v1.1 마일스톤 체크포인트(npz)·외삽·로그 (step 100992)
 [06:38:56] step_110000 → npz 변환 시작
 [06:38:59] step_110000 변환 완료 (13MB)
+To https://github.com/zxcyxv/LinearTuring.git
+   500150b..94dd152  clean -> clean
+[06:39:05] 푸시 성공: v1.1 마일스톤 체크포인트(npz)·외삽·로그 (step 110992)
+[07:09:06] step_120000 → npz 변환 시작
+[07:09:09] step_120000 변환 완료 (13MB)

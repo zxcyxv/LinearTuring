@@ -114,3 +114,8 @@ To https://github.com/zxcyxv/LinearTuring.git
    4a21160..4e7e077  clean -> clean
 [00:28:24] 푸시 성공: v1.7 마일스톤 체크포인트(npz)·외삽·로그 (step 150992)
 [00:57:17] watcher 시작 (train pid=118467)
+To https://github.com/zxcyxv/LinearTuring.git
+   4e7e077..14eb622  clean -> clean
+[00:57:21] 푸시 성공: v1.1 학습 로그 (자동) (step ?)
+[00:58:24] step_160000 → npz 변환 시작
+[00:58:27] step_160000 변환 완료 (13MB)

@@ -714,3 +714,48 @@ W0910 01:03:05.159000 118467 torch/_inductor/utils.py:1436] [0/2] Not enough SMs
 [EXTRAP] step 150000  seg16 42.77%  best seg128 68.16%  (+25.39%p)  churn@128 0.05478  → /workspace/LinearTuring/2026-09-09/run_v11/milestones/extrap_step_150000.txt
 [LT] step 150250  lm_loss 0.4127  acc 0.9561  exact 0.7656 (~98/128) [halt step 150240]
 [EVAL] step 150381  acc 0.8177  exact 1002/2048
+[LT] step 150500  lm_loss 0.6712  acc 0.9374  exact 0.7422 (~95/128) [halt step 150496]
+[LT] step 150750  lm_loss 0.1969  acc 0.9586  exact 0.8047 (~103/128) [halt step 150736]
+[LT] step 151000  lm_loss 0.4881  acc 0.9510  exact 0.7500 (~96/128) [halt step 150992]
+[LT] step 151250  lm_loss 0.6137  acc 0.9488  exact 0.7812 (~100/128) [halt step 151248]
+[LT] step 151500  lm_loss 0.2444  acc 0.9516  exact 0.7656 (~98/128) [halt step 151488]
+[LT] step 151750  lm_loss 0.5181  acc 0.9674  exact 0.7812 (~100/128) [halt step 151744]
+[LT] step 152000  lm_loss 0.1291  acc 0.9553  exact 0.7656 (~98/128) [halt step 152000]
+[LT] step 152250  lm_loss 0.4040  acc 0.9563  exact 0.7656 (~98/128) [halt step 152240]
+[EVAL] step 152334  acc 0.8280  exact 1057/2048
+[LT] step 152500  lm_loss 0.6532  acc 0.9444  exact 0.7422 (~95/128) [halt step 152496]
+[LT] step 152750  lm_loss 0.1497  acc 0.9736  exact 0.8516 (~109/128) [halt step 152736]
+[LT] step 153000  lm_loss 0.4159  acc 0.9400  exact 0.7109 (~91/128) [halt step 152992]
+[LT] step 153250  lm_loss 0.7077  acc 0.9429  exact 0.7344 (~94/128) [halt step 153248]
+[LT] step 153500  lm_loss 0.2866  acc 0.9565  exact 0.7969 (~102/128) [halt step 153488]
+[LT] step 153750  lm_loss 0.6120  acc 0.9308  exact 0.7266 (~93/128) [halt step 153744]
+[LT] step 154000  lm_loss 0.1768  acc 0.9411  exact 0.6875 (~88/128) [halt step 154000]
+[LT] step 154250  lm_loss 0.3963  acc 0.9665  exact 0.8516 (~109/128) [halt step 154240]
+[EVAL] step 154287  acc 0.8240  exact 1057/2048
+[LT] step 154500  lm_loss 0.6194  acc 0.9404  exact 0.7344 (~94/128) [halt step 154496]
+[LT] step 154750  lm_loss 0.1815  acc 0.9382  exact 0.6641 (~85/128) [halt step 154736]
+[LT] step 155000  lm_loss 0.3703  acc 0.9541  exact 0.7891 (~101/128) [halt step 154992]
+[LT] step 155250  lm_loss 0.6854  acc 0.9114  exact 0.6406 (~82/128) [halt step 155248]
+[LT] step 155500  lm_loss 0.2616  acc 0.9474  exact 0.7656 (~98/128) [halt step 155488]
+[LT] step 155750  lm_loss 0.5190  acc 0.9615  exact 0.7656 (~98/128) [halt step 155744]
+[LT] step 156000  lm_loss 0.1526  acc 0.9514  exact 0.7812 (~100/128) [halt step 156000]
+[EVAL] step 156240  acc 0.8225  exact 1010/2048
+[LT] step 156250  lm_loss 0.4186  acc 0.9362  exact 0.7031 (~90/128) [halt step 156240]
+[LT] step 156500  lm_loss 0.6191  acc 0.9358  exact 0.7422 (~95/128) [halt step 156496]
+[LT] step 156750  lm_loss 0.2273  acc 0.9408  exact 0.6953 (~89/128) [halt step 156736]
+[LT] step 157000  lm_loss 0.4937  acc 0.9528  exact 0.7891 (~101/128) [halt step 156992]
+[LT] step 157250  lm_loss 0.7059  acc 0.9582  exact 0.7734 (~99/128) [halt step 157248]
+[LT] step 157500  lm_loss 0.3541  acc 0.9436  exact 0.6875 (~88/128) [halt step 157488]
+[LT] step 157750  lm_loss 0.5442  acc 0.9501  exact 0.7109 (~91/128) [halt step 157744]
+[LT] step 158000  lm_loss 0.1560  acc 0.9492  exact 0.7422 (~95/128) [halt step 158000]
+[EVAL] step 158193  acc 0.8220  exact 1017/2048
+[LT] step 158250  lm_loss 0.3852  acc 0.9359  exact 0.7266 (~93/128) [halt step 158240]
+[LT] step 158500  lm_loss 0.6539  acc 0.9463  exact 0.6875 (~88/128) [halt step 158496]
+[LT] step 158750  lm_loss 0.1755  acc 0.9605  exact 0.7656 (~98/128) [halt step 158736]
+[LT] step 159000  lm_loss 0.6612  acc 0.9566  exact 0.7500 (~96/128) [halt step 158992]
+[LT] step 159250  lm_loss 0.7232  acc 0.9345  exact 0.7031 (~90/128) [halt step 159248]
+[LT] step 159500  lm_loss 0.2696  acc 0.9619  exact 0.8203 (~105/128) [halt step 159488]
+[LT] step 159750  lm_loss 0.6180  acc 0.9541  exact 0.7812 (~100/128) [halt step 159744]
+[LT] step 160000  lm_loss 0.1245  acc 0.9608  exact 0.8281 (~106/128) [halt step 160000]
+[LT] milestone 저장 step=160000 → /workspace/LinearTuring/2026-09-09/run_v11/milestones/step_160000.pt
+[EXTRAP] step 160000  seg16 45.70%  best seg128 66.02%  (+20.31%p)  churn@128 0.04473  → /workspace/LinearTuring/2026-09-09/run_v11/milestones/extrap_step_160000.txt

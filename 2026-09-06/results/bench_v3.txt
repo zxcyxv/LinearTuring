@@ -1,5 +1,0 @@
-# v3 스텝 벤치 (bench_v3.py, RTX4000Ada 1장, 배치128, 합성 데이터, fwd+bwd+opt)
-mode=eager            merged=0    296.7 ms/step   3.37 it/s   (warmup+compile 4s)  peak 6.02 GB
-mode=default          merged=0    133.9 ms/step   7.47 it/s   (warmup+compile 141s)  peak 3.46 GB
-mode=default          merged=1    138.7 ms/step   7.21 it/s   (warmup+compile 133s)  peak 3.57 GB
-max-autotune / reduce-overhead: CUDA graph 오류 — carry(h,w)가 이전 스텝 그래프 출력이라 덮어씀. carry clone 으로 우회 가능, 미시도

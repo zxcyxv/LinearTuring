@@ -123,3 +123,9 @@ To https://github.com/zxcyxv/LinearTuring.git
    14eb622..2466688  clean -> clean
 [00:58:32] 푸시 성공: v1.7 마일스톤 체크포인트(npz)·외삽·로그 (step 160240)
 [00:58:32] 학습 프로세스 종료 감지 — 마지막 처리
+To https://github.com/zxcyxv/LinearTuring.git
+   2466688..ae1792d  clean -> clean
+[01:01:35] 푸시 성공: v1.7 학습 종료 — 최종 체크포인트·로그 (step 160240)
+[01:01:35] watcher 종료
+[01:32:21] step_10000 → npz 변환 시작
+[01:32:24] step_10000 변환 완료 (13MB)
